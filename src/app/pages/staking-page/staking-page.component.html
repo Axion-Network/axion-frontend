@@ -19,6 +19,17 @@
       matTooltipClass="question__tooltip"
     ></div>
   </div>
+</section>
+
+<section class="axn-section" *ngIf="account">
+  <div class="axn-form-block p-20">
+    <div class="axn-title-block">
+      <span>Estimate your staking earnings here: <a href="https://axioncalc.com" target="_blank" [ngStyle]="{'color': 'inherit'}">axioncalc.com</a></span>
+    </div>
+  </div>
+</section>
+  
+<section class="axn-section" *ngIf="account">
   <form #stakeForm="ngForm" class="axn-form axn-form-3-1">
     <div class="axn-form-block axn-form-staking">
       <div class="axn-form-block-one">

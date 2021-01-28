@@ -214,7 +214,7 @@
             <span class="axn-form-block-shares-text-min">
             Bonus APY<br />
             <b>{{minerBalance.nft.multiplier > 1 
-              ? minerBalance.nft.bonusApy.div(minerBalance.nft.multiplier) + " x " + minerBalance.nft.multiplier +" = " + minerBalance.nft.bonusApy + "%" 
+              ? minerBalance.nft.bonusApy / minerBalance.nft.multiplier + " x " + minerBalance.nft.multiplier +" = " + minerBalance.nft.bonusApy + "%" 
               : minerBalance.nft.bonusApy+"%"}}</b>
             </span>
           </div>
@@ -229,7 +229,7 @@
             <b>{{selectedMine.adjustedApy.isZero() || selectedMine.adjustedApy.isGreaterThan(10000) 
               ? "TBC" 
               : minerBalance.nft.multiplier > 0 
-                ? selectedMine.adjustedApy + " + " + minerBalance.nft.bonusApy + " = " + minerBalance.nft.bonusApy.plus(selectedMine.adjustedApy) + "%"
+                ? selectedMine.adjustedApy + " + " + minerBalance.nft.bonusApy + " = " + selectedMine.adjustedApy.plus(minerBalance.nft.bonusApy) + "%"
                 : selectedMine.adjustedApy+"%"}}</b>
           </span>
           <span class="axn-form-block-shares-text-min axn-text-center">

@@ -242,6 +242,12 @@ a {
     }
   }
 
+  &-b {
+    &-0 {
+      margin-bottom: 0px !important;
+    }
+  }
+
   &-a {
     margin: 0 auto;
   }

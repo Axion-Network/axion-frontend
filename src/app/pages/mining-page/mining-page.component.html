@@ -113,7 +113,7 @@
 
             <span *ngIf="currentBlock < selectedMine.startBlock" class="axn-text-body">
               Mining is Starting Soon<br/>
-              Start Block: <a style="text-decoration: none;" target="_blank" href="https://etherscan.io/block/countdown/{{selectedMine.startBlock}}">{{selectedMine.startBlock}}</a>
+              Start Block: <a class="link" target="_blank" href="https://etherscan.io/block/countdown/{{selectedMine.startBlock}}">{{selectedMine.startBlock}}</a>
             </span>
 
             <span *ngIf="currentBlock >= selectedMine.startBlock && !selectedMine.rewardBalance.isZero()" class="axn-cheap icon icon_axn cl-blue-bg">AXN</span>
@@ -188,23 +188,33 @@
       <div class="axn-form-block">
         <div class="axn-form-base-2 axn-form-base-center">
           
-          <div class="axn-form-block-one">
-            <span class="icon icon-flex axn-form-block-shares-text-min" [ngClass]="{'icon_ok-1': minerBalance.nft.og25NFT !== 0, icon_no: minerBalance.nft.og25NFT === 0}">OG-5555 2.5m NFT</span>
+          <div class="axn-form-block-one-link">
+            <a class="axn-btn axn-btn-gray link" target="_blank" href="https://opensea.io/collection/og-5555-2-5-v2">
+              <span class="icon icon-flex axn-form-block-shares-text-min" 
+                [ngClass]="{'icon_ok-1': minerBalance.nft.og25NFT !== 0, icon_no: minerBalance.nft.og25NFT === 0}">
+              </span>OG-5555 2.5m NFT
+            </a>
           </div>
   
-          <div class="axn-form-block-one">
-            <span class="icon icon-flex axn-form-block-shares-text-min" [ngClass]="{'icon_ok-1': minerBalance.nft.og100NFT !== 0, icon_no: minerBalance.nft.og100NFT === 0}">OG-5555 100m NFT</span>
+          <div class="axn-form-block-one-link">
+            <a class="axn-btn axn-btn-gray link" target="_blank" href="https://opensea.io/collection/og-5555-100">
+              <span class="icon icon-flex axn-form-block-shares-text-min" 
+                [ngClass]="{'icon_ok-1': minerBalance.nft.og100NFT !== 0, icon_no: minerBalance.nft.og100NFT === 0}">
+            </span>OG-5555 100m NFT</a>
           </div>
   
-          <div class="axn-form-block-one">
-            <span class="icon icon-flex axn-form-block-shares-text-min" [ngClass]="{'icon_ok-1': minerBalance.nft.liqNFT !== 0, icon_no: minerBalance.nft.liqNFT === 0}">Liquidity Rep. NFT</span>
+          <div class="axn-form-block-one-link">
+            <a class="axn-btn axn-btn-gray link" target="_blank" href="https://opensea.io/collection/axn-liq-rep">
+              <span class="icon icon-flex axn-form-block-shares-text-min" 
+                [ngClass]="{'icon_ok-1': minerBalance.nft.liqNFT !== 0, icon_no: minerBalance.nft.liqNFT === 0}">
+            </span>Liquidity Rep. NFT</a>
           </div>
   
-           <div class="axn-form-block-one">
-             <span class="axn-form-block-shares-text-min">
-              Bonus APY<br />
-              <b>{{minerBalance.nft.bonusApy}}%</b>
-             </span>
+          <div class="axn-form-block-one" style="padding-bottom: 10px;">
+            <span class="axn-form-block-shares-text-min">
+            Bonus APY<br />
+            <b>{{minerBalance.nft.bonusApy}}%</b>
+            </span>
           </div>
         </div>
       </div>

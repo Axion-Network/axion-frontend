@@ -213,7 +213,7 @@ export class MiningContractService {
       og25NFT: 0,
       og100NFT: 0,
       liqNFT: 0,
-      reward: 0
+      multiplier: 0
     };
 
     try {
@@ -228,11 +228,11 @@ export class MiningContractService {
       result.liqNFT = +balances[2];
 
       if (result.og25NFT > 0)
-        result.reward += 0.1;
+        result.multiplier++;
       if (result.og100NFT > 0)
-        result.reward += 0.1;
+        result.multiplier++;
       if (result.liqNFT > 0)
-        result.reward += 0.1;
+        result.multiplier++;
 
       return result;
     }
@@ -240,7 +240,7 @@ export class MiningContractService {
   }
 
   public adjustApy(mine: Mine, nftBalance) {
-    nftBalance.bonusApy = mine.apy.times(nftBalance.reward).dp(2);
+    nftBalance.bonusApy = mine.apy.times(nftBalance.multiplier / 10).dp(2);
     mine.adjustedApy = mine.apy.times(0.7).dp(2);
   }
 
@@ -254,7 +254,7 @@ export class MiningContractService {
     };
   }
 
-  public async getNftTokenBalance(address: string): Promise<string> {
+  private async getNftTokenBalance(address: string): Promise<string> {
     const token = this.web3Service.getContract(this.contractData.ERC721.ABI, address);
     return await token.methods.balanceOf(this.account.address).call();
   }

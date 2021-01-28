@@ -79,7 +79,7 @@ export class MiningPageComponent implements OnDestroy {
       og25NFT: 0,
       og100NFT: 0,
       liqNFT: 0,
-      reward: 0,
+      multiplier: 0,
       bonusApy: 0
     }
   };
@@ -196,16 +196,16 @@ export class MiningPageComponent implements OnDestroy {
     this.minerBalance.pendingReward = result[1];
     this.minerBalance.lpAvailable = result[2];
     this.minerBalance.nft = result[3];
-    this.minerBalance.rewardPerBlock = this.getMinerRewardPerBlock(result[0], result[3].reward);
+    this.minerBalance.rewardPerBlock = this.getMinerRewardPerBlock(result[0], result[3].multiplier);
 
     if (!this.minerBalance.lpDeposit.isZero())
       this.contractService.updatePendingRewardOnNewBlock(this.selectedMine.mineAddress, this.minerBalance);
   }
 
-  private getMinerRewardPerBlock(lpDeposit: BigNumber, nftReward: number) {
+  private getMinerRewardPerBlock(lpDeposit: BigNumber, nftMultiplier: number) {
     return lpDeposit
       .times(this.selectedMine.blockReward)
-      .times(0.7 + nftReward)
+      .times(0.7 + nftMultiplier / 10)
       .div(this.contractService._1e18)
       .div(this.selectedMine.lpTokenBalance.isZero() ? 1 : this.selectedMine.lpTokenBalance);
   }

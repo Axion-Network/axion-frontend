@@ -213,7 +213,9 @@
           <div class="axn-form-block-one" style="padding-bottom: 10px;">
             <span class="axn-form-block-shares-text-min">
             Bonus APY<br />
-            <b>{{minerBalance.nft.bonusApy}}%</b>
+            <b>{{minerBalance.nft.multiplier > 1 
+              ? minerBalance.nft.bonusApy.div(minerBalance.nft.multiplier) + " x " + minerBalance.nft.multiplier +" = " + minerBalance.nft.bonusApy + "%" 
+              : minerBalance.nft.bonusApy+"%"}}</b>
             </span>
           </div>
         </div>
@@ -224,7 +226,11 @@
         <div class="axn-form-base-4 axn-form-base-center p-b-25">
           <span class="axn-form-block-shares-text-min axn-text-center">
             APY<br/>
-            <b>{{selectedMine.adjustedApy.isZero() || selectedMine.adjustedApy.isGreaterThan(10000) ? "TBC" : selectedMine.adjustedApy+"%"}}</b>
+            <b>{{selectedMine.adjustedApy.isZero() || selectedMine.adjustedApy.isGreaterThan(10000) 
+              ? "TBC" 
+              : minerBalance.nft.multiplier > 0 
+                ? selectedMine.adjustedApy + " + " + minerBalance.nft.bonusApy + " = " + minerBalance.nft.bonusApy.plus(selectedMine.adjustedApy) + "%"
+                : selectedMine.adjustedApy+"%"}}</b>
           </span>
           <span class="axn-form-block-shares-text-min axn-text-center">
             Your/Total Block Reward<br />

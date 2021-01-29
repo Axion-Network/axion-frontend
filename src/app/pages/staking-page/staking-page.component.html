@@ -148,7 +148,7 @@
                   share.full | bigNumberFormat: 0:true:false:18 || 0
                 }}"
               >
-                {{ share.short || 0 }}
+                {{ share.short ? share.short.toLocaleString() : 0 }}
               </span>
               <br />
               <span class="axn-form-block-shares-text-min">Shares</span>

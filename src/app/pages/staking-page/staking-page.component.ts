@@ -256,18 +256,21 @@ export class StakingPageComponent implements OnDestroy {
       });
   }
 
+  private _1e18 = new BigNumber(10).pow(18)
+  private getLPBShares(amount, days) {
+    const stakeDays = days || 1
+    const principal = new BigNumber(amount || 0);
+    const bonusMultiplier = new BigNumber(stakeDays - 1).div(1820);
+    const fixedShareRate = new BigNumber(this.stakingContractInfo.ShareRate).div(this._1e18)
+    return principal.times(bonusMultiplier).div(fixedShareRate)
+  }
+
   get bonusLongerPays() {
-    const currentValue = new BigNumber(this.formsData.stakeAmount || 0);
-    return currentValue
-      .times((this.formsData.stakeDays || 1) - 1)
-      .div(stakingMaxDays);
+    return this.getLPBShares(this.formsData.stakeAmount, this.formsData.stakeDays)
   }
 
   get bonusLongerPaysBetterRestake() {
-    const currentValue = new BigNumber(this.restakeData.amount || 0);
-    return currentValue
-      .times((+this.restakeData.stakeDays || 1) - 1)
-      .div(stakingMaxDays);
+    return this.getLPBShares(this.restakeData.amount, this.restakeData.stakeDays)
   }
 
   get userShares() {

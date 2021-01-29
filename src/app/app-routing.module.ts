@@ -1,9 +1,9 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
-import { ClaimPageComponent } from "./claim-page/claim-page.component";
-import { AuctionPageComponent } from "./auction-page/auction-page.component";
-import { StakingPageComponent } from "./staking-page/staking-page.component";
-import { ClaimResolver } from "./resolvers/Claim";
+import { ClaimPageComponent } from "./pages/claim-page/claim-page.component";
+import { AuctionPageComponent } from "./pages/auction-page/auction-page.component";
+import { StakingPageComponent } from "./pages/staking-page/staking-page.component";
+import { MiningPageComponent } from "./pages/mining-page/mining-page.component";
 
 const routes: Routes = [
   {
@@ -17,6 +17,14 @@ const routes: Routes = [
   {
     path: "staking",
     component: StakingPageComponent,
+  },
+  {
+    path: "mining",
+    component: MiningPageComponent,
+  },
+  {
+    path: "mining/:mine",
+    component: MiningPageComponent,
   },
   {
     path: "**",

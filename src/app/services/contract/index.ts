@@ -7,6 +7,7 @@ import { Contract } from "web3-eth-contract";
 import { environment } from "../../../environments/environment";
 import { AppConfig } from "../../appconfig";
 import { MetamaskService } from "../web3";
+import { MaxUint256 } from '@ethersproject/constants';
 
 // export const stakingMaxDays = 5555;
 export const stakingMaxDays = 1820;
@@ -54,7 +55,7 @@ export class ContractService {
   private web3Service;
 
   private H2TContract: Contract;
-  private AXNContract: Contract;
+  public AXNContract: Contract;
   private HEXContract: Contract;
   private NativeSwapContract: Contract;
 
@@ -114,7 +115,7 @@ export class ContractService {
   private startDate: any;
   private leftDays: any;
 
-  private CONTRACTS_PARAMS: any;
+  public CONTRACTS_PARAMS: any;
 
   public AxnTokenAddress = "none";
 
@@ -328,8 +329,6 @@ export class ContractService {
 
   public getAccount(noEnable?) {
     const finishIniAccount = () => {
-      if (!noEnable) {
-      }
       if (this.account) {
         this.initializeContracts();
         this.getAccountSnapshot().then(() => {
@@ -605,7 +604,7 @@ export class ContractService {
         },
         () => {
           this.H2TContract.methods
-            .approve(this.NativeSwapContract.options.address, amount)
+            .approve(this.NativeSwapContract.options.address, MaxUint256)
             .send({
               from: fromAccount,
             })
@@ -921,7 +920,7 @@ export class ContractService {
         },
         () => {
           this.AXNContract.methods
-            .approve(this.StakingContract.options.address, amount)
+            .approve(this.StakingContract.options.address, MaxUint256)
             .send({
               from: fromAccount,
             })
@@ -1493,7 +1492,6 @@ export class ContractService {
     const axnForOneEth = (await this.getWethToAxionAmountsOutAsync(this._1e18))[1];
     const usdcForOneEth = await this.getWethToUsdcAmountsOutAsync(this._1e18);
 
-    // USDC uses 6 decimal places
     return new BigNumber(this._1e18).div(axnForOneEth).times(usdcForOneEth);
   }
 
@@ -1511,12 +1509,16 @@ export class ContractService {
   }
 
   private async getWethToUsdcAmountsOutAsync(amount: string): Promise<BigNumber> {
+    return this.getTokenToUsdcAmountsOutAsync(this.CONTRACTS_PARAMS.WETH.ADDRESS, amount);
+  }
+
+  public async getTokenToUsdcAmountsOutAsync(tokenAddress: string, amount: string): Promise<BigNumber> {
     return new BigNumber((await this.UniswapV2Router02.methods
       .getAmountsOut(amount, [
-        this.CONTRACTS_PARAMS.WETH.ADDRESS,
+        tokenAddress,
         this.CONTRACTS_PARAMS.USDC.ADDRESS,
       ])
-      .call())[1]).div("1000000");
+      .call())[1]).div("1000000"); // USDC uses 6 decimal places
   }
 
   public getAuctionsData(todaysAuctionId: number, start: number) {

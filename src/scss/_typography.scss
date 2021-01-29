@@ -83,6 +83,23 @@ a {
       padding-bottom: 20px;
     }
 
+    &-subtitle {
+      font-weight: 400;
+      font-size: 20px;
+    }
+
+    &-body {
+      font-weight: 300;
+      font-size: 1rem;
+      text-transform: none;
+
+      &-link {
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+
     &-input {
       font-size: 30px;
       text-align: center;
@@ -110,6 +127,10 @@ a {
         margin-left: 0;
         margin-top: 10px;
       }
+    }
+
+    &-center {
+      text-align: center;
     }
   }
 
@@ -152,6 +173,11 @@ a {
       padding-top: 5px !important;
       padding-bottom: 5px !important;
     }
+    
+    &-15 {
+      padding-top: 15px !important;
+      padding-bottom: 15px !important;
+    }
   }
 
   &-l {
@@ -165,8 +191,16 @@ a {
   }
 
   &-b {
+    &-25 {
+      padding-bottom: 25px !important;
+    }
+
     &-15 {
       padding-bottom: 15px;
+    }
+
+    &-5 {
+      padding-bottom: 5px !important;
     }
 
     &-none {
@@ -185,6 +219,14 @@ a {
       margin-top: 20px !important;
     }
 
+    &-25 {
+      margin-top: 25px !important;
+    }
+
+    &-10 {
+      margin-top: 10px !important;
+    }
+
     &-m {
       &-20 {
         margin-top: -20px;
@@ -197,6 +239,12 @@ a {
       &-25 {
         margin-top: -25px;
       }
+    }
+  }
+
+  &-b {
+    &-0 {
+      margin-bottom: 0px !important;
     }
   }
 
@@ -248,4 +296,10 @@ a {
       text-transform: uppercase;
     }
   }
+}
+
+.link {
+  color: $clBlue;
+  font-weight: 900; 
+  text-decoration: none;
 }

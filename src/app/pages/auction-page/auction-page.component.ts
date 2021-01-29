@@ -9,11 +9,11 @@ import {
 import BigNumber from "bignumber.js";
 import * as moment from "moment";
 import { CookieService } from "ngx-cookie-service";
-import { AppComponent } from "../app.component";
-import { AppConfig } from "../appconfig";
-import { MetamaskErrorComponent } from "../components/metamaskError/metamask-error.component";
+import { AppComponent } from "../../app.component";
+import { AppConfig } from "../../appconfig";
+import { MetamaskErrorComponent } from "../../components/metamaskError/metamask-error.component";
 
-import { AuctionBid, ContractService } from "../services/contract";
+import { AuctionBid, ContractService } from "../../services/contract";
 import { MatDialog } from "@angular/material/dialog";
 
 @Component({

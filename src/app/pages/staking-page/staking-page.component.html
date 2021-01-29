@@ -19,7 +19,12 @@
       matTooltipClass="question__tooltip"
     ></div>
   </div>
-  <form #stakeForm="ngForm" class="axn-form axn-form-3-1">
+  <div class="axn-form-block p-20 m-t-25">
+    <div class="axn-title-block">
+      <span>Estimate your stake earnings at <a href="https://axioncalc.com" target="_blank" class="link">axioncalc.com</a></span>
+    </div>
+  </div>
+  <form #stakeForm="ngForm" class="axn-form axn-form-3-1 m-t-10">
     <div class="axn-form-block axn-form-staking">
       <div class="axn-form-block-one">
         <span class="axn-form-block-one-title">Amount</span>
@@ -133,7 +138,7 @@
               <span class="axn-form-block-shares-text">Share rate</span>
             </div>
           </div>
-          <div class="axn-form-base-4">
+          <div class="axn-form-base-5">
             <div class="axn-form-block-shares-right">
               <span
                 class="axn-form-block-shares-value-min"
@@ -628,7 +633,7 @@
               }} BPD</span
             >
           </td>
-          <td>{{ stake.apy }}%</td>
+          <td>{{stake.apy === 0 ? "TBC" : stake.apy+"%"}}</td>
           <td class="action-button">
             <button
               class="axn-btn axn-btn-gray"

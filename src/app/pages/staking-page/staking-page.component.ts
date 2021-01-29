@@ -6,9 +6,9 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
-import { ContractService, stakingMaxDays, Stake } from "../services/contract";
+import { ContractService, stakingMaxDays, Stake } from "../../services/contract";
 import BigNumber from "bignumber.js";
-import { AppConfig } from "../appconfig";
+import { AppConfig } from "../../appconfig";
 import { MatDialog } from "@angular/material/dialog";
 
 interface StakingInfoInterface {

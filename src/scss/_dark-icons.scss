@@ -5,6 +5,12 @@
     }
   }
 
+  &_uni {
+    @include before-img(block, 28px, 24px, r) {
+      background-image: url("assets/images/icons/unicorn-dark-theme.svg");
+    }
+  }
+  
   &_ok-1 {
     @include before-img(block, 10px, 10px, r) {
       background-image: url("assets/images/icons/ok-blue-icon-dark-theme.svg");

@@ -7,8 +7,8 @@ import {
   ViewChild,
 } from "@angular/core";
 import BigNumber from "bignumber.js";
-import { AppComponent } from "../app.component";
-import { ContractService } from "../services/contract";
+import { AppComponent } from "../../app.component";
+import { ContractService } from "../../services/contract";
 import { Resolve, Router } from "@angular/router";
 
 @Component({

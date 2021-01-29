@@ -1,0 +1,488 @@
+<!-- PAGE TITLE -->
+<section class="axn-section" *ngIf="account">
+  <div class="axn-title-block">
+    <span class="axn-title" (hover)="tooltip2.toggle()">Liquidity Mining</span>
+    <div #tooltip2="matTooltip" (click)="tooltip2.toggle()" class="question" mat-raised-button matTooltip="
+          Deposit Liquidity Provider (LP) tokens and get rewarded in AXN!
+
+          Rewards will be calculated on block-by-block basis - on average, a new block is created every 13 seconds.
+
+          To deposit into a mine:
+
+          1) You first need to own/buy AXN.
+
+          2) You then fund a Uniswap liquidity pool with AXN and {{selectedMine ? selectedMine?.market : 'another token'}}.
+
+          3) Once you add the liquidity, Uniswap automatically generates and sends you a LP token as a proof of deposit.
+
+          4) You can deposit those LP tokens here to earn a sizeable reward in AXN!
+        " matTooltipClass="question__tooltip question__extrawidth">
+    </div>
+  </div>
+  <div *ngIf="selectedMine">
+    <div class="axn-form axn-form-base-2 vertical-center m-b-0">
+      <!-- DEPOSIT -->
+      <div class="axn-form-block axn-form-auction">
+        <div class="axn-form-block-one axn-form-arrow p-b-none">
+          <span class="axn-form-block-one-title">Deposit {{selectedMine.base}}-{{selectedMine.market}} LP Tokens</span>
+          <input
+            type="text"
+            *ngIf="account"
+            required="required"
+            class="axn-input"
+            placeholder="0.0"
+            onfocus="this.placeholder = ''"
+            onblur="this.placeholder = '0.0'"
+            [appBigNumber]="{
+              decimals: tokensDecimals,
+              max: minerBalance.lpAvailable.wei
+            }"
+            [(ngModel)]="formData.depositLPAmount"
+            autocomplete="off"
+          />
+          <span class="axn-cheap icon icon_uni_dark cl-purple-bg">{{selectedMine.base}}-{{selectedMine.market}}</span>
+  
+          <div class="axn-form-bottom axn-form-base-2">
+            <div class="axn-form-block-sendmax">
+              <span class="axn-btn axn-btn-max" (click)="formData.depositLPAmount = minerBalance.lpAvailable.wei">
+               &nbsp;Max&nbsp;
+              </span>
+  
+              <span class="axn-form-block-sendmax-text">
+                Balance: {{ minerBalance.lpAvailable.bn | bigNumberFormat: tokensDecimals:true:false:2 || 0}}
+                <span class="axn-form-block-sendmax-value"></span>
+              </span>
+              <br/>
+            </div>
+  
+            <!-- Deposit Button -->
+            <div class="axn-form-block-button" layout-align="center center">
+              <button
+                class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-mid"
+                [ngClass]="{ progress: selectedMine.depositLPLoading }"
+                [disabled]="!formData.depositLPAmount || +formData?.depositLPAmount === 0 || selectedMine.depositLPLoading || selectedMine.rewardBalance.isZero()"
+                (click)="deposit()"
+              >
+                <!-- Ellipsis Loading Indicator -->
+                <span class="lds-ellipsis" *ngIf="selectedMine.depositLPLoading">
+                  <span class="lds-ellipsis-container">
+                    <span></span><span></span><span></span><span></span>
+                  </span>
+                </span>
+  
+                <!-- Button Text -->
+                <span class="axn-btn-text axn-btn-arrow-right">DEPOSIT</span>
+              </button>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+  
+      <!-- MINE INFO -->
+      <div class="axn-form-block axn-form-auction p-b-5">
+        <div class="axn-form-base-2">
+          <div class="axn-form-block-one axn-form-border-dashed-right">
+            <span class="axn-form-block-one-title">Your / total {{selectedMine.base}}-{{selectedMine.market}} LP Tokens</span>
+            <div>
+              <span
+              class="axn-form-block-one-value-small p-tb-5"
+              matTooltipClass="table__tooltip"
+              mat-raised-button
+              matTooltip="${{ getLpTokenDollarValue(minerBalance.lpDeposit) | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}"
+            >
+              {{ minerBalance.lpDeposit | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}
+            </span>
+            /
+            <span
+                class="axn-form-block-one-value-small p-tb-5"
+                matTooltipClass="table__tooltip"
+                mat-raised-button
+                matTooltip="${{ getLpTokenDollarValue(selectedMine.lpTokenBalance) | bigNumberFormat: 0:true:false:2 || 0 }}"
+              >
+                {{ selectedMine.lpTokenBalance | bigNumberFormat: 0:true:false:2 || 0 }}
+              </span>
+            </div>
+            <span class="axn-cheap icon icon_uni_dark cl-purple-bg">{{selectedMine.base}}-{{selectedMine.market}}</span>
+          </div>
+          <div class="axn-form-block-one">
+            <span class="axn-form-block-one-title">AXN Mined</span>
+            
+            <span
+              *ngIf="currentBlock >= selectedMine.startBlock && !selectedMine.rewardBalance.isZero()"
+              class="axn-form-block-one-value-small p-tb-5"
+              matTooltipClass="table__tooltip"
+              mat-raised-button
+              matTooltip="${{getDollarValue(minerBalance.pendingReward) | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}"
+            >
+              {{ minerBalance.pendingReward | bigNumberFormat: tokensDecimals:true:false:2 }}
+            </span>
+
+            <span *ngIf="currentBlock >= selectedMine.startBlock && selectedMine.rewardBalance.isZero()" class="axn-text-body">
+              Mine is Empty.
+            </span>
+
+            <span *ngIf="currentBlock < selectedMine.startBlock" class="axn-text-body">
+              Mining is Starting Soon<br/>
+              Start Block: <a class="link" target="_blank" href="https://etherscan.io/block/countdown/{{selectedMine.startBlock}}">{{selectedMine.startBlock}}</a>
+            </span>
+
+            <span *ngIf="currentBlock >= selectedMine.startBlock && !selectedMine.rewardBalance.isZero()" class="axn-cheap icon icon_axn cl-blue-bg">AXN</span>
+          </div>
+        </div>
+  
+        <!-- Buttons -->
+        <div class="axn-form-bottom axn-form-base-3">
+          <div class="axn-form-block-one axn-form-base-center">
+            <button 
+              (click)="openWithdrawLPModal()"
+              [disabled]="minerBalance.lpDeposit.isZero() || selectedMine.withdrawLPLoading || selectedMine.withdrawAllLoading" 
+              [ngClass]="{ progress: selectedMine.withdrawLPLoading }"
+              class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-mid" 
+            >
+              <!-- Ellipsis Loading Indicator -->
+              <span class="lds-ellipsis" *ngIf="selectedMine.withdrawLPLoading">
+                <span class="lds-ellipsis-container">
+                  <span></span><span></span><span></span><span></span>
+                </span>
+              </span>
+            
+              <!-- Button Text -->
+              <span class="axn-btn-text">Withdraw LP Tokens</span>
+            </button>
+          </div>
+  
+          <div class="axn-form-block-one axn-form-base-center">
+            <button 
+              (click)="withdrawAll()"
+              [ngClass]="{ progress: selectedMine.withdrawAllLoading }"
+              class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-mid" 
+              [disabled]="minerBalance.pendingReward.isZero() && minerBalance.lpDeposit.isZero() || selectedMine.withdrawAllLoading" 
+            >
+              <!-- Ellipsis Loading Indicator -->
+              <span class="lds-ellipsis" *ngIf="selectedMine.withdrawAllLoading">
+                <span class="lds-ellipsis-container">
+                  <span></span><span></span><span></span><span></span>
+                </span>
+              </span>
+            
+              <!-- Button Text -->
+              <span class="axn-btn-text">Withdraw Everything</span>
+            </button>
+          </div>
+  
+          <div class="axn-form-block-one axn-form-base-center">
+            <button 
+              (click)="withdrawRewards()"
+              class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-mid" 
+              [disabled]="minerBalance.pendingReward.isZero() || selectedMine.withdrawRewardsLoading || selectedMine.withdrawAllLoading || selectedMine.rewardBalance.isZero()" 
+              [ngClass]="{ progress: selectedMine.withdrawRewardsLoading }"
+            >
+              <!-- Ellipsis Loading Indicator -->
+              <span class="lds-ellipsis" *ngIf="selectedMine.withdrawRewardsLoading">
+                <span class="lds-ellipsis-container">
+                  <span></span><span></span><span></span><span></span>
+                </span>
+              </span>
+          
+              <!-- Button Text -->
+              <span class="axn-btn-text">Withdraw AXN</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- NFT Info & Current Stats -->
+    <div class="axn-form axn-form-base-2 vertical-center m-t-10">
+      <!-- MINER INFO -->
+      <div class="axn-form-block">
+        <div class="axn-form-base-2 axn-form-base-center">
+          
+          <div class="axn-form-block-one-link">
+            <a class="axn-btn axn-btn-gray link" target="_blank" href="https://opensea.io/collection/og-5555-2-5-v2">
+              <span class="icon icon-flex axn-form-block-shares-text-min" 
+                [ngClass]="{'icon_ok-1': minerBalance.nft.og25NFT !== 0, icon_no: minerBalance.nft.og25NFT === 0}">
+              </span>OG-5555 2.5m NFT
+            </a>
+          </div>
+  
+          <div class="axn-form-block-one-link">
+            <a class="axn-btn axn-btn-gray link" target="_blank" href="https://opensea.io/collection/og-5555-100">
+              <span class="icon icon-flex axn-form-block-shares-text-min" 
+                [ngClass]="{'icon_ok-1': minerBalance.nft.og100NFT !== 0, icon_no: minerBalance.nft.og100NFT === 0}">
+            </span>OG-5555 100m NFT</a>
+          </div>
+  
+          <div class="axn-form-block-one-link">
+            <a class="axn-btn axn-btn-gray link" target="_blank" href="https://opensea.io/collection/axn-liq-rep">
+              <span class="icon icon-flex axn-form-block-shares-text-min" 
+                [ngClass]="{'icon_ok-1': minerBalance.nft.liqNFT !== 0, icon_no: minerBalance.nft.liqNFT === 0}">
+            </span>Liquidity Rep. NFT</a>
+          </div>
+  
+          <div class="axn-form-block-one" style="padding-bottom: 10px;">
+            <span class="axn-form-block-shares-text-min">
+            Bonus APY<br />
+            <b>{{minerBalance.nft.multiplier > 1 
+              ? minerBalance.nft.bonusApy / minerBalance.nft.multiplier + " x " + minerBalance.nft.multiplier +" = " + minerBalance.nft.bonusApy + "%" 
+              : minerBalance.nft.bonusApy+"%"}}</b>
+            </span>
+          </div>
+        </div>
+      </div>
+    
+      <!-- CURRENT MINE INFO -->
+      <div class="axn-form-block">
+        <div class="axn-form-base-4 axn-form-base-center p-b-25">
+          <span class="axn-form-block-shares-text-min axn-text-center">
+            APY<br/>
+            <b>{{selectedMine.adjustedApy.isZero() || selectedMine.adjustedApy.isGreaterThan(10000) 
+              ? "TBC" 
+              : minerBalance.nft.multiplier > 0 
+                ? selectedMine.adjustedApy + " + " + minerBalance.nft.bonusApy + " = " + selectedMine.adjustedApy.plus(minerBalance.nft.bonusApy) + "%"
+                : selectedMine.adjustedApy+"%"}}</b>
+          </span>
+          <span class="axn-form-block-shares-text-min axn-text-center">
+            Your/Total Block Reward<br />
+            <span
+              class="axn-form-block-one-value-small p-tb-5"
+              matTooltipClass="table__tooltip"
+              mat-raised-button
+              matTooltip="${{getDollarValue(minerBalance.rewardPerBlock.times(6500)) | bigNumberFormat: tokensDecimals:true:false:2 || 0 }} per day"
+            >
+            <b>{{minerBalance.rewardPerBlock | bigNumberFormat: tokensDecimals:true:false:2 }}/</b>
+            </span>
+            <span
+              class="axn-form-block-one-value-small p-tb-5"
+              matTooltipClass="table__tooltip"
+              mat-raised-button
+              matTooltip="${{getDollarValue(selectedMine.blockReward.times(6500)) | bigNumberFormat: tokensDecimals:true:false:2 || 0 }} per day"
+            >
+            <b>{{selectedMine.blockReward | bigNumberFormat: tokensDecimals:true:false:2 }} AXN</b>
+            </span>
+          </span>
+          <span class="axn-form-block-shares-text-min axn-text-center">
+            Est. Days Left<br />
+            <b>{{selectedMine.estDaysLeft}}</b>
+          </span>
+          <span class="axn-form-block-shares-text-min axn-text-center">
+            Rewards Left<br />
+            <span
+              class="axn-form-block-one-value-small p-tb-5"
+              matTooltipClass="table__tooltip"
+              mat-raised-button
+              matTooltip="${{getDollarValue(selectedMine.rewardBalance) | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}"
+            >
+            <b>{{selectedMine.rewardBalance | bigNumberFormat: tokensDecimals:true:false:2 }} AXN</b><br />
+            </span>
+          </span>
+        </div>
+  
+        <!-- OPEN POOL INFO -->
+        <div class="axn-form-block-one axn-form-block-one-np axn-form-base-center p-b-5">
+          <button (click)="openUniswapPoolInfo()" class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-big">
+            <span class="axn-btn-text">
+              <span class="icon icon_uni"></span>&nbsp;&nbsp;Open Uniswap Info
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="selectedMine && this.mines?.length > 1" class="axn-form-block-one axn-form-block-one-np axn-form-base-center p-tb-15">
+      <button routerLink="/mining"
+        class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-mid axn-btn-arrow-left">
+        <span class="axn-btn-text">Back to Mines</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="!selectedMine && this.mines?.length > 1" class="axn-mines">
+    <div class="axn-form-block axn-form-block-one axn-form-base-center axn-mine" *ngFor="let mine of mines">
+      <p class="axn-text-subtitle">{{mine.base}}-{{mine.market}}</p>
+      <p class="axn-text-body">
+        APY: <b>{{mine.apy === 0 || mine.apy > 10000 ? "TBC" : mine.apy+"%"}}</b><br/><br />
+        Mine Start Block: <b>{{mine.startBlock}}</b><br/><br />
+        Available Rewards: <b>{{mine.rewardBalance | bigNumberFormat: tokensDecimals:true:false:2 || 0}} AXN</b><br /><br />
+        Block Reward: <b>{{mine.blockReward | bigNumberFormat: tokensDecimals:true:false:4 || 0}} AXN</b><br /><br />
+        Estimated Days Left: <b>{{mine.estDaysLeft}}</b>
+      </p>
+
+      <button 
+        routerLink="/mining/{{mine.mineAddress}}"
+        class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-big" 
+        [ngClass]="{ progress: switchingLoading === mine.mineAddress }"
+        [disabled]="switchingLoading === mine.mineAddress || selectedMine?.mineAddress === mine.mineAddress" 
+      >
+        <!-- Ellipsis Loading Indicator -->
+        <span class="lds-ellipsis" *ngIf="switchingLoading === mine.mineAddress">
+          <span class="lds-ellipsis-container">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </span>
+      
+        <!-- Button Text -->
+        <span class="axn-btn-text">{{currentBlock < mine.startBlock ? "Starting Soon - " : ""}}{{selectedMine?.mineAddress === mine.mineAddress ? "Selected" : "View"}} Mine</span>
+      </button>
+
+    </div>
+  </div>
+</section>
+
+<section class="axn-section" *ngIf="account && this.mines?.length == 0">
+  <div class="axn-title-block">
+    <span class="axn-title">No mines have been created yet.</span>
+  </div>
+</section>
+
+<!-- MANAGERS ONLY: CREATE A POOL -->
+<section class="axn-section">
+  <div *ngIf="account?.isManager && (!selectedMine || this.mines?.length <= 1)" class="axn-form-block-one axn-form-base-center">
+    <button (click)="openCreateMineModal()" class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-big">
+      <span class="axn-btn-text">
+        Create a Mine
+      </span>
+    </button>
+  </div>
+</section>
+
+<!-- Create Mine Modal -->
+<ng-template #createMineModal class="dialog-block" mat-dialog-content>
+  <div class="dialog-block__content">
+    <div class="dialog-title">Create a Mine</div>
+
+    <div class="dialog-description dialog-description-slim">
+      <div class="axn-form axn-form-block-one">
+
+        <!-- Token Address -->
+        <span class="axn-form-block-one-title">LP Token Address</span>
+        <input placeholder="0x" type="text" class="axn-input" required="required" [(ngModel)]="createMineData.tokenAddress" (blur)="onCreateMineAddressChanged()"/>
+        <span class="axn-text-body" *ngIf="createMineData.base && createMineData.market">
+          Pair: 
+          <span class="axn-text-body-link" (click)="openUniswapPoolInfo(createMineData.tokenAddress)">{{createMineData.base}}-{{createMineData.market}}</span>
+        </span>
+
+        <!-- Start & End Block -->
+        <div class="axn-form axn-form-base-2">
+            <div class="axn-form-block-one">
+              <span class="axn-form-block-one-title">Start Block</span>
+              <input placeholder="{{createMineData.startBlock}}" step="1" type="number" class="axn-input" required="required" [(ngModel)]="createMineData.startBlock" />
+            </div>
+            <div class="axn-form-block-one">
+              <span class="axn-form-block-one-title">End Block</span>
+              <input placeholder="{{createMineData.endBlock}}" step="1" type="number" class="axn-input" required="required" [(ngModel)]="createMineData.endBlock" />
+            </div>
+        </div>
+
+        <!-- Reward Amount -->
+        <div class="axn-form-block-one">
+          <span class="axn-form-block-one-title">Reward Pool</span>
+          <input
+            type="text"
+            class="axn-input"
+            name="reward-mine"
+            placeholder="0"
+            onfocus="this.placeholder = ''"
+            (ngModelChange)="onRewardAmountChanged()"
+            
+            onblur="this.placeholder = '0'"
+            [(ngModel)]="createMineData.rewardAmount"
+            [appBigNumber]="{decimals: tokensDecimals, min: 1 }"
+          />
+          <span class="axn-cheap icon icon_axn cl-blue-bg">AXN</span>
+        </div>
+
+        <span class="axn-text-body" *ngIf="!createMineData.blockReward.isZero()">
+          Block Reward: {{createMineData.blockReward | bigNumberFormat: tokensDecimals:true:false:2}} AXN
+        </span>
+      </div>
+    </div>
+
+    <div class="dialog-bottom">
+      <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
+        <span>Close</span>
+      </button>
+
+      <button 
+        (click)="createMine()"
+        class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-mid"
+        [ngClass]="{ progress: createMineData.progressIndicator }" 
+        [disabled]="createMineData.progressIndicator"
+      >
+        <span class="lds-ellipsis" *ngIf="createMineData.progressIndicator">
+          <span class="lds-ellipsis-container">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </span>
+
+        <span class="axn-btn-text">Create</span>
+      </button>
+    </div>
+
+  </div>
+</ng-template>
+
+<!-- WIthdraw LP Modal -->
+<ng-template #withdrawLPModal class="dialog-block" mat-dialog-content>
+  <div class="dialog-block__content">
+    <div class="dialog-title">Withdraw LP Tokens</div>
+
+    <div class="dialog-description dialog-description-slim">
+      <div class="axn-form axn-form-block-one">
+        <span class="axn-form-block-one-title">Amount</span>
+        <input
+          type="text"
+          *ngIf="account"
+          required="required"
+          class="axn-input axn-input-mid"
+          placeholder="0.0"
+          onfocus="this.placeholder = ''"
+          onblur="this.placeholder = '0.0'"
+          [appBigNumber]="{
+            decimals: tokensDecimals,
+            max: minerBalance.lpDeposit
+          }"
+          [(ngModel)]="formData.withdrawLPAmount"
+          autocomplete="off"
+        />
+        <span class="axn-cheap icon icon_uni cl-purple-bg">{{selectedMine?.base}}-{{selectedMine?.market}}</span>
+
+        <div class="axn-form-block-sendmax">
+          <span class="axn-btn axn-btn-max" (click)="formData.withdrawLPAmount = minerBalance.lpDeposit.toString()">
+            &nbsp;Max&nbsp;
+          </span>
+        
+          <span class="axn-form-block-sendmax-text">
+            Balance: {{ minerBalance?.lpDeposit | bigNumberFormat: tokensDecimals:true:false:2 || 0}}
+            <span class="axn-form-block-sendmax-value"></span>
+          </span>
+          <br />
+        </div>
+
+      </div>
+    </div>
+
+    <div class="dialog-bottom">
+      <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
+        <span>Close</span>
+      </button>
+
+      <button 
+        (click)="withdrawLPTokens()" 
+        class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-mid"
+        [ngClass]="{ progress: selectedMine?.withdrawLPLoading }" 
+        [disabled]="selectedMine?.withdrawLPLoading || +formData?.withdrawLPAmount === 0"
+      >
+        <span class="lds-ellipsis" *ngIf="selectedMine?.withdrawLPLoading">
+          <span class="lds-ellipsis-container">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </span>
+
+        <span class="axn-btn-text">Withdraw</span>
+      </button>
+    </div>
+
+  </div>
+</ng-template>

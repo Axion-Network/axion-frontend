@@ -5,8 +5,8 @@ import { CookieService } from "ngx-cookie-service";
 
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
-import { ClaimPageComponent } from "./claim-page/claim-page.component";
-import { AuctionPageComponent } from "./auction-page/auction-page.component";
+import { ClaimPageComponent } from "./pages/claim-page/claim-page.component";
+import { AuctionPageComponent } from "./pages/auction-page/auction-page.component";
 import { TransactionSuccessModalComponent } from "./components/transactionSuccessModal/transaction-success-modal.component";
 import { MetamaskErrorComponent } from "./components/metamaskError/metamask-error.component";
 import { ContractService } from "./services/contract";
@@ -17,14 +17,14 @@ import {
   BigNumberMax,
   BigNumberMin,
 } from "./directives/bignumber/bignumber";
-import { StakingPageComponent } from "./staking-page/staking-page.component";
+import { StakingPageComponent } from "./pages/staking-page/staking-page.component";
 import { MinMaxDirective } from "./directives/minmax/minmax";
 import { AngularFittextModule } from "angular-fittext";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpClientModule } from "@angular/common/http";
 import { MatDialogModule, MatTooltipModule, MAT_HAMMER_OPTIONS  } from "@angular/material";
 import { AppConfig } from "./appconfig";
-import { MiningPageComponent } from "./mining-page/mining-page.component";
+import { MiningPageComponent } from "./pages/mining-page/mining-page.component";
 
 export function initializeApp(injector: Injector) {
   return () =>

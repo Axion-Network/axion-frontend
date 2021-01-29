@@ -20,7 +20,7 @@
     </div>
   </div>
   <div *ngIf="selectedMine">
-    <div class="axn-form axn-form-base-2 vertical-center">
+    <div class="axn-form axn-form-base-2 vertical-center m-b-0">
       <!-- DEPOSIT -->
       <div class="axn-form-block axn-form-auction">
         <div class="axn-form-block-one axn-form-arrow p-b-none">
@@ -83,20 +83,31 @@
       <div class="axn-form-block axn-form-auction p-b-5">
         <div class="axn-form-base-2">
           <div class="axn-form-block-one axn-form-border-dashed-right">
-            <span class="axn-form-block-one-title">Your {{selectedMine.base}}-{{selectedMine.market}} LP Tokens</span>
-            <span
+            <span class="axn-form-block-one-title">Your / total {{selectedMine.base}}-{{selectedMine.market}} LP Tokens</span>
+            <div>
+              <span
               class="axn-form-block-one-value-small p-tb-5"
               matTooltipClass="table__tooltip"
               mat-raised-button
-              matTooltip="{{ minerBalance.lpDeposit | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}"
+              matTooltip="${{ getLpTokenDollarValue(minerBalance.lpDeposit) | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}"
             >
               {{ minerBalance.lpDeposit | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}
             </span>
-  
+            /
+            <span
+                class="axn-form-block-one-value-small p-tb-5"
+                matTooltipClass="table__tooltip"
+                mat-raised-button
+                matTooltip="${{ getLpTokenDollarValue(selectedMine.lpTokenBalance) | bigNumberFormat: 0:true:false:2 || 0 }}"
+              >
+                {{ selectedMine.lpTokenBalance | bigNumberFormat: 0:true:false:2 || 0 }}
+              </span>
+            </div>
             <span class="axn-cheap icon icon_uni_dark cl-purple-bg">{{selectedMine.base}}-{{selectedMine.market}}</span>
           </div>
           <div class="axn-form-block-one">
             <span class="axn-form-block-one-title">AXN Mined</span>
+            
             <span
               *ngIf="currentBlock >= selectedMine.startBlock && !selectedMine.rewardBalance.isZero()"
               class="axn-form-block-one-value-small p-tb-5"
@@ -113,7 +124,7 @@
 
             <span *ngIf="currentBlock < selectedMine.startBlock" class="axn-text-body">
               Mining is Starting Soon<br/>
-              Start Block: {{selectedMine.startBlock}}
+              Start Block: <a class="link" target="_blank" href="https://etherscan.io/block/countdown/{{selectedMine.startBlock}}">{{selectedMine.startBlock}}</a>
             </span>
 
             <span *ngIf="currentBlock >= selectedMine.startBlock && !selectedMine.rewardBalance.isZero()" class="axn-cheap icon icon_axn cl-blue-bg">AXN</span>
@@ -183,28 +194,40 @@
     </div>
   
     <!-- NFT Info & Current Stats -->
-    <div class="axn-form axn-form-base-2 vertical-center">
+    <div class="axn-form axn-form-base-2 vertical-center m-t-10">
       <!-- MINER INFO -->
       <div class="axn-form-block">
         <div class="axn-form-base-2 axn-form-base-center">
           
-          <div class="axn-form-block-one">
-            <span class="icon icon-flex axn-form-block-shares-text-min" [ngClass]="{'icon_ok-1': minerBalance.nft.og25NFT !== 0, icon_no: minerBalance.nft.og25NFT === 0}">OG-5555 2.5m NFT</span>
+          <div class="axn-form-block-one-link">
+            <a class="axn-btn axn-btn-gray link" target="_blank" href="https://opensea.io/collection/og-5555-2-5-v2">
+              <span class="icon icon-flex axn-form-block-shares-text-min" 
+                [ngClass]="{'icon_ok-1': minerBalance.nft.og25NFT !== 0, icon_no: minerBalance.nft.og25NFT === 0}">
+              </span>OG-5555 2.5m NFT
+            </a>
           </div>
   
-          <div class="axn-form-block-one">
-            <span class="icon icon-flex axn-form-block-shares-text-min" [ngClass]="{'icon_ok-1': minerBalance.nft.og100NFT !== 0, icon_no: minerBalance.nft.og100NFT === 0}">OG-5555 100m NFT</span>
+          <div class="axn-form-block-one-link">
+            <a class="axn-btn axn-btn-gray link" target="_blank" href="https://opensea.io/collection/og-5555-100">
+              <span class="icon icon-flex axn-form-block-shares-text-min" 
+                [ngClass]="{'icon_ok-1': minerBalance.nft.og100NFT !== 0, icon_no: minerBalance.nft.og100NFT === 0}">
+            </span>OG-5555 100m NFT</a>
           </div>
   
-          <div class="axn-form-block-one">
-            <span class="icon icon-flex axn-form-block-shares-text-min" [ngClass]="{'icon_ok-1': minerBalance.nft.liqNFT !== 0, icon_no: minerBalance.nft.liqNFT === 0}">Liquidity Rep. NFT</span>
+          <div class="axn-form-block-one-link">
+            <a class="axn-btn axn-btn-gray link" target="_blank" href="https://opensea.io/collection/axn-liq-rep">
+              <span class="icon icon-flex axn-form-block-shares-text-min" 
+                [ngClass]="{'icon_ok-1': minerBalance.nft.liqNFT !== 0, icon_no: minerBalance.nft.liqNFT === 0}">
+            </span>Liquidity Rep. NFT</a>
           </div>
   
-           <div class="axn-form-block-one">
-             <span class="axn-form-block-shares-text-min">
-              Bonus<br />
-              <b>{{minerBalance.nft.reward}}%</b>
-             </span>
+          <div class="axn-form-block-one" style="padding-bottom: 10px;">
+            <span class="axn-form-block-shares-text-min">
+            Bonus APY<br />
+            <b>{{minerBalance.nft.multiplier > 1 
+              ? minerBalance.nft.bonusApy / minerBalance.nft.multiplier + " x " + minerBalance.nft.multiplier +" = " + minerBalance.nft.bonusApy + "%" 
+              : minerBalance.nft.bonusApy+"%"}}</b>
+            </span>
           </div>
         </div>
       </div>
@@ -214,7 +237,11 @@
         <div class="axn-form-base-4 axn-form-base-center p-b-25">
           <span class="axn-form-block-shares-text-min axn-text-center">
             APY<br/>
-            <b>{{selectedMine.apy === 0 || selectedMine.apy > 10000 ? "TBC" : selectedMine.apy+"%"}}</b>
+            <b>{{selectedMine.adjustedApy.isZero() || selectedMine.adjustedApy.isGreaterThan(10000) 
+              ? "TBC" 
+              : minerBalance.nft.multiplier > 0 
+                ? selectedMine.adjustedApy + " + " + minerBalance.nft.bonusApy + " = " + selectedMine.adjustedApy.plus(minerBalance.nft.bonusApy) + "%"
+                : selectedMine.adjustedApy+"%"}}</b>
           </span>
           <span class="axn-form-block-shares-text-min axn-text-center">
             Your/Total Block Reward<br />
@@ -236,8 +263,8 @@
             </span>
           </span>
           <span class="axn-form-block-shares-text-min axn-text-center">
-            Days Left<br />
-            <b>{{selectedMine.approxDaysLeft}}</b>
+            Est. Days Left<br />
+            <b>{{selectedMine.estDaysLeft}}</b>
           </span>
           <span class="axn-form-block-shares-text-min axn-text-center">
             Rewards Left<br />
@@ -279,7 +306,7 @@
         Mine Start Block: <b>{{mine.startBlock}}</b><br/><br />
         Available Rewards: <b>{{mine.rewardBalance | bigNumberFormat: tokensDecimals:true:false:2 || 0}} AXN</b><br /><br />
         Block Reward: <b>{{mine.blockReward | bigNumberFormat: tokensDecimals:true:false:4 || 0}} AXN</b><br /><br />
-        Approximate Days Left: <b>{{mine.approxDaysLeft}}</b>
+        Estimated Days Left: <b>{{mine.estDaysLeft}}</b>
       </p>
 
       <button 

@@ -219,6 +219,14 @@ a {
       margin-top: 20px !important;
     }
 
+    &-25 {
+      margin-top: 25px !important;
+    }
+
+    &-10 {
+      margin-top: 10px !important;
+    }
+
     &-m {
       &-20 {
         margin-top: -20px;
@@ -231,6 +239,12 @@ a {
       &-25 {
         margin-top: -25px;
       }
+    }
+  }
+
+  &-b {
+    &-0 {
+      margin-bottom: 0px !important;
     }
   }
 
@@ -282,4 +296,10 @@ a {
       text-transform: uppercase;
     }
   }
+}
+
+.link {
+  color: $clBlue;
+  font-weight: 900; 
+  text-decoration: none;
 }

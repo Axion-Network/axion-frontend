@@ -134,9 +134,7 @@
               toSwap || 0 | bigNumberFormat: tokensDecimals.AXN:true:false:18
             }}"
           >
-            {{
-              toSwap || 0 | bigNumberFormat: tokensDecimals.AXN:true:false:2
-            }}
+            {{ toSwap || 0 | bigNumberFormat: tokensDecimals.AXN:true:false:2 }}
           </span>
           <span class="axn-cheap icon icon_axn cl-blue-bg">AXN</span>
         </div>
@@ -177,125 +175,6 @@
             </span>
           </span>
           <span class="axn-btn-text">SWAP</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="axn-section" *ngIf="account">
-  <div class="axn-title-block">
-    <span class="axn-title" *ngIf="account.completeClaim?.hasClaimed">AXN with HEX has been freeclaimed</span>
-    <span class="axn-title" *ngIf="account.snapshot?.nothingToClaim">Not eligible to freeclaim AXN with HEX</span>
-    <span class="axn-title" *ngIf="!account.snapshot?.nothingToClaim && !account.completeClaim?.hasClaimed">Freeclaim AXN with HEX</span>
-    <div
-      #tooltip2="matTooltip"
-      (click)="tooltip2.toggle()"
-      class="question"
-      mat-raised-button
-      matTooltip="If you were in possession of HEX on 28th May 2020 (staked or liquid), you are eligible to freeclaim Axion at a rate of 1:1. All freeclaimed Axion tokens will be automatically staked for 350 days.
-
-    The amount of Axion you can freeclaim is limited to 10M Axion. Tokens over the limit will be sent to the Weekly Auction.
-
-    The freeclaim will be available until 28th January 2021 or if a total of 10 billion AXN have been claimed by HEX holders, whichever comes first.
-    
-    There is a Late Claim Penalty for late exchange. The amount of the penalty is calculated by the formula:
-    Penalty = (HEX + Shares amount) * (day since freeclaim starts / 350)
-
-    Tokens from the penalty will be distributed in the following way: 349/350 will be sent to the next day auction; 1/350 for distribution at the end of the year at BigPayDay."
-      matTooltipClass="question__tooltip"
-    ></div>
-  </div>
-
-  <div *ngIf="!account.snapshot?.nothingToClaim && !account.completeClaim?.hasClaimed">
-    <div class="axn-form axn-form-base-3">
-      <div class="axn-form-block axn-form-accent">
-        <div class="axn-form-block-one axn-form-arrow">
-          <span class="axn-form-block-one-title">From</span>
-          <span
-            class="axn-form-block-one-value"
-            matTooltipClass="table__tooltip"
-            mat-raised-button
-            matTooltip="{{
-              (account ? account.snapshot.hexAmount || 0 : 0)
-                | bigNumberFormat: tokensDecimals.HEX:true:false:18
-            }}"
-          >
-            <b>
-              {{
-                (account ? account.snapshot.hexAmount || 0 : 0)
-                  | bigNumberFormat: tokensDecimals.HEX:true:false:2
-              }}
-            </b>
-          </span>
-          <span class="axn-cheap cl-gradient-bg">HEX</span>
-        </div>
-      </div>
-  
-      <div class="axn-form-block axn-form-accent">
-        <div class="axn-form-block-one">
-          <span class="axn-form-block-one-title">To</span>
-          <span
-            class="axn-form-block-one-value"
-            matTooltipClass="table__tooltip"
-            mat-raised-button
-            matTooltip="{{
-              (account ? account.claimableInfo.claim || 0 : 0)
-                | bigNumberFormat: tokensDecimals['AXN']:true:false:18
-            }}"
-          >
-            {{
-              (account ? account.claimableInfo.claim || 0 : 0)
-                | bigNumberFormat: tokensDecimals["AXN"]:true:false:2
-            }}
-          </span>
-          <span class="axn-cheap icon icon_axn cl-blue-bg">AXN</span>
-        </div>
-      </div>
-  
-      <div class="axn-form-block axn-form-accent">
-        <div class="axn-form-block-one">
-          <span class="axn-form-block-one-title">Penalty</span>
-          <span
-            class="axn-form-block-one-value"
-            matTooltipClass="table__tooltip"
-            mat-raised-button
-            matTooltip="{{
-              (account ? account.claimableInfo.penalty || 0 : 0)
-                | bigNumberFormat: tokensDecimals['AXN']:true:false:18
-            }}"
-          >
-            {{
-              (account ? account.claimableInfo.penalty || 0 : 0)
-                | bigNumberFormat: tokensDecimals["AXN"]:true:false:2
-            }}
-          </span>
-          <span class="axn-cheap icon icon_axn cl-blue-bg">AXN</span>
-        </div>
-      </div>
-    </div>
-  
-    <div class="axn-form-block axn-form-transparent">
-      <div class="axn-form-block-button">
-        <button
-          class="axn-btn axn-btn-gray axn-btn-form"
-          (click)="claim()"
-          [ngClass]="{ progress: claimTokensProgress }"
-          [disabled]="
-            account.snapshot.nothingToClaim ||
-            account.claimableInfo.claim.isZero() ||
-            claimTokensProgress
-          "
-        >
-          <span class="lds-ellipsis" *ngIf="claimTokensProgress">
-            <span class="lds-ellipsis-container">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-            </span>
-          </span>
-          <span class="axn-btn-text">CLAIM</span>
         </button>
       </div>
     </div>

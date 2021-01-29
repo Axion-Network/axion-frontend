@@ -7,13 +7,13 @@ import {
   TemplateRef,
 } from "@angular/core";
 import BigNumber from "bignumber.js";
-import { AppComponent } from "../app.component";
+import { AppComponent } from "../../app.component";
 import { MatDialog } from "@angular/material/dialog";
-import { MiningContractService } from "../services/mining-contract";
-import { MetamaskErrorComponent } from "../components/metamaskError/metamask-error.component";
+import { MiningContractService } from "../../services/mining-contract";
+import { MetamaskErrorComponent } from "../../components/metamaskError/metamask-error.component";
 import { ActivatedRoute } from "@angular/router";
-import { TransactionSuccessModalComponent } from "../components/transactionSuccessModal/transaction-success-modal.component";
-import { Mine as BasicMine } from '../services/mining-contract';
+import { TransactionSuccessModalComponent } from "../../components/transactionSuccessModal/transaction-success-modal.component";
+import { Mine as BasicMine } from '../../services/mining-contract';
 
 interface Mine extends BasicMine {
   depositLPLoading?: boolean,
@@ -79,7 +79,8 @@ export class MiningPageComponent implements OnDestroy {
       og25NFT: 0,
       og100NFT: 0,
       liqNFT: 0,
-      reward: 0
+      multiplier: 0,
+      bonusApy: 0
     }
   };
 
@@ -144,6 +145,10 @@ export class MiningPageComponent implements OnDestroy {
     return amount.times(this.usdcPerAxnPrice);
   }
 
+  public getLpTokenDollarValue(amount: BigNumber) {
+    return amount.times(this.selectedMine.lpTokenUsdcPrice);
+  }
+
   public openSuccessModal(txID: string) {
     this.dialog.open(TransactionSuccessModalComponent, {
       width: "400px",
@@ -189,19 +194,22 @@ export class MiningPageComponent implements OnDestroy {
       this.contractService.getMinerNftBalances()
     ]);
 
+    this.contractService.adjustApy(this.selectedMine, result[3]);
+
     this.minerBalance.lpDeposit = result[0];
     this.minerBalance.pendingReward = result[1];
     this.minerBalance.lpAvailable = result[2];
     this.minerBalance.nft = result[3];
-    this.minerBalance.rewardPerBlock = this.getMinerRewardPerBlock(result[0]);
+    this.minerBalance.rewardPerBlock = this.getMinerRewardPerBlock(result[0], result[3].multiplier);
 
     if (!this.minerBalance.lpDeposit.isZero())
       this.contractService.updatePendingRewardOnNewBlock(this.selectedMine.mineAddress, this.minerBalance);
   }
 
-  private getMinerRewardPerBlock(lpDeposit: BigNumber) {
+  private getMinerRewardPerBlock(lpDeposit: BigNumber, nftMultiplier: number) {
     return lpDeposit
       .times(this.selectedMine.blockReward)
+      .times(0.7 + nftMultiplier / 10)
       .div(this.contractService._1e18)
       .div(this.selectedMine.lpTokenBalance.isZero() ? 1 : this.selectedMine.lpTokenBalance);
   }

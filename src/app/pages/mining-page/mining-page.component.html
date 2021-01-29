@@ -83,8 +83,9 @@
       <div class="axn-form-block axn-form-auction p-b-5">
         <div class="axn-form-base-2">
           <div class="axn-form-block-one axn-form-border-dashed-right">
-            <span class="axn-form-block-one-title">Your {{selectedMine.base}}-{{selectedMine.market}} LP Tokens</span>
-            <span
+            <span class="axn-form-block-one-title">Your / total {{selectedMine.base}}-{{selectedMine.market}} LP Tokens</span>
+            <div>
+              <span
               class="axn-form-block-one-value-small p-tb-5"
               matTooltipClass="table__tooltip"
               mat-raised-button
@@ -92,7 +93,16 @@
             >
               {{ minerBalance.lpDeposit | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}
             </span>
-  
+            /
+            <span
+                class="axn-form-block-one-value-small p-tb-5"
+                matTooltipClass="table__tooltip"
+                mat-raised-button
+                matTooltip="{{ selectedMine.lpTokenBalance | bigNumberFormat: 0:true:false:2 || 0 }}"
+              >
+                {{ selectedMine.lpTokenBalance | bigNumberFormat: 0:true:false:2 || 0 }}
+              </span>
+            </div>
             <span class="axn-cheap icon icon_uni_dark cl-purple-bg">{{selectedMine.base}}-{{selectedMine.market}}</span>
           </div>
           <div class="axn-form-block-one">
@@ -253,7 +263,7 @@
           </span>
           <span class="axn-form-block-shares-text-min axn-text-center">
             Est. Days Left<br />
-            <b>{{selectedMine.approxDaysLeft}}</b>
+            <b>{{selectedMine.estDaysLeft}}</b>
           </span>
           <span class="axn-form-block-shares-text-min axn-text-center">
             Rewards Left<br />
@@ -295,7 +305,7 @@
         Mine Start Block: <b>{{mine.startBlock}}</b><br/><br />
         Available Rewards: <b>{{mine.rewardBalance | bigNumberFormat: tokensDecimals:true:false:2 || 0}} AXN</b><br /><br />
         Block Reward: <b>{{mine.blockReward | bigNumberFormat: tokensDecimals:true:false:4 || 0}} AXN</b><br /><br />
-        Approximate Days Left: <b>{{mine.approxDaysLeft}}</b>
+        Estimated Days Left: <b>{{mine.estDaysLeft}}</b>
       </p>
 
       <button 

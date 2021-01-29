@@ -19,7 +19,7 @@ export interface Mine {
   blockReward: BigNumber;
   rewardBalance: BigNumber;
   lpTokenBalance: BigNumber;
-  approxDaysLeft: number;
+  estDaysLeft: number;
 }
 
 export interface MineInfo {
@@ -279,7 +279,7 @@ export class MiningContractService {
     let apy = await this.getMineApr(mineInfo.lpToken, blockReward, lpTokenBalance);
 
     const rewardBalance = new BigNumber(balance);
-    const approxDaysLeft = rewardBalance.div(blockReward.times(6500)).dp(0).toNumber();
+    const estDaysLeft = rewardBalance.div(blockReward.times(6500)).dp(0).toNumber();
 
     const mine: Mine = {
       apy,
@@ -292,7 +292,7 @@ export class MiningContractService {
       startBlock: +mineInfo.startBlock,
       rewardBalance,
       lpTokenBalance,
-      approxDaysLeft
+      estDaysLeft
     };
 
     return mine;

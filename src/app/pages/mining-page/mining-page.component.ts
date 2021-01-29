@@ -145,6 +145,10 @@ export class MiningPageComponent implements OnDestroy {
     return amount.times(this.usdcPerAxnPrice);
   }
 
+  public getLpTokenDollarValue(amount: BigNumber) {
+    return amount.times(this.selectedMine.lpTokenUsdcPrice);
+  }
+
   public openSuccessModal(txID: string) {
     this.dialog.open(TransactionSuccessModalComponent, {
       width: "400px",

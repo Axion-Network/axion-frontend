@@ -19,6 +19,7 @@ export interface Mine {
   blockReward: BigNumber;
   rewardBalance: BigNumber;
   lpTokenBalance: BigNumber;
+  lpTokenUsdcPrice: BigNumber;
   estDaysLeft: number;
 }
 
@@ -274,9 +275,9 @@ export class MiningContractService {
 
     const lpTokenBalance = new BigNumber(
       await pairERC20Contract.methods.balanceOf(mineAddress).call())
-        .div(this.contractService._1e18);
+      .div(this.contractService._1e18);
 
-    let apy = await this.getMineApr(mineInfo.lpToken, blockReward, lpTokenBalance);
+    const {apy, lpTokenUsdcPrice} = await this.getMineApyAndLpTokenUsdPrice(mineInfo.lpToken, blockReward, lpTokenBalance);
 
     const rewardBalance = new BigNumber(balance);
     const estDaysLeft = rewardBalance.div(blockReward.times(6500)).dp(0).toNumber();
@@ -292,15 +293,17 @@ export class MiningContractService {
       startBlock: +mineInfo.startBlock,
       rewardBalance,
       lpTokenBalance,
+      lpTokenUsdcPrice,
       estDaysLeft
     };
 
     return mine;
   }
 
-  private async getMineApr(lpTokenAddress: string, blockReward: BigNumber, mineLpTokenBalance: BigNumber): Promise<BigNumber> {
+  private async getMineApyAndLpTokenUsdPrice(lpTokenAddress: string, blockReward: BigNumber, mineLpTokenBalance: BigNumber)
+    : Promise<{ apy: BigNumber, lpTokenUsdcPrice: BigNumber }> {
     if (mineLpTokenBalance.isZero())
-      return new BigNumber(0);
+      return { apy: new BigNumber(0), lpTokenUsdcPrice: new BigNumber(0) };
 
     const pairContract = this.web3Service.getContract(this.contractData.UniswapPair.ABI, lpTokenAddress);
 
@@ -312,20 +315,20 @@ export class MiningContractService {
     ]);
 
     const tokenValues = await Promise.all([
-      this.getValueInUsdc(tokenData[1], tokenData[0].reserve0),
-      this.getValueInUsdc(tokenData[2], tokenData[0].reserve1)
+      this.getReserveValueInUsdc(tokenData[1], tokenData[0].reserve0),
+      this.getReserveValueInUsdc(tokenData[2], tokenData[0].reserve1)
     ]);
 
-    const lpTokenPrice = tokenValues[0].reserve.plus(tokenValues[1].reserve).div(tokenData[3]);
+    const lpTokenUsdcPrice = tokenValues[0].reserve.plus(tokenValues[1].reserve).div(tokenData[3]);
     const axnTokenPrice = tokenValues.find(x => x.isAxn).tokenPrice;
-    const lpTokenPriceInAxn = lpTokenPrice.div(axnTokenPrice);
+    const lpTokenPriceInAxn = lpTokenUsdcPrice.div(axnTokenPrice);
 
     const lpSupplyValueInAxn = lpTokenPriceInAxn.times(mineLpTokenBalance);
 
-    return blockReward.times(6500).times(365).times(100).div(lpSupplyValueInAxn).div(this._1e18);
+    return { apy: blockReward.times(6500).times(365).times(100).div(lpSupplyValueInAxn).div(this._1e18), lpTokenUsdcPrice };
   }
 
-  private async getValueInUsdc(address: string, reserve: string): Promise<{ tokenPrice: BigNumber, reserve: BigNumber, isAxn: boolean }> {
+  private async getReserveValueInUsdc(address: string, reserve: string): Promise<{ tokenPrice: BigNumber, reserve: BigNumber, isAxn: boolean }> {
     const isAxn = address === this.axionContract.options.address;
 
     if (isAxn) {

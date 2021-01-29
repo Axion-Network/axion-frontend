@@ -89,7 +89,7 @@
               class="axn-form-block-one-value-small p-tb-5"
               matTooltipClass="table__tooltip"
               mat-raised-button
-              matTooltip="{{ minerBalance.lpDeposit | bigNumberFormat: tokensDecimals:true:false:18 || 0 }}"
+              matTooltip="${{ getLpTokenDollarValue(minerBalance.lpDeposit) | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}"
             >
               {{ minerBalance.lpDeposit | bigNumberFormat: tokensDecimals:true:false:2 || 0 }}
             </span>
@@ -98,7 +98,7 @@
                 class="axn-form-block-one-value-small p-tb-5"
                 matTooltipClass="table__tooltip"
                 mat-raised-button
-                matTooltip="{{ selectedMine.lpTokenBalance | bigNumberFormat: 0:true:false:18 || 0 }}"
+                matTooltip="${{ getLpTokenDollarValue(selectedMine.lpTokenBalance) | bigNumberFormat: 0:true:false:2 || 0 }}"
               >
                 {{ selectedMine.lpTokenBalance | bigNumberFormat: 0:true:false:2 || 0 }}
               </span>

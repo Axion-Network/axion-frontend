@@ -77,7 +77,7 @@ export class StakingPageComponent implements OnDestroy {
     closestPoolAmount: "0",
   };
 
-  private stakingInfoChecker = false;
+  public stakingInfoChecker = false;
   private bpdInfoChecker = false;
 
   public currentSort: {

@@ -278,6 +278,10 @@
   </div>
 </section>
 
+<section *ngIf="account && !stakes.length && !activeStakeTotals" class="loading-spinner">
+  <mat-progress-spinner color="primary" mode="indeterminate" diameter="50"></mat-progress-spinner>
+</section>
+
 <section class="axn-section" *ngIf="activeStakeTotals && tokensDecimals">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">

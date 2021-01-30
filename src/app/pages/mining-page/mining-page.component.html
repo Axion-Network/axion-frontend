@@ -19,6 +19,11 @@
         " matTooltipClass="question__tooltip question__extrawidth">
     </div>
   </div>
+
+  <div *ngIf="!selectedMine && !mines" class="loading-spinner">
+    <mat-progress-spinner color="primary" mode="indeterminate" diameter="40"></mat-progress-spinner>
+  </div>
+
   <div *ngIf="selectedMine">
     <div class="axn-form axn-form-base-2 vertical-center m-b-0">
       <!-- DEPOSIT -->

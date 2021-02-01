@@ -451,7 +451,7 @@
     </div>
 
     <div *ngIf="!auctions.length" class="loading-spinner">
-      <mat-progress-spinner color="secondary" mode="indeterminate" diameter="50"></mat-progress-spinner>
+      <mat-spinner color="accent" diameter="50"></mat-spinner>
     </div>
 
     <table *ngIf="auctions.length" class="standard-table" cellpadding="0" cellspacing="0" border="0">
@@ -530,7 +530,7 @@
     </div>
 
     <div *ngIf="!completedAuctions.length" class="loading-spinner">
-      <mat-progress-spinner color="secondary" mode="indeterminate" diameter="40"></mat-progress-spinner>
+      <mat-spinner color="accent" diameter="50"></mat-spinner>
     </div>
 
     <table *ngIf="completedAuctions.length" class="standard-table" cellpadding="0" cellspacing="0" border="0">

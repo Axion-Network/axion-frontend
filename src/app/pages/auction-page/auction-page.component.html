@@ -681,6 +681,28 @@
   </div>
 </ng-template>
 
+<ng-template #overBidModal class="dialog-block" mat-dialog-content>
+  <div class="dialog-block__content">
+    <div class="dialog-title">Attention!</div>
+
+    <div class="dialog-description">
+      <span class="axn-text-boxy">
+        The auction is close to, or has already been sold out.<br />
+        You may be better off buying on Uniswap at this point.
+      </span>
+    </div>
+
+    <div class="dialog-bottom">
+      <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
+        <span>Cancel Bid</span>
+      </button>
+      <button class="axn-btn axn-btn-gray" type="button" (click)="successLowProfit()">
+        <span>Proceed</span>
+      </button>
+    </div>
+  </div>
+</ng-template>
+
 <ng-template #withdrawModal class="dialog-block" mat-dialog-content>
   <div class="dialog-block__content">
     <div class="dialog-title">Stake Auction Bid</div>

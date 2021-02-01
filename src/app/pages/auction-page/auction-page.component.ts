@@ -37,6 +37,11 @@ export class AuctionPageComponent implements OnDestroy {
   })
   withdrawModal: TemplateRef<any>;
 
+  @ViewChild("overBidModal", {
+    static: true,
+  })
+  overBidModal: TemplateRef<any>;
+  private overBidDialog;
   private warningDialog;
 
   public changeSort = true;
@@ -258,22 +263,15 @@ export class AuctionPageComponent implements OnDestroy {
   }
 
   public successLowProfit() {
-    this.warningDialog.close();
+    if (this.warningDialog)
+      this.warningDialog.close();
+    if (this.overBidDialog)
+      this.overBidDialog.close();
+
     this.sendETHToAuction(true);
   }
 
   public sendETHToAuction(withoutWarning?) {
-    if (!withoutWarning) {
-      const myTokens = new BigNumber(this.poolInfo.uniswapMiddlePrice)
-        .times(this.formsData.auctionAmount)
-        .div(new BigNumber(10).pow(this.tokensDecimals.ETH))
-        .dp(0);
-      if (myTokens.isZero()) {
-        this.warningDialog = this.dialog.open(this.warningModal, {});
-        return;
-      }
-    }
-
     const refAddress = this.cookieService.get("ref")
     if (refAddress.toLowerCase() === this.account.address.toLowerCase()) {
       this.dialog.open(MetamaskErrorComponent, {
@@ -283,6 +281,23 @@ export class AuctionPageComponent implements OnDestroy {
         },
       });
       return;
+    }
+
+    if (!withoutWarning) {
+
+      // Low Bid warning
+      const _1e18 = new BigNumber(10).pow(this.tokensDecimals.ETH);
+      const myTokens = new BigNumber(this.poolInfo.axnPerEth).times(this.formsData.auctionAmount).div(_1e18).dp(0);
+      if (myTokens.isZero()) {
+        this.warningDialog = this.dialog.open(this.warningModal, {});
+        return;
+      }
+
+      // Overbid warning
+      if (this.poolInfo.isOverBid) {
+        this.overBidDialog = this.dialog.open(this.overBidModal, {});
+        return;
+      }
     }
 
     this.sendAuctionProgress = true;

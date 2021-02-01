@@ -38,7 +38,6 @@ export interface Stake {
 export interface Auction {
   eth: BigNumber;
   axn: BigNumber;
-  uniswapAveragePrice: BigNumber;
   uniAxnPerEth: BigNumber;
   axnPerEth: BigNumber;
   isOverBid: boolean;
@@ -761,12 +760,9 @@ export class ContractService {
 
     const auction = {} as Auction;
 
-    auction.uniswapAveragePrice = uniswapAveragePrice;
-
     auction.eth = new BigNumber(auctionReserves.eth);
 
-    auction.axn = new BigNumber(auctionReserves.token)
-      .div(this._1e18);
+    auction.axn = new BigNumber(auctionReserves.token);
 
     let auctionPriceFromPool: BigNumber;
 

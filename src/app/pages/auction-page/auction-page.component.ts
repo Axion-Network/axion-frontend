@@ -27,10 +27,15 @@ export class AuctionPageComponent implements OnDestroy {
   })
   successModal: TemplateRef<any>;
 
-  @ViewChild("warningModal", {
+  @ViewChild("smallBidModal", {
     static: true,
   })
-  warningModal: TemplateRef<any>;
+  smallBidModal: TemplateRef<any>;
+
+  @ViewChild("largeBidModal", {
+    static: true,
+  })
+  largeBidModal: TemplateRef<any>;
 
   @ViewChild("withdrawModal", {
     static: true,
@@ -42,7 +47,8 @@ export class AuctionPageComponent implements OnDestroy {
   })
   overBidModal: TemplateRef<any>;
   private overBidDialog;
-  private warningDialog;
+  private smallBidDialog;
+  private largeBidDialog;
 
   public changeSort = true;
 
@@ -262,10 +268,12 @@ export class AuctionPageComponent implements OnDestroy {
   }
 
   public successLowProfit() {
-    if (this.warningDialog)
-      this.warningDialog.close();
+    if (this.smallBidDialog)
+      this.smallBidDialog.close();
     if (this.overBidDialog)
       this.overBidDialog.close();
+    if (this.largeBidDialog)
+      this.largeBidDialog.close();
 
     this.sendETHToAuction(true);
   }
@@ -284,16 +292,23 @@ export class AuctionPageComponent implements OnDestroy {
 
     if (!withoutWarning) {
 
-      // Low Bid warning
+      // Small bid warning
       const potentialWinnings = new BigNumber(this.poolInfo.axnPerEth).times(this.formsData.bidEthAmount).div(this._1e18).dp(0);
       if (potentialWinnings.isZero()) {
-        this.warningDialog = this.dialog.open(this.warningModal, {});
+        this.smallBidDialog = this.dialog.open(this.smallBidModal, {});
         return;
       }
 
       // Overbid warning
       if (this.poolInfo.isOverBid) {
         this.overBidDialog = this.dialog.open(this.overBidModal, {});
+        return;
+      }
+
+      // Large bid warning
+      const afterBidAuctionPrice = new BigNumber(this.poolInfo.axn).div(this.poolInfo.eth.plus(this.formsData.bidEthAmount));
+      if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth)) {
+        this.largeBidDialog = this.dialog.open(this.largeBidModal, {});
         return;
       }
     }

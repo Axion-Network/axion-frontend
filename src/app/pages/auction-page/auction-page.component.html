@@ -95,9 +95,9 @@
             class="axn-form-block-one-value-small p-tb-5"
             matTooltipClass="table__tooltip"
             mat-raised-button
-            matTooltip="${{ getAxnDollarValue(poolInfo.axn) | bigNumberFormat: 0:true:false:2 || 0 }}"
+            matTooltip="${{ getAxnDollarValue(poolInfo.axn) | bigNumberFormat: tokensDecimals['ETH']:true:false:2 || 0 }}"
           >
-            {{ poolInfo.axn | bigNumberFormat: 0:true:false:2 || 0 }}
+            {{ poolInfo.axn | bigNumberFormat: tokensDecimals['ETH']:true:false:2 || 0 }}
           </span>
           <span class="axn-cheap icon icon_axn cl-blue-bg">AXN</span>
         </div>
@@ -658,12 +658,12 @@
   </div>
 </section>
 
-<ng-template #warningModal class="dialog-block" mat-dialog-content>
+<ng-template #smallBidModal class="dialog-block" mat-dialog-content>
   <div class="dialog-block__content">
     <div class="dialog-title">Attention!</div>
 
     <div class="dialog-description">
-      Your bid is too low - you might not get anything from the auction.
+      Your bid is too small - you will not get anything from the auction.
     </div>
 
     <div class="dialog-bottom">
@@ -687,7 +687,29 @@
 
     <div class="dialog-description">
       <span class="axn-text-boxy">
-        The auction is over bid. Your bid would dilute the pool, resulting in less AXN per ETH.<br/>
+        The auction is over bid. Your bid would dilute the pool, resulting in every bidder receiving less AXN per ETH.<br/>
+        You are better off buying on <a class="link" target="_blank" href="https://app.uniswap.org/#/swap?outputCurrency=0x71f85b2e46976bd21302b64329868fd15eb0d127">Uniswap</a> at this point.
+      </span>
+    </div>
+
+    <div class="dialog-bottom">
+      <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
+        <span>Cancel Bid</span>
+      </button>
+      <button class="axn-btn axn-btn-gray" type="button" (click)="successLowProfit()">
+        <span>Proceed</span>
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #largeBidModal class="dialog-block" mat-dialog-content>
+  <div class="dialog-block__content">
+    <div class="dialog-title">Attention!</div>
+
+    <div class="dialog-description">
+      <span class="axn-text-boxy">
+        Your bid will dilute the pool due to it's size, resulting in every bidder receiving less AXN per ETH.<br/>
         You are better off buying on <a class="link" target="_blank" href="https://app.uniswap.org/#/swap?outputCurrency=0x71f85b2e46976bd21302b64329868fd15eb0d127">Uniswap</a> at this point.
       </span>
     </div>

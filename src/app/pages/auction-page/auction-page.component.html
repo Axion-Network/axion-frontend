@@ -67,7 +67,7 @@
               }}</span></span
             >
           </div>
-          <div class="axn-form-block-button" *ngIf="poolInfo.axn > 0">
+          <div class="axn-form-block-button" *ngIf="!poolInfo.axn.isZero()">
             <button
               class="axn-btn axn-btn-gray axn-btn-form axn-btn-form-small"
               [ngClass]="{ progress: sendAuctionProgress }"

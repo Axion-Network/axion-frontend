@@ -205,7 +205,7 @@ export class MiningContractService {
 
     return {
       base: "AXN",
-      market
+      market: market === "WETH" ? "ETH" : market
     };
   }
 

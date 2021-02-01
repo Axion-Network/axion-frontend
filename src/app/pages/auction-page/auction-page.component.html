@@ -46,7 +46,7 @@
           }"
           [maxValueChange]="onChangeAccount"
           (ngModelChange)="onChangeAmount()"
-          [(ngModel)]="formsData.auctionAmount"
+          [(ngModel)]="formsData.bidEthAmount"
           autocomplete="off"
         />
         <span class="axn-cheap icon icon_eth cl-purple-bg">ETH</span>
@@ -56,7 +56,7 @@
             <span
               class="axn-btn axn-btn-max"
               (click)="
-                formsData.auctionAmount = account?.balances.ETH.shortBigNumber.toString()
+                formsData.bidEthAmount = account?.balances.ETH.shortBigNumber.toString()
               "
               >Max</span
             >

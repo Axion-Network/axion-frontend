@@ -56,7 +56,7 @@ export class AuctionPageComponent implements OnDestroy {
   public onChangeAccount: EventEmitter<any> = new EventEmitter();
 
   public formsData: {
-    auctionAmount?: string;
+    bidEthAmount?: string;
   } = {};
 
   public withdrawData: {
@@ -96,6 +96,7 @@ export class AuctionPageComponent implements OnDestroy {
 
   private usdcPerAxnPrice: BigNumber;
   private usdcPerEthPrice: BigNumber;
+  private _1e18: string;
 
   constructor(
     public contractService: ContractService,
@@ -105,6 +106,7 @@ export class AuctionPageComponent implements OnDestroy {
     private config: AppConfig,
     private dialog: MatDialog
   ) {
+    this._1e18 = contractService._1e18;
     this.referalAddress = this.cookieService.get("ref");
     this.accountSubscribe = this.contractService
       .accountSubscribe()
@@ -208,37 +210,37 @@ export class AuctionPageComponent implements OnDestroy {
 
   public onChangeAmount() {
     this.dataSendForm =
-      Number(this.formsData.auctionAmount) <= 0 ||
-        this.formsData.auctionAmount === undefined
+      Number(this.formsData.bidEthAmount) <= 0 ||
+        this.formsData.bidEthAmount === undefined
         ? false
         : true;
 
     if (
-      this.formsData.auctionAmount >
+      this.formsData.bidEthAmount >
       this.account.balances.ETH.shortBigNumber.toString()
     ) {
-      this.formsData.auctionAmount = this.account.balances.ETH.shortBigNumber.toString();
+      this.formsData.bidEthAmount = this.account.balances.ETH.shortBigNumber.toString();
     }
 
     this.dataSendForm =
-      new BigNumber(this.formsData.auctionAmount).toNumber() <= 0 ||
-        this.formsData.auctionAmount === undefined
+      new BigNumber(this.formsData.bidEthAmount).toNumber() <= 0 ||
+        this.formsData.bidEthAmount === undefined
         ? false
         : true;
 
     if (
-      Number(this.formsData.auctionAmount) >
+      Number(this.formsData.bidEthAmount) >
       Number(this.account.balances.ETH.wei)
     ) {
       this.dataSendForm = false;
     }
 
-    if (this.formsData.auctionAmount === "") {
+    if (this.formsData.bidEthAmount === "") {
       this.dataSendForm = false;
     }
 
-    if (this.formsData.auctionAmount) {
-      if (this.formsData.auctionAmount.indexOf("+") !== -1) {
+    if (this.formsData.bidEthAmount) {
+      if (this.formsData.bidEthAmount.indexOf("+") !== -1) {
         this.dataSendForm = false;
       }
     }
@@ -283,9 +285,8 @@ export class AuctionPageComponent implements OnDestroy {
     if (!withoutWarning) {
 
       // Low Bid warning
-      const _1e18 = new BigNumber(10).pow(this.tokensDecimals.ETH);
-      const myTokens = new BigNumber(this.poolInfo.axnPerEth).times(this.formsData.auctionAmount).div(_1e18).dp(0);
-      if (myTokens.isZero()) {
+      const potentialWinnings = new BigNumber(this.poolInfo.axnPerEth).times(this.formsData.bidEthAmount).div(this._1e18).dp(0);
+      if (potentialWinnings.isZero()) {
         this.warningDialog = this.dialog.open(this.warningModal, {});
         return;
       }
@@ -300,18 +301,18 @@ export class AuctionPageComponent implements OnDestroy {
     this.sendAuctionProgress = true;
 
     const callMethod =
-      this.formsData.auctionAmount === this.account.balances.ETH.wei
+      this.formsData.bidEthAmount === this.account.balances.ETH.wei
         ? "sendMaxETHToAuctionV2"
         : "sendETHToAuctionV2";
 
     this.contractService[callMethod](
-      this.formsData.auctionAmount,
+      this.formsData.bidEthAmount,
       refAddress
     )
       .then(
         ({ transactionHash }) => {
           this.contractService.updateETHBalance(true).then(() => {
-            this.formsData.auctionAmount = undefined;
+            this.formsData.bidEthAmount = undefined;
           });
         },
         (err) => {

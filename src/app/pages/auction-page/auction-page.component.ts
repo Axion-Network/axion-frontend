@@ -118,11 +118,10 @@ export class AuctionPageComponent implements OnDestroy {
               this.onChangeAccount.emit();
               this.getWalletBids();
 
-              this.contractService.getAuctionPool().then((info) => {
-                this.poolInfo = info;
-                this.getAuctionPool();
-                this.auctionPoolChecker = true;
-              });
+              const info = await this.contractService.getAuctionPool();
+              this.poolInfo = info;
+              this.getAuctionPool();
+              this.auctionPoolChecker = true;
 
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
               this.usdcPerEthPrice = await this.contractService.getUsdcPerEthPrice();
@@ -244,18 +243,17 @@ export class AuctionPageComponent implements OnDestroy {
   }
 
   private getAuctionPool() {
-    setTimeout(() => {
-      this.contractService.getAuctionPool().then((info: any) => {
-        if (info.axnPerEth.toNumber() === 0) {
-          info.axnPerEth = this.poolInfo.axnPerEth;
-        }
+    setTimeout(async () => {
+      const info = await this.contractService.getAuctionPool();
+      if (info.axnPerEth.toNumber() === 0) {
+        info.axnPerEth = this.poolInfo.axnPerEth;
+      }
 
-        this.poolInfo = info;
+      this.poolInfo = info;
 
-        if (this.auctionPoolChecker) {
-          this.getAuctionPool();
-        }
-      });
+      if (this.auctionPoolChecker) {
+        this.getAuctionPool();
+      }
     }, this.settings.settings.checkerAuctionPool);
   }
 
@@ -277,7 +275,7 @@ export class AuctionPageComponent implements OnDestroy {
     }
 
     const refAddress = this.cookieService.get("ref")
-    if (refAddress.toLowerCase() === this.account.address.toLowerCase()){
+    if (refAddress.toLowerCase() === this.account.address.toLowerCase()) {
       this.dialog.open(MetamaskErrorComponent, {
         width: "400px",
         data: {

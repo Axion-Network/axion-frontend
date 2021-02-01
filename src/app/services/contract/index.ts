@@ -35,6 +35,14 @@ export interface Stake {
   apy: number;
 }
 
+export interface Auction {
+  eth: BigNumber;
+  axn: BigNumber;
+  uniAxnPerEth: BigNumber;
+  axnPerEth: BigNumber;
+  isOverBid: boolean;
+}
+
 export interface AuctionBid {
   auctionId: string;
   startDate: Date;
@@ -723,64 +731,64 @@ export class ContractService {
     });
   }
 
-  public getAuctionPool() {
-    return new Promise(async (resolve) => {
-      const currentAuctionId = await this.AuctionContract.methods
-        .calculateStepsFromStart()
-        .call();
+  public async getAuctionPool() {
+    const currentAuctionId = await this.AuctionContract.methods
+      .calculateStepsFromStart()
+      .call();
 
-      const auctionReserves = await this.AuctionContract.methods
-        .reservesOf(currentAuctionId)
-        .call();
+    const auctionReserves = await this.AuctionContract.methods
+      .reservesOf(currentAuctionId)
+      .call();
 
-      let uniswapAveragePrice: BigNumber
-        = new BigNumber(auctionReserves.uniswapMiddlePrice)
-          .div(this._1e18);
-
-      if (uniswapAveragePrice.isZero()) {
-        const lastAuctionId = currentAuctionId - 1;
-
-        if (lastAuctionId >= 0) {
-          const lastAuctionReserves = await this.AuctionContract.methods
-            .reservesOf(lastAuctionId)
-            .call();
-
-          uniswapAveragePrice
-            = new BigNumber(lastAuctionReserves.uniswapMiddlePrice)
-              .div(this._1e18);
-        }
-      }
-
-      const data = {} as any;
-
-      data.eth = new BigNumber(auctionReserves.eth);
-
-      data.axn = new BigNumber(auctionReserves.token)
+    let uniswapAveragePrice: BigNumber
+      = new BigNumber(auctionReserves.uniswapMiddlePrice)
         .div(this._1e18);
 
-      let auctionPriceFromPool: BigNumber;
+    if (uniswapAveragePrice.isZero()) {
+      const lastAuctionId = currentAuctionId - 1;
 
-      if (auctionReserves.eth === "0" || auctionReserves.token === "0") {
-        auctionPriceFromPool = new BigNumber(0);
-      } else {
-        auctionPriceFromPool = new BigNumber(auctionReserves.token).div(
-          auctionReserves.eth
-        );
-      }
+      if (lastAuctionId >= 0) {
+        const lastAuctionReserves = await this.AuctionContract.methods
+          .reservesOf(lastAuctionId)
+          .call();
 
-      const amountsOut = await this.getWethToAxionAmountsOutAsync(this._1e18.toString());
-
-      const uniswapPrice = new BigNumber(amountsOut[1]).div(this._1e18);
-
-      data.uniAxnPerEth = uniswapPrice;
-
-      data.axnPerEth = this.getCurrentAuctionAxnPerEth(
-        auctionPriceFromPool,
         uniswapAveragePrice
-      );
+          = new BigNumber(lastAuctionReserves.uniswapMiddlePrice)
+            .div(this._1e18);
+      }
+    }
 
-      resolve(data);
-    });
+    const auction = {} as Auction;
+
+    auction.eth = new BigNumber(auctionReserves.eth);
+
+    auction.axn = new BigNumber(auctionReserves.token)
+      .div(this._1e18);
+
+    let auctionPriceFromPool: BigNumber;
+
+    if (auctionReserves.eth === "0" || auctionReserves.token === "0") {
+      auctionPriceFromPool = new BigNumber(0);
+    } else {
+      auctionPriceFromPool = new BigNumber(auctionReserves.token).div(
+        auctionReserves.eth
+      );
+    }
+
+    const amountsOut = await this.getWethToAxionAmountsOutAsync(this._1e18.toString());
+
+    const uniswapPrice = new BigNumber(amountsOut[1]).div(this._1e18);
+
+    auction.uniAxnPerEth = uniswapPrice;
+
+    auction.axnPerEth = this.getCurrentAuctionAxnPerEth(
+      auctionPriceFromPool,
+      uniswapAveragePrice
+    );
+
+    auction.isOverBid = uniswapAveragePrice.isGreaterThanOrEqualTo(auction.axnPerEth);
+
+    return auction;
   }
 
   private getCurrentAuctionAxnPerEth(

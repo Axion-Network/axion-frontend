@@ -42,6 +42,18 @@
       height: max-content;
     }
 
+    &-mining {
+      &-big {
+        min-height: 250px;
+        height: max-content;
+      }
+      
+      &-small {
+        min-height: 125px;
+        height: max-content;
+      }
+    }
+
     &-bottom {
       margin-top: 30px;
 

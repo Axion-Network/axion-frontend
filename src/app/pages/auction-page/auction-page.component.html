@@ -132,7 +132,7 @@
           <span class="icon icon-flex icon__eth-purple cl-purple">1 ETH</span>
         </div>
 
-        <span class="axn-form-block-pool-title">Uniswap price</span>
+        <a class="link" target="_blank" href="https://app.uniswap.org/#/swap?outputCurrency=0x71f85b2e46976bd21302b64329868fd15eb0d127"><span class="axn-form-block-pool-title">Uniswap price</span></a>
         <div class="axn-form-block-pool-uni">
           <span class="icon icon-flex icon__axion-gray cl-gray-dark"
             >{{
@@ -663,19 +663,19 @@
     <div class="dialog-title">Attention!</div>
 
     <div class="dialog-description">
-      Your bid too low, you might get nothing from the auction
+      Your bid is too low - you might not get anything from the auction.
     </div>
 
     <div class="dialog-bottom">
       <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
-        <span>Close</span>
+        <span>Cancel Bid</span>
       </button>
       <button
         class="axn-btn axn-btn-gray"
         type="button"
         (click)="successLowProfit()"
       >
-        <span>Ok</span>
+        <span>Proceed</span>
       </button>
     </div>
   </div>
@@ -687,8 +687,8 @@
 
     <div class="dialog-description">
       <span class="axn-text-boxy">
-        The auction is over bid. Your bid would dilute the pool, resulting in less AXN.<br/>
-        You are better off buying on Uniswap at this point.
+        The auction is over bid. Your bid would dilute the pool, resulting in less AXN per ETH.<br/>
+        You are better off buying on <a class="link" target="_blank" href="https://app.uniswap.org/#/swap?outputCurrency=0x71f85b2e46976bd21302b64329868fd15eb0d127">Uniswap</a> at this point.
       </span>
     </div>
 

@@ -13,7 +13,7 @@ import { AppComponent } from "../../app.component";
 import { AppConfig } from "../../appconfig";
 import { MetamaskErrorComponent } from "../../components/metamaskError/metamask-error.component";
 
-import { AuctionBid, ContractService } from "../../services/contract";
+import { AuctionBid, ContractService, Auction } from "../../services/contract";
 import { MatDialog } from "@angular/material/dialog";
 
 @Component({
@@ -84,10 +84,7 @@ export class AuctionPageComponent implements OnDestroy {
   public withdrawnBids: AuctionBid[] = [];
   public withdrawnV1Bids: AuctionBid[] = [];
 
-  public poolInfo: any = {
-    axn: 0,
-    eth: 0,
-  };
+  public poolInfo = {} as Auction;
 
   public auctions: any = [];
   public auctionsIntervals: [];

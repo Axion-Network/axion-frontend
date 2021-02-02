@@ -554,6 +554,17 @@
               matTooltipClass="question__tooltip"
             ></div>
           </th>
+          <th width="10">
+            Extend
+            <div
+              class="question"
+              mat-raised-button
+              #tooltip="matTooltip"
+              (click)="tooltip.toggle()"
+              matTooltip="For one week starting from Feb 8th, 2021, you can extend any stake to 5,555 days. Your current interest will also be added to your principal &amp; gas fees will be refunded."
+              matTooltipClass="question__tooltip"
+            ></div>
+          </th>
           <th width="10">&nbsp;</th>
         </tr>
       </thead>
@@ -638,6 +649,14 @@
             >
           </td>
           <td>{{stake.apy === 0 ? "TBC" : stake.apy+"%"}}</td>
+
+          <!-- Extend Stake -->
+          <td class="action-button">
+            <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
+              <span class="t-fw-light">&nbsp;&nbsp;EXTEND&nbsp;&nbsp;</span>
+            </button>
+          </td>
+
           <td class="action-button">
             <button
               class="axn-btn axn-btn-gray"
@@ -992,6 +1011,62 @@
       <button class="axn-btn axn-btn-gray" type="button" (click)="successWithPenaltyActions(actionsModalData.stake)">
         <span>Withdraw</span>
       </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Extend Stake Modal -->
+<ng-template #extendStakeModal class="dialog-block" mat-dialog-content>
+  <div class="dialog-block__content">
+    <div class="dialog-title">Extend Event!</div>
+
+    <div class="dialog-description">
+      <div>
+        <p class="axn-text-body">
+          For a limited time, extend this stake out to 5,555 days at the current share rate ({{stakingContractInfo.ShareRate |
+          bigNumberFormat: tokensDecimals.AXN:true:false:2}}).<br />
+          Your accumulated interest will be added to your original principal and re-staked for 5,555 days.<br />
+        </p>
+
+        <div class="axn-form-base-2">
+          <div class="axn-form-block-one axn-form-border-dashed-right">
+            <span class="axn-form-block-one-title">Current Stake Details</span>
+            <p class="axn-text-body">
+              Principal: <b>{{extensionInfo.stake.principal | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b><br /><br />
+              Current Interest: <b>{{extensionInfo.stake.interest | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b><br /><br />
+              Total Shares: <b>{{extensionInfo.stake.shares | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b><br /><br />
+              End Date: <b>{{extensionInfo.stake.end | date: "shortDate"}}</b><br />
+            </p>
+          </div>
+
+          <div class="axn-form-block-one">
+            <span class="axn-form-block-one-title">Extension Details</span>
+            <p class="axn-text-body">
+              Principal: <b>{{extensionInfo.newStake.amount | bigNumberFormat:tokensDecimals.AXN:true:false:2}} AXN</b><br /><br />
+              Base Shares: <b>{{extensionInfo.newStake.baseShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b><br />
+              LPB Shares: <b>{{extensionInfo.newStake.lpbShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b><br />
+              Total Shares: <b>{{extensionInfo.newStake.totalShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b><br /><br/>
+              New End Date: <b>{{extensionInfo.newStake.endDate | date: "shortDate"}}</b><br />
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog-bottom">
+      <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
+        <span>Cancel</span>
+      </button>
+
+      <button class="axn-btn axn-btn-gray"  (click)="confirmExtension()" [ngClass]="{ progress: extensionInfo.progress }" [disabled]="extensionInfo.progress">
+        <span class="lds-ellipsis" *ngIf="extensionInfo.progress">
+          <span class="lds-ellipsis-container">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </span>
+        <span class="t-fw-light">Extend</span>
+      </button>
+
     </div>
   </div>
 </ng-template>

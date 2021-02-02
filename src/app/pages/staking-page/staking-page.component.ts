@@ -10,6 +10,8 @@ import { ContractService, stakingMaxDays, Stake } from "../../services/contract"
 import BigNumber from "bignumber.js";
 import { AppConfig } from "../../appconfig";
 import { MatDialog } from "@angular/material/dialog";
+import { TransactionSuccessModalComponent } from "src/app/components/transactionSuccessModal/transaction-success-modal.component";
+import { MetamaskErrorComponent } from "src/app/components/metamaskError/metamask-error.component";
 
 interface StakingInfoInterface {
   ShareRate: number;
@@ -69,6 +71,23 @@ export class StakingPageComponent implements OnDestroy {
     static: true,
   })
   actionsModal: TemplateRef<any>;
+
+  @ViewChild("extendStakeModal", {
+    static: true,
+  })
+  extendStakeModal: TemplateRef<any>;
+  public extensionInfo: {
+    ref?: any,
+    stake?: Stake,
+    progress?: boolean,
+    newStake?: {
+      endDate: Number,
+      amount: BigNumber,
+      lpbShares: BigNumber,
+      baseShares: BigNumber,
+      totalShares: BigNumber,
+    }
+  } = { };
 
   public stakingContractInfo: StakingInfoInterface = {
     ShareRate: 0,
@@ -501,6 +520,40 @@ export class StakingPageComponent implements OnDestroy {
       .catch(() => {
         stake.withdrawProgress = false;
       });
+  }
+
+  public extendStake(stake: Stake) {
+    const shareRate = new BigNumber(this.stakingContractInfo.ShareRate).div(this._1e18);
+    const amount = new BigNumber(stake.principal.plus(stake.interest));
+
+    this.extensionInfo.stake = stake;
+    this.extensionInfo.ref = this.dialog.open(this.extendStakeModal, {});
+    this.extensionInfo.newStake = {
+      amount, 
+      lpbShares: this.getLPBShares(amount, 5555),
+      totalShares: amount.times((5554 / 1820) + 1).div(shareRate),
+      baseShares: amount.div(this._1e18).div(shareRate).times(this._1e18),
+      endDate: Date.now() + (5555 * this.settingsData.settings.time.seconds * 1000),
+    }
+  }
+
+  public async confirmExtension() {
+    this.extensionInfo.progress = true;
+
+    try {
+      const transaction = await this.contractService.extendStake(this.extensionInfo.stake.sessionId);
+      this.extensionInfo.ref.close()
+      this.dialog.open(TransactionSuccessModalComponent, {
+        width: "400px",
+        data: transaction.transactionHash,
+      });
+    } catch (err) {
+      if (err.message)
+        this.dialog.open(MetamaskErrorComponent, {
+          width: "400px",
+          data: { msg: err.message },
+        });
+    } finally { this.extensionInfo.progress = false }
   }
 
   ngOnDestroy() {

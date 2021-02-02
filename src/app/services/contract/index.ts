@@ -1999,4 +1999,8 @@ export class ContractService {
 
     this.getEndDateTimeHex3t();
   }
+
+  public extendStake(sessionID: string) {
+    return this.StakingContract.methods.extendStake(sessionID).send({from: this.account.address,})
+  }
 }

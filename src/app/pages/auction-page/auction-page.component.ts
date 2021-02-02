@@ -307,7 +307,7 @@ export class AuctionPageComponent implements OnDestroy {
 
       // Large bid warning
       const afterBidAuctionPrice = new BigNumber(this.poolInfo.axn).div(this.poolInfo.eth.plus(this.formsData.bidEthAmount));
-      if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth)) {
+      if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth.times(0.75))) {
         this.largeBidDialog = this.dialog.open(this.largeBidModal, {});
         return;
       }

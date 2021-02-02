@@ -9,8 +9,9 @@ a {
 .axn {
   &-link {
     text-decoration: none;
-    color: $clLink;
+    color: $clBlue;
     transition: 0.4s ease;
+    font-weight: 900;
 
     &:hover {
       text-decoration: underline;
@@ -300,10 +301,4 @@ a {
       text-transform: uppercase;
     }
   }
-}
-
-.link {
-  color: $clBlue;
-  font-weight: 900; 
-  text-decoration: none;
 }

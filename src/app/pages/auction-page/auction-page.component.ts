@@ -415,28 +415,22 @@ export class AuctionPageComponent implements OnDestroy {
     return amount ? amount.times(this.usdcPerEthPrice) : 0;
   }
 
-  public sortBids(ev) {
-    if (ev.direction === "asc")
-      this.withdrawnBids.sort((a, b) => a[ev.active] - b[ev.active])
-    else if (ev.direction === "desc")
-      this.withdrawnBids.sort((a, b) => b[ev.active] - a[ev.active])
-  }
-
-  public sortAuctions(ev, type) {
+  public sort(ev, type) {
     const fields = ev.active.split(".")
-    if (ev.direction === "asc")
+    if (ev.direction === "asc") {
       this[type].sort((a, b) => {
         if (fields.length > 1)
           return a[fields[0]][fields[1]] - b[fields[0]][fields[1]]
         else
           return a[ev.active] - b[ev.active]
       })
-    else if (ev.direction === "desc")
+    } else if (ev.direction === "desc") {
       this[type].sort((a, b) => {
         if (fields.length > 1)
           return b[fields[0]][fields[1]] - a[fields[0]][fields[1]]
         else
           return b[ev.active] - a[ev.active]
       })
+    }
   }
 }

@@ -408,93 +408,45 @@ export class AuctionPageComponent implements OnDestroy {
   }
 
   public getAxnDollarValue(amount: BigNumber) {
-    return amount.times(this.usdcPerAxnPrice);
+    return amount ? amount.times(this.usdcPerAxnPrice) : 0;
   }
 
   public getEthDollarValue(amount: BigNumber) {
-    return amount.times(this.usdcPerEthPrice);
+    return amount ? amount.times(this.usdcPerEthPrice) : 0;
   }
 
-  // private applySort() {
-  //   if (this.currentSort.field) {
-  //     this.activeBids.sort((a, b) => {
-  //       let aValue = a[this.currentSort.field];
-  //       let bValue = b[this.currentSort.field];
-  //       switch (this.currentSort.field) {
-  //         case "start":
-  //           aValue = aValue.getTime();
-  //           bValue = bValue.getTime();
-  //           break;
-  //         case "token":
-  //         case "eth":
-  //         case "accountTokenBalance":
-  //           aValue = aValue.toNumber();
-  //           bValue = bValue.toNumber();
-  //           break;
-  //       }
+  public sortBids(ev) {
+    if (ev.direction === "asc")
+      this.withdrawnBids.sort((a, b) => a[ev.active] - b[ev.active])
+    else if (ev.direction === "desc")
+      this.withdrawnBids.sort((a, b) => b[ev.active] - a[ev.active])
+  }
 
-  //       return aValue > bValue
-  //         ? this.currentSort.ask
-  //           ? 1
-  //           : -1
-  //         : aValue < bValue
-  //         ? this.currentSort.ask
-  //           ? -1
-  //           : 1
-  //         : 1;
-  //     });
-  //   } else {
-  //     this.activeBids.sort((a, b) => {
-  //       return Number(a.auctionId) > Number(b.auctionId) ? 1 : -1;
-  //     });
-  //   }
-  // }
-
-  // public async sortAuctions(type: string, tdate?: string) {
-  //   this.sortData[type] && this.changeSort
-  //     ? (this.changeSort = false)
-  //     : (this.changeSort = true);
-  //   Object.keys(this.sortData).forEach((v) => (this.sortData[v] = v === type));
-
-  //   this.auctions.sort((auctionsList1, auctionsList2) => {
-  //     let sortauctionsList1: any;
-  //     let sortauctionsList2: any;
-
-  //     if (tdate) {
-  //       sortauctionsList1 =
-  //         tdate === "date"
-  //           ? new Date(auctionsList1[type]).getDate()
-  //           : new Date(auctionsList1[type]).getTime();
-  //       sortauctionsList2 =
-  //         tdate === "date"
-  //           ? new Date(auctionsList2[type]).getDate()
-  //           : new Date(auctionsList2[type]).getTime();
-  //     } else {
-  //       sortauctionsList1 = auctionsList1[type];
-  //       sortauctionsList2 = auctionsList2[type];
-  //     }
-
-  //     if (this.changeSort) {
-  //       return sortauctionsList1 > sortauctionsList2 ? 1 : -1;
-  //     } else {
-  //       return sortauctionsList1 < sortauctionsList2 ? 1 : -1;
-  //     }
-  //   });
-  // }
-
-  // public sortAuctions(field) {
-  //   const currentUseField = this.currentSort.field;
-
-  //   if (currentUseField !== field) {
-  //     this.currentSort.field = field;
-  //     this.currentSort.ask = false;
-  //   } else {
-  //     if (!this.currentSort.ask) {
-  //       this.currentSort.ask = true;
-  //     } else {
-  //       this.currentSort.field = undefined;
-  //     }
-  //   }
-  //   this.applySort();
-  // }
+  public sortAuctions(ev, type) {
+    switch (type) {
+      case "auctions":
+      case "completedAuctions": {
+        const fields = ev.active.split(".")
+        if (fields.length > 1) {
+          if (ev.direction === "asc")
+            this[type].sort((a, b) => a[fields[0]][fields[1]] - b[fields[0]][fields[1]])
+          else if (ev.direction === "desc")
+            this[type].sort((a, b) => b[fields[0]][fields[1]] - a[fields[0]][fields[1]])
+        } else {
+          if (ev.direction === "asc")
+            this[type].sort((a, b) => a[ev.active] - b[ev.active])
+          else if (ev.direction === "desc")
+            this[type].sort((a, b) => b[ev.active] - a[ev.active])
+        }
+      } break;
+      case "withdrawnV1Bids":
+        if (ev.direction === "asc")
+          this[type].sort((a, b) => a[ev.active] - b[ev.active])
+        else if (ev.direction === "desc")
+          this[type].sort((a, b) => b[ev.active] - a[ev.active])
+        break;
+      default: 
+        return;
+    }
+  }
 }

@@ -2000,7 +2000,7 @@ export class ContractService {
     this.getEndDateTimeHex3t();
   }
 
-  public extendStake(sessionID: string) {
-    return this.StakingContract.methods.extendStake(sessionID).send({from: this.account.address,})
+  public extendStake(stake: Stake) {
+    return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShareV2"](stake.sessionId).send({ from: this.account.address })
   }
 }

@@ -4813,6 +4813,32 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            }
+          ],
+          "name": "maxShareV2",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            }
+          ],
+          "name": "maxShareV1",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     },
@@ -17535,6 +17561,32 @@
             }
           ],
           "name": "setSessionsOf",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            }
+          ],
+          "name": "maxShareV2",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            }
+          ],
+          "name": "maxShareV1",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"

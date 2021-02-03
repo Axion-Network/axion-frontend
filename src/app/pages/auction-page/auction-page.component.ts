@@ -423,30 +423,20 @@ export class AuctionPageComponent implements OnDestroy {
   }
 
   public sortAuctions(ev, type) {
-    switch (type) {
-      case "auctions":
-      case "completedAuctions": {
-        const fields = ev.active.split(".")
-        if (fields.length > 1) {
-          if (ev.direction === "asc")
-            this[type].sort((a, b) => a[fields[0]][fields[1]] - b[fields[0]][fields[1]])
-          else if (ev.direction === "desc")
-            this[type].sort((a, b) => b[fields[0]][fields[1]] - a[fields[0]][fields[1]])
-        } else {
-          if (ev.direction === "asc")
-            this[type].sort((a, b) => a[ev.active] - b[ev.active])
-          else if (ev.direction === "desc")
-            this[type].sort((a, b) => b[ev.active] - a[ev.active])
-        }
-      } break;
-      case "withdrawnV1Bids":
-        if (ev.direction === "asc")
-          this[type].sort((a, b) => a[ev.active] - b[ev.active])
-        else if (ev.direction === "desc")
-          this[type].sort((a, b) => b[ev.active] - a[ev.active])
-        break;
-      default: 
-        return;
-    }
+    const fields = ev.active.split(".")
+    if (ev.direction === "asc")
+      this[type].sort((a, b) => {
+        if (fields.length > 1)
+          return a[fields[0]][fields[1]] - b[fields[0]][fields[1]]
+        else
+          return a[ev.active] - b[ev.active]
+      })
+    else if (ev.direction === "desc")
+      this[type].sort((a, b) => {
+        if (fields.length > 1)
+          return b[fields[0]][fields[1]] - a[fields[0]][fields[1]]
+        else
+          return b[ev.active] - a[ev.active]
+      })
   }
 }

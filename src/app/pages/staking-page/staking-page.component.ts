@@ -503,6 +503,13 @@ export class StakingPageComponent implements OnDestroy {
       });
   }
 
+  public sortStakes(ev, type) {
+    if (ev.direction === "asc")
+      this.stakes[type].sort((a: Stake, b: Stake) => a[ev.active] - b[ev.active])
+    else if (ev.direction === "desc")
+      this.stakes[type].sort((a: Stake, b: Stake) => b[ev.active] - a[ev.active])
+  }
+
   ngOnDestroy() {
     this.stakingInfoChecker = false;
     this.bpdInfoChecker = false;

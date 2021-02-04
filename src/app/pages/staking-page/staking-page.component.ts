@@ -10,6 +10,7 @@ import { ContractService, stakingMaxDays, Stake } from "../../services/contract"
 import BigNumber from "bignumber.js";
 import { AppConfig } from "../../appconfig";
 import { MatDialog } from "@angular/material/dialog";
+import { Sort } from '@angular/material/sort';
 
 interface StakingInfoInterface {
   ShareRate: number;
@@ -18,7 +19,6 @@ interface StakingInfoInterface {
   closestPoolAmount?: string;
 }
 
-const FULL_PERIOD = 700;
 const AVAILABLE_DAYS_AFTER_END = 14;
 
 @Component({
@@ -50,11 +50,11 @@ export class StakingPageComponent implements OnDestroy {
     matured?: Stake[];
     closedV1?: Stake[];
   } = {
-    active: [],
-    closed: [],
-    matured: [],
-    closedV1: [],
-  };
+      active: [],
+      closed: [],
+      matured: [],
+      closedV1: [],
+    };
 
   public activeStakeTotals: any;
 
@@ -86,11 +86,11 @@ export class StakingPageComponent implements OnDestroy {
     closedV1: any;
     matured: any;
   } = {
-    active: {},
-    closed: {},
-    closedV1: {},
-    matured: {},
-  };
+      active: {},
+      closed: {},
+      closedV1: {},
+      matured: {},
+    };
 
   public bpd: any = [];
 
@@ -363,10 +363,10 @@ export class StakingPageComponent implements OnDestroy {
             ? 1
             : -1
           : aValue < bValue
-          ? currentTableState.ask
-            ? -1
-            : 1
-          : 1;
+            ? currentTableState.ask
+              ? -1
+              : 1
+            : 1;
       });
     } else {
       this.stakes[table].sort((a, b) => {
@@ -417,7 +417,7 @@ export class StakingPageComponent implements OnDestroy {
     this.stakeWithdraw(stake, Date.now() < penaltyWindow);
   }
 
-  public restake(stake: Stake, stakingDays: number) {    
+  public restake(stake: Stake, stakingDays: number) {
     this.actionsModalData.opened.close();
     stake.withdrawProgress = true;
     this.contractService.restake(stake, stakingDays).then(() => {
@@ -449,7 +449,7 @@ export class StakingPageComponent implements OnDestroy {
         const endTwoWeeks = endTS + oneDayInSeconds * AVAILABLE_DAYS_AFTER_END;
         const late =
           nowTS < endTS ? "Early" : nowTS > endTwoWeeks ? "Late" : "Normal";
-          
+
         this.confirmWithdrawData = {
           stake,
           openedWarning,
@@ -501,6 +501,32 @@ export class StakingPageComponent implements OnDestroy {
       .catch(() => {
         stake.withdrawProgress = false;
       });
+  }
+
+  private sortData(sort: Sort, stakes: Stake[]) {
+    if (!sort.active || sort.direction === '') {
+      return;
+    }
+
+    stakes = stakes.sort((a, b) => {
+      const isAsc = sort.direction === 'asc';
+      switch (sort.active) {
+        case 'start': return this.compareDate(a.start, b.start, isAsc);
+        case 'end': return this.compareDate(a.end, b.end, isAsc);
+        case 'principal': return this.compareBigNumber(a.principal, b.principal, isAsc);
+        case 'shares': return this.compareBigNumber(a.shares, b.shares, isAsc);
+        case 'interest': return this.compareBigNumber(a.interest, b.interest, isAsc);
+        default: return 0;
+      }
+    });
+  }
+
+  private compareDate(a: Date, b: Date, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  private compareBigNumber(a: BigNumber, b: BigNumber, isAsc: boolean) {
+    return (a.isLessThan(b) ? -1 : 1) * (isAsc ? 1 : -1);
   }
 
   ngOnDestroy() {

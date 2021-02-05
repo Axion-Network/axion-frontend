@@ -2001,7 +2001,7 @@ export class ContractService {
   }
 
   public async checkMaxSharesActive() {
-    return true; //this.StakingContract.methods.getMaxShareEventActive()
+    return true; //this.StakingContract.methods.getMaxShareEventActive().call()
   }
   
   public extendStake(stake: Stake) {

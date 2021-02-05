@@ -4839,6 +4839,19 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxShareEventActive",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     },
@@ -17588,6 +17601,19 @@
           ],
           "name": "maxShareV1",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxShareEventActive",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         }

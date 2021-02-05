@@ -554,6 +554,12 @@ export class StakingPageComponent implements OnDestroy {
           data: { msg: err.message },
         });
     } finally { this.extensionInfo.progress = false }
+
+  public sortStakes(ev, type) {
+    if (ev.direction === "asc")
+      this.stakes[type].sort((a: Stake, b: Stake) => a[ev.active] - b[ev.active])
+    else if (ev.direction === "desc")
+      this.stakes[type].sort((a: Stake, b: Stake) => b[ev.active] - a[ev.active])
   }
 
   ngOnDestroy() {

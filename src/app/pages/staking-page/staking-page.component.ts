@@ -38,6 +38,7 @@ export class StakingPageComponent implements OnDestroy {
   public hasBigPayDay = false;
   public stakeEndDate: any;
   public startDay = new Date();
+  public maxSharesActive = false;
   public today = new Date().getTime();
   public share: any = {};
   public onChangeAccount: EventEmitter<any> = new EventEmitter();
@@ -150,6 +151,7 @@ export class StakingPageComponent implements OnDestroy {
               });
 
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
+              this.maxSharesActive = await this.contractService.checkMaxSharesActive();
             }
           });
         }
@@ -555,7 +557,7 @@ export class StakingPageComponent implements OnDestroy {
         });
     } finally { this.extensionInfo.progress = false }
   }
-  
+
   public sortStakes(ev, type) {
     if (ev.direction === "asc")
       this.stakes[type].sort((a: Stake, b: Stake) => a[ev.active] - b[ev.active])

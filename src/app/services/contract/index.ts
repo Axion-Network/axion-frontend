@@ -2000,6 +2000,10 @@ export class ContractService {
     this.getEndDateTimeHex3t();
   }
 
+  public async checkMaxSharesActive() {
+    return true; //this.StakingContract.methods.getMaxShareEventActive()
+  }
+  
   public extendStake(stake: Stake) {
     return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShareV2"](stake.sessionId).send({ from: this.account.address })
   }

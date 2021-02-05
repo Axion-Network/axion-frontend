@@ -653,7 +653,7 @@
           <!-- Extend Stake -->
           <td class="action-button" *ngIf="maxSharesActive">
             <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
-              <span class="t-fw-light">&nbsp;&nbsp;EXTEND&nbsp;&nbsp;</span>
+              <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
             </button>
           </td>
 
@@ -1018,13 +1018,12 @@
 <!-- Extend Stake Modal -->
 <ng-template #extendStakeModal class="dialog-block" mat-dialog-content>
   <div class="dialog-block__content">
-    <div class="dialog-title">Extend Event!</div>
+    <div class="dialog-title">Max Shares Event</div>
 
     <div class="dialog-description">
       <div>
         <p class="axn-text-body">
-          For a limited time, extend this stake out to 5,555 days at the current share rate ({{stakingContractInfo.ShareRate |
-          bigNumberFormat: tokensDecimals.AXN:true:false:2}}).<br />
+          For a limited time, extend this stake out to 5,555 days at the current share rate ({{stakingContractInfo.ShareRate | bigNumberFormat: tokensDecimals.AXN:true:false:2}}).<br />
           Your accumulated interest will be added to your original principal and re-staked for 5,555 days.<br />
         </p>
 
@@ -1040,7 +1039,7 @@
           </div>
 
           <div class="axn-form-block-one">
-            <span class="axn-form-block-one-title">Extension Details</span>
+            <span class="axn-form-block-one-title">Upgrade Details</span>
             <p class="axn-text-body">
               Principal: <b>{{extensionInfo.newStake.amount | bigNumberFormat:tokensDecimals.AXN:true:false:2}} AXN</b><br /><br />
               Base Shares: <b>{{extensionInfo.newStake.baseShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b><br />
@@ -1064,7 +1063,7 @@
             <span></span><span></span><span></span><span></span>
           </span>
         </span>
-        <span class="t-fw-light">Extend</span>
+        <span class="t-fw-light">Upgrade</span>
       </button>
 
     </div>

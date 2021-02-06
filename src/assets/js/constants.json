@@ -17586,7 +17586,7 @@
               "type": "uint256"
             }
           ],
-          "name": "maxShareV2",
+          "name": "maxShare",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"

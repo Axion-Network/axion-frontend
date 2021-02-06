@@ -1008,7 +1008,7 @@
 <!-- Extend Stake Modal -->
 <ng-template #extendStakeModal class="dialog-block" mat-dialog-content>
   <div class="dialog-block__content">
-    <div class="dialog-title">Max Shares Event</div>
+    <div class="dialog-title">Max Shares Upgrade</div>
 
     <div class="dialog-description">
       <div>
@@ -1023,7 +1023,7 @@
             <span class="axn-text-body-important">{{extensionInfo.stake.principal | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</span>
             <span class="icon icon_right_arrow"></span>
 
-            <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{ extensionInfo.stake.interest | bigNumberFormat: tokensDecimals.AXN:true:false:2 }} AXN from interest">
+            <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{ extensionInfo.stake.interest | bigNumberFormat: tokensDecimals.AXN:true:false:2 }} AXN added from interest">
               <span class="axn-text-body-important">{{extensionInfo.newStake.amount | bigNumberFormat:tokensDecimals.AXN:true:false:2}} AXN</span>
             </span>
             <br /><br />
@@ -1032,7 +1032,7 @@
             <span class="axn-text-body-important">{{extensionInfo.stake.shares | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</span>
             <span class="icon icon_right_arrow"></span>
 
-            <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{ extensionInfo.newStake.baseShares | bigNumberFormat:tokensDecimals.AXN:true:false:2  }} basic shares + {{ extensionInfo.newStake.lpbShares | bigNumberFormat:tokensDecimals.AXN:true:false:2 }} longer pays better shares">
+            <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{ extensionInfo.newStake.baseShares | bigNumberFormat:tokensDecimals.AXN:true:false:2  }} basic shares + {{ extensionInfo.newStake.lpbShares | bigNumberFormat:tokensDecimals.AXN:true:false:2 }} longer pays better">
               <span class="axn-text-body-important">{{extensionInfo.newStake.totalShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</span>
             </span>
             <br /><br />

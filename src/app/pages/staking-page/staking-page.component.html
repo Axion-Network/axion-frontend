@@ -554,17 +554,7 @@
               matTooltipClass="question__tooltip"
             ></div>
           </th>
-          <th width="10" *ngIf="maxSharesActive">
-            Upgrade
-            <div
-              class="question"
-              mat-raised-button
-              #tooltip="matTooltip"
-              (click)="tooltip.toggle()"
-              matTooltip="For one week starting from Feb 8th, 2021, you can upgrade any stake to 5,555 days. Your current interest will also be added to your principal &amp; gas fees will be refunded."
-              matTooltipClass="question__tooltip"
-            ></div>
-          </th>
+          <th width="10" *ngIf="maxSharesActive">&nbsp;</th>
           <th width="10">&nbsp;</th>
         </tr>
       </thead>
@@ -1023,8 +1013,8 @@
     <div class="dialog-description">
       <div>
         <p class="axn-text-body">
-          For a limited time, extend this stake out to 5,555 days at the current share rate ({{stakingContractInfo.ShareRate | bigNumberFormat: tokensDecimals.AXN:true:false:2}}).<br />
-          Your accumulated interest will be added to your original principal and re-staked for 5,555 days.<br />
+          Upgrade this stake and receive max shares at the current share rate (<b>{{stakingContractInfo.ShareRate | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b>).<br />
+          Any accumulated interest will be added to your principal and re-staked for <b>5,555</b> days.<br />
         </p>
 
         <div class="axn-form-base-2">

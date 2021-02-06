@@ -150,8 +150,8 @@ export class StakingPageComponent implements OnDestroy {
                 this.bpdInfoChecker = true;
               });
 
-              this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
               this.maxSharesActive = await this.contractService.checkMaxSharesActive();
+              this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
             }
           });
         }

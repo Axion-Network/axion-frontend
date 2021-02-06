@@ -1030,24 +1030,60 @@
         <div class="axn-form-base-2">
           <div class="axn-form-block-one axn-form-border-dashed-right">
             <span class="axn-form-block-one-title">Current Stake Details</span>
-            <p class="axn-text-body">
-              Principal: <b>{{extensionInfo.stake.principal | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b><br /><br />
-              Current Interest: <b>{{extensionInfo.stake.interest | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b><br /><br />
-              Total Shares: <b>{{extensionInfo.stake.shares | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b><br /><br />
-              End Date: <b>{{extensionInfo.stake.end | date: "shortDate"}}</b><br />
-            </p>
+            
+            <div class="axn-form-base-2">
+              <div class="axn-form-block-one">
+                <p class="axn-text-body">
+                  Principal<br />
+                  <b>{{extensionInfo.stake.principal | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b>
+                </p>
+                <p class="axn-text-body">
+                  End Date<br />
+                  <b>{{extensionInfo.stake.end | date: "shortDate"}}</b>
+                </p>
+              </div>
+
+              <div class="axn-form-block-one">
+                <p class="axn-text-body">
+                  Interest<br />
+                  <b>{{extensionInfo.stake.interest | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b>
+                </p>
+                <p class="axn-text-body">
+                  Total Shares<br />
+                  <b>{{extensionInfo.stake.shares | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b>
+                </p>
+              </div>
+            </div>
           </div>
 
           <div class="axn-form-block-one">
             <span class="axn-form-block-one-title">Upgrade Details</span>
-            <p class="axn-text-body">
-              Principal: <b>{{extensionInfo.newStake.amount | bigNumberFormat:tokensDecimals.AXN:true:false:2}} AXN</b><br /><br />
-              Base Shares: <b>{{extensionInfo.newStake.baseShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b><br />
-              LPB Shares: <b>{{extensionInfo.newStake.lpbShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b><br />
-              Total Shares: <b>{{extensionInfo.newStake.totalShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b><br /><br/>
-              New End Date: <b>{{extensionInfo.newStake.endDate | date: "shortDate"}}</b><br />
-            </p>
+
+            <div class="axn-form-base-2">
+              <div class="axn-form-block-one">
+                <p class="axn-text-body">
+                  New Principal<br />
+                  <b>{{extensionInfo.newStake.amount | bigNumberFormat:tokensDecimals.AXN:true:false:2}} AXN</b>
+                </p>
+                <p class="axn-text-body">
+                  New End Date<br />
+                  <b>{{extensionInfo.newStake.endDate | date: "shortDate"}}</b>
+                </p>
+              </div>
+              
+              <div class="axn-form-block-one">
+                <p class="axn-text-body">
+                  Base Shares / LPB Shares<br />
+                  <b>{{extensionInfo.newStake.baseShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b>&nbsp;/&nbsp;<b>{{extensionInfo.newStake.lpbShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b>
+                </p>
+                <p class="axn-text-body">
+                  Total Shares<br />
+                  <b>{{extensionInfo.newStake.totalShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</b>
+                </p>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
     </div>

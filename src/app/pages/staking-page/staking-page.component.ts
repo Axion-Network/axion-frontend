@@ -544,7 +544,8 @@ export class StakingPageComponent implements OnDestroy {
 
     try {
       const transaction = await this.contractService.extendStake(this.extensionInfo.stake);
-      this.extensionInfo.ref.close()
+      this.extensionInfo.ref.close();
+      this.stakeList();
       this.dialog.open(TransactionSuccessModalComponent, {
         width: "400px",
         data: transaction.transactionHash,

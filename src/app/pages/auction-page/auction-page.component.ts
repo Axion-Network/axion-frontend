@@ -307,7 +307,7 @@ export class AuctionPageComponent implements OnDestroy {
 
       // Large bid warning
       const afterBidAuctionPrice = new BigNumber(this.poolInfo.axn).div(this.poolInfo.eth.plus(this.formsData.bidEthAmount));
-      if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth)) {
+      if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth.times(0.75))) {
         this.largeBidDialog = this.dialog.open(this.largeBidModal, {});
         return;
       }
@@ -408,93 +408,29 @@ export class AuctionPageComponent implements OnDestroy {
   }
 
   public getAxnDollarValue(amount: BigNumber) {
-    return amount.times(this.usdcPerAxnPrice);
+    return amount ? amount.times(this.usdcPerAxnPrice) : 0;
   }
 
   public getEthDollarValue(amount: BigNumber) {
-    return amount.times(this.usdcPerEthPrice);
+    return amount ? amount.times(this.usdcPerEthPrice) : 0;
   }
 
-  // private applySort() {
-  //   if (this.currentSort.field) {
-  //     this.activeBids.sort((a, b) => {
-  //       let aValue = a[this.currentSort.field];
-  //       let bValue = b[this.currentSort.field];
-  //       switch (this.currentSort.field) {
-  //         case "start":
-  //           aValue = aValue.getTime();
-  //           bValue = bValue.getTime();
-  //           break;
-  //         case "token":
-  //         case "eth":
-  //         case "accountTokenBalance":
-  //           aValue = aValue.toNumber();
-  //           bValue = bValue.toNumber();
-  //           break;
-  //       }
-
-  //       return aValue > bValue
-  //         ? this.currentSort.ask
-  //           ? 1
-  //           : -1
-  //         : aValue < bValue
-  //         ? this.currentSort.ask
-  //           ? -1
-  //           : 1
-  //         : 1;
-  //     });
-  //   } else {
-  //     this.activeBids.sort((a, b) => {
-  //       return Number(a.auctionId) > Number(b.auctionId) ? 1 : -1;
-  //     });
-  //   }
-  // }
-
-  // public async sortAuctions(type: string, tdate?: string) {
-  //   this.sortData[type] && this.changeSort
-  //     ? (this.changeSort = false)
-  //     : (this.changeSort = true);
-  //   Object.keys(this.sortData).forEach((v) => (this.sortData[v] = v === type));
-
-  //   this.auctions.sort((auctionsList1, auctionsList2) => {
-  //     let sortauctionsList1: any;
-  //     let sortauctionsList2: any;
-
-  //     if (tdate) {
-  //       sortauctionsList1 =
-  //         tdate === "date"
-  //           ? new Date(auctionsList1[type]).getDate()
-  //           : new Date(auctionsList1[type]).getTime();
-  //       sortauctionsList2 =
-  //         tdate === "date"
-  //           ? new Date(auctionsList2[type]).getDate()
-  //           : new Date(auctionsList2[type]).getTime();
-  //     } else {
-  //       sortauctionsList1 = auctionsList1[type];
-  //       sortauctionsList2 = auctionsList2[type];
-  //     }
-
-  //     if (this.changeSort) {
-  //       return sortauctionsList1 > sortauctionsList2 ? 1 : -1;
-  //     } else {
-  //       return sortauctionsList1 < sortauctionsList2 ? 1 : -1;
-  //     }
-  //   });
-  // }
-
-  // public sortAuctions(field) {
-  //   const currentUseField = this.currentSort.field;
-
-  //   if (currentUseField !== field) {
-  //     this.currentSort.field = field;
-  //     this.currentSort.ask = false;
-  //   } else {
-  //     if (!this.currentSort.ask) {
-  //       this.currentSort.ask = true;
-  //     } else {
-  //       this.currentSort.field = undefined;
-  //     }
-  //   }
-  //   this.applySort();
-  // }
+  public sort(ev, type) {
+    const fields = ev.active.split(".")
+    if (ev.direction === "asc") {
+      this[type].sort((a, b) => {
+        if (fields.length > 1)
+          return a[fields[0]][fields[1]] - b[fields[0]][fields[1]]
+        else
+          return a[ev.active] - b[ev.active]
+      })
+    } else if (ev.direction === "desc") {
+      this[type].sort((a, b) => {
+        if (fields.length > 1)
+          return b[fields[0]][fields[1]] - a[fields[0]][fields[1]]
+        else
+          return b[ev.active] - a[ev.active]
+      })
+    }
+  }
 }

@@ -21,7 +21,7 @@
   </div>
   <div class="axn-form-block p-20 m-t-25">
     <div class="axn-title-block">
-      <span>Estimate your stake earnings at <a href="https://axioncalc.com" target="_blank" class="link">axioncalc.com</a></span>
+      <span>Estimate your stake earnings at <a href="https://axioncalc.com" target="_blank" class="axn-link">axioncalc.com</a></span>
     </div>
   </div>
   <form #stakeForm="ngForm" class="axn-form axn-form-3-1 m-t-10">
@@ -278,6 +278,10 @@
   </div>
 </section>
 
+<section *ngIf="account && !stakingInfoChecker" class="loading-spinner">
+  <mat-spinner color="accent" diameter="50"></mat-spinner>
+</section>
+
 <section class="axn-section" *ngIf="activeStakeTotals && tokensDecimals">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
@@ -381,16 +385,16 @@
     <div class="axn-title-block p-20">
       <span class="axn-title">Matured Stakes</span>
     </div>
-    <table class="standard-table" cellpadding="0" cellspacing="0" border="0">
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0"  matSort matSortDisableClear="true" (matSortChange)="sortStakes($event, 'matured')">
       <thead>
         <tr>
-          <th>Start</th>
-          <th>End</th>
-          <th>Progress</th>
-          <th>Principal</th>
-          <th>Shares</th>
-          <th>Interest</th>
-          <th>APY
+          <th mat-sort-header="start">Start</th>
+          <th mat-sort-header="end">End</th>
+          <th mat-sort-header="progress">Progress</th>
+          <th mat-sort-header="principal">Principal</th>
+          <th mat-sort-header="shares">Shares</th>
+          <th mat-sort-header="interest">Interest</th>
+          <th mat-sort-header="apy">APY
             <div
               class="question"
               mat-raised-button
@@ -531,16 +535,16 @@
     <div class="axn-title-block p-20">
       <span class="axn-title">Active Stakes</span>
     </div>
-    <table class="standard-table" cellpadding="0" cellspacing="0" border="0">
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" matSort matSortDisableClear="true" (matSortChange)="sortStakes($event, 'active')">
       <thead>
         <tr>
-          <th>Start</th>
-          <th>End</th>
-          <th>Progress</th>
-          <th>Principal</th>
-          <th>Shares</th>
-          <th>Interest</th>
-          <th>APY
+          <th mat-sort-header="start">Start</th>
+          <th mat-sort-header="end">End</th>
+          <th mat-sort-header="progress">Progress</th>
+          <th mat-sort-header="principal">Principal</th>
+          <th mat-sort-header="shares">Shares</th>
+          <th mat-sort-header="interest">Interest</th>
+          <th mat-sort-header="apy">APY
             <div
               class="question"
               mat-raised-button
@@ -681,16 +685,16 @@
     <div class="axn-title-block p-20">
       <span class="axn-title">Stake History</span>
     </div>
-    <table class="standard-table" cellpadding="0" cellspacing="0" border="0">
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" matSort matSortDisableClear="true" (matSortChange)="sortStakes($event, 'closed')">
       <thead>
         <tr>
-          <th>Start</th>
-          <th>Target End</th>
-          <th>Actual End</th>
-          <th>Principal</th>
-          <th>Shares</th>
-          <th>Interest/Penalty</th>
-          <th>APY
+          <th mat-sort-header="start">Start</th>
+          <th mat-sort-header="end">Target End</th>
+          <th mat-sort-header="endSeconds">Actual End</th>
+          <th mat-sort-header="principal">Principal</th>
+          <th mat-sort-header="shares">Shares</th>
+          <th mat-sort-header="interest">Interest/Penalty</th>
+          <th mat-sort-header="apy">APY
             <div
               class="question"
               mat-raised-button
@@ -700,7 +704,7 @@
               matTooltipClass="question__tooltip"
             ></div>
           </th>
-          <th>Payout</th>
+          <th mat-sort-header="payout">Payout</th>
         </tr>
       </thead>
       <tbody>
@@ -818,13 +822,13 @@
     <div class="axn-title-block p-20">
       <span class="axn-title">v1 Stake History</span>
     </div>
-    <table class="standard-table" cellpadding="0" cellspacing="0" border="0">
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" matSort matSortDisableClear="true" (matSortChange)="sortStakes($event, 'closedV1')">
       <thead>
         <tr>
-          <th>Start</th>
-          <th>Target End</th>
-          <th>Principal</th>
-          <th>BigPayDay</th>
+          <th mat-sort-header="start">Start</th>
+          <th mat-sort-header="end">Target End</th>
+          <th mat-sort-header="principal">Principal</th>
+          <th mat-sort-header="bigPayDay">BigPayDay</th>
         </tr>
       </thead>
       <tbody>

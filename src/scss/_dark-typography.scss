@@ -2,7 +2,7 @@
 
 .axn {
   &-link {
-    color: $clLink-dark;
+    color: inherit;
   }
 
   &-title {
@@ -20,9 +20,4 @@
     color: $clCheap-Text-dark;
     box-shadow: $clCheap-Shadow-dark;
   }
-}
-
-.link {
-  color: inherit;
-  text-decoration: none;
 }

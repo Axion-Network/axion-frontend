@@ -22,7 +22,7 @@ import { MinMaxDirective } from "./directives/minmax/minmax";
 import { AngularFittextModule } from "angular-fittext";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpClientModule } from "@angular/common/http";
-import { MatDialogModule, MatTooltipModule, MAT_HAMMER_OPTIONS  } from "@angular/material";
+import { MatDialogModule, MatProgressSpinnerModule, MatSortModule, MatTooltipModule, MAT_HAMMER_OPTIONS  } from "@angular/material";
 import { AppConfig } from "./appconfig";
 import { MiningPageComponent } from "./pages/mining-page/mining-page.component";
 
@@ -58,7 +58,7 @@ registerLocaleData(localeGB, "en-gb");
     BigNumberMax,
     StakingPageComponent,
     MinMaxDirective,
-    MiningPageComponent
+    MiningPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -71,6 +71,8 @@ registerLocaleData(localeGB, "en-gb");
     HttpClientModule,
     BrowserAnimationsModule,
     ClipboardModule,
+    MatProgressSpinnerModule,
+    MatSortModule
   ],
   providers: [
     LocaleService,

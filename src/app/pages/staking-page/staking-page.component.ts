@@ -91,7 +91,7 @@ export class StakingPageComponent implements OnDestroy {
     closestPoolAmount: "0",
   };
 
-  private stakingInfoChecker = false;
+  public stakingInfoChecker = false;
   private bpdInfoChecker = false;
 
   public currentSort: {
@@ -528,6 +528,13 @@ export class StakingPageComponent implements OnDestroy {
       .catch(() => {
         stake.withdrawProgress = false;
       });
+  }
+
+  public sortStakes(ev, type) {
+    if (ev.direction === "asc")
+      this.stakes[type].sort((a: Stake, b: Stake) => a[ev.active] - b[ev.active])
+    else if (ev.direction === "desc")
+      this.stakes[type].sort((a: Stake, b: Stake) => b[ev.active] - a[ev.active])
   }
 
   ngOnDestroy() {

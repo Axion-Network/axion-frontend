@@ -785,7 +785,7 @@ export class ContractService {
       uniswapAveragePrice
     );
 
-    auction.isOverBid = uniswapAveragePrice.isGreaterThan(auction.axnPerEth);
+    auction.isOverBid = uniswapAveragePrice.times(0.75).isGreaterThan(auction.axnPerEth);
 
     return auction;
   }

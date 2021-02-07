@@ -81,6 +81,10 @@
       }
     }
 
+    &-link {
+      text-decoration: none;
+    }
+
     &-cancel {
       color: $clButton-Gray-Text;
       background-color: $clButton-Cancel-Background;

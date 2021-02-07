@@ -2953,7 +2953,7 @@
       ]
     },
     "AuctionV1": {
-      "ADDRESS": "0xb0e9F8CD4D09b596d0356Bcf07dB05fC76bD2e6E",
+      "ADDRESS": "0xB1475c18eA63F025308eED9950b9f954ACC742c0",
       "ABI": [
         {
           "inputs": [],
@@ -4856,7 +4856,7 @@
       ]
     },
     "StakingV1": {
-      "ADDRESS": "0x94538A8534fd3faC1f337c301f2d05B3Be4623B2",
+      "ADDRESS": "0xCfD53Eff4871B93eD7405F3f428C25F3bf60bbEa",
       "ABI": [
         {
           "inputs": [],
@@ -7691,7 +7691,7 @@
       ]
     },
     "SubBalanceV1": {
-      "ADDRESS": "0x7F3e5dACaD4C29275D573EE078d3E58b416f4D47",
+      "ADDRESS": "0xAC0031652fB4907c17Aa1f32dEF350e433357fFC",
       "ABI": [
         {
           "inputs": [
@@ -15838,7 +15838,7 @@
       ]
     },
     "AuctionV1": {
-      "ADDRESS": "0x14CA5af222Ab1b7969459D488eB43cF7A26584b9",
+      "ADDRESS": "0xb0e9F8CD4D09b596d0356Bcf07dB05fC76bD2e6E",
       "ABI": [
         {
           "inputs": [],
@@ -17620,7 +17620,7 @@
       ]
     },
     "StakingV1": {
-      "ADDRESS": "0x7a70545D387942097F987278A32d425C3c7ED375",
+      "ADDRESS": "0x94538A8534fd3faC1f337c301f2d05B3Be4623B2",
       "ABI": [
         {
           "inputs": [],
@@ -20566,7 +20566,7 @@
       ]
     },
     "SubBalanceV1": {
-      "ADDRESS": "0x3abF5b50eac3c3Bb95c26fAdaCdAf9CAA189DfcC",
+      "ADDRESS": "0x7F3e5dACaD4C29275D573EE078d3E58b416f4D47",
       "ABI": [
         {
           "inputs": [

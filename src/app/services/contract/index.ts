@@ -1334,19 +1334,30 @@ export class ContractService {
       });
   }
 
-  public restake(stake: Stake, stakeDays, topUp) {
-    const restakeMethod = stake.isV1 ? 'restakeV1' : 'restake';
-
-    if(!topUp) {
+  public async restake(stake: Stake, stakeDays, topUp) {
+    if (!topUp) {
       topUp = new BigNumber(0)
     }
 
-    return this.StakingContract.methods[restakeMethod](stake.sessionId, stakeDays, topUp).send({
-      from: this.account.address,
-    })
-    .then((res) => {
-      return this.checkTransaction(res);
-    });
+    let res: any;
+
+    if (stake.isV1) {
+      res = await this.StakingContract.methods
+        .restakeV1(stake.sessionId, stakeDays, topUp)
+        .send({
+          from: this.account.address,
+        });
+
+      
+    } else {
+      res = await this.StakingContract.methods
+        .restake(stake.sessionId, stakeDays, topUp)
+        .send({
+          from: this.account.address,
+        });
+    }
+
+    await this.checkTransaction(res);
   }
 
   public async bpdWithdraw(sessionId) {

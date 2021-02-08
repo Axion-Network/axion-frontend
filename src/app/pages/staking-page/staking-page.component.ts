@@ -405,7 +405,7 @@ export class StakingPageComponent implements OnDestroy {
   public async openStakeActions(stake: Stake) {
     // Check if this is a late unstake
     const endMS = +stake.endSeconds * 1000;
-    const penaltyWindow = endMS + (AVAILABLE_DAYS_AFTER_END * 86400 * 1000)
+    const penaltyWindow = endMS + (AVAILABLE_DAYS_AFTER_END * this.contractService.getMSecondsInDay() * 1000)
     const isLate = Date.now() > penaltyWindow
 
     if (isLate) {

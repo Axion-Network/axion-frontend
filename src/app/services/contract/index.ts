@@ -1334,9 +1334,9 @@ export class ContractService {
       });
   }
 
-  public async restake(stake: Stake, stakeDays, topUp) {
+  public async restake(stake: Stake, stakeDays: number, topUp: string) {
     if (!topUp) {
-      topUp = new BigNumber(0)
+      topUp = "0";
     }
 
     let res: any;
@@ -1348,7 +1348,6 @@ export class ContractService {
           from: this.account.address,
         });
 
-      
     } else {
       res = await this.StakingContract.methods
         .restake(stake.sessionId, stakeDays, topUp)

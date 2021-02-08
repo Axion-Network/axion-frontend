@@ -5,6 +5,13 @@
     }
   }
 
+  &_right_arrow {
+    @include before-img(inline-block, 18px, 14px, r) {
+      padding: 0 2%;
+      background-image: url("assets/images/styling/arrow-right.svg");
+    }
+  }
+
   &_uni {
     @include before-img(block, 28px, 24px, r) {
       background-image: url("assets/images/icons/unicorn-dark-theme.svg");

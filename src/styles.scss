@@ -51,7 +51,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  max-width: 1250px;
+  max-width: 1400px;
   margin: 0 auto;
 
   &-section {
@@ -562,4 +562,8 @@ body {
 
 .mat-sort-header-button {
   margin-left: 12px;
+}
+
+.upgrade-container {
+  margin: 2%;
 }

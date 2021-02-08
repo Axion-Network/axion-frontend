@@ -55,6 +55,13 @@
     }
   }
 
+  &_right_arrow {
+    @include before-img(inline-block, 18px, 14px, r) {
+      padding: 0 2%;
+      background-image: url("assets/images/styling/arrow-right-light.svg");
+    }
+  }
+
   &_share {
     @include before-img(block, 17px, 17px, r) {
       background-image: url("assets/images/icons/share-icon.svg");

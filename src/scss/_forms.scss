@@ -133,20 +133,14 @@
     }
 
     &-3 {
-      grid-template-columns: minmax(250px, 400px) minmax(250px, 320px) minmax(
-          250px,
-          470px
-        );
+      grid-template-columns: minmax(200px, 500px) minmax(250px, 300px) minmax(350px, 650px);
 
       @include b(900) {
         grid-template-columns: 1fr;
       }
 
       &-1 {
-        grid-template-columns: minmax(250px, 480px) minmax(150px, 180px) minmax(
-            300px,
-            550px
-          );
+        grid-template-columns: minmax(300px, 500px) minmax(150px, 200px) minmax(350px, 650px);
 
         @include b(900) {
           grid-template-columns: 1fr;

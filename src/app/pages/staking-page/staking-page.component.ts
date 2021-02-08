@@ -10,6 +10,8 @@ import { ContractService, stakingMaxDays, Stake } from "../../services/contract"
 import BigNumber from "bignumber.js";
 import { AppConfig } from "../../appconfig";
 import { MatDialog } from "@angular/material/dialog";
+import { TransactionSuccessModalComponent } from "src/app/components/transactionSuccessModal/transaction-success-modal.component";
+import { MetamaskErrorComponent } from "src/app/components/metamaskError/metamask-error.component";
 
 interface StakingInfoInterface {
   ShareRate: number;
@@ -36,6 +38,7 @@ export class StakingPageComponent implements OnDestroy {
   public hasBigPayDay = false;
   public stakeEndDate: any;
   public startDay = new Date();
+  public maxSharesActive = false;
   public today = new Date().getTime();
   public share: any = {};
   public onChangeAccount: EventEmitter<any> = new EventEmitter();
@@ -43,6 +46,20 @@ export class StakingPageComponent implements OnDestroy {
     stakeAmount?: string;
     stakeDays?: number;
   } = {};
+
+  public restakeData: {
+    opened?: any;
+    stake?: Stake;
+    lpb?: BigNumber;
+    isLate?: boolean;
+    topUp?: string;
+    shares?: BigNumber;
+    stakeDays?: number;
+    amount?: BigNumber;
+    penalty?: BigNumber;
+    totalShares?: BigNumber;
+  } = {};
+
   public stakeTokensProgress: boolean;
   public stakes: {
     active?: Stake[];
@@ -69,6 +86,23 @@ export class StakingPageComponent implements OnDestroy {
     static: true,
   })
   actionsModal: TemplateRef<any>;
+
+  @ViewChild("extendStakeModal", {
+    static: true,
+  })
+  extendStakeModal: TemplateRef<any>;
+  public extensionInfo: {
+    ref?: any,
+    stake?: Stake,
+    progress?: boolean,
+    newStake?: {
+      endDate: Number,
+      amount: BigNumber,
+      lpbShares: BigNumber,
+      baseShares: BigNumber,
+      totalShares: BigNumber,
+    }
+  } = { };
 
   public stakingContractInfo: StakingInfoInterface = {
     ShareRate: 0,
@@ -130,6 +164,7 @@ export class StakingPageComponent implements OnDestroy {
                 this.bpdInfoChecker = true;
               });
 
+              this.maxSharesActive = await this.contractService.checkMaxSharesActive();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
             }
           });
@@ -256,7 +291,7 @@ export class StakingPageComponent implements OnDestroy {
   }
 
   get bonusLongerPaysBetterRestake() {
-    return this.getLPBShares(this.actionsModalData.amount, this.actionsModalData.stakingDays)
+    return this.getLPBShares(this.restakeData.amount, this.restakeData.stakeDays)
   }
 
   get userShares() {
@@ -271,7 +306,14 @@ export class StakingPageComponent implements OnDestroy {
   get userSharesRestake() {
     const divDecimals = Math.pow(10, this.tokensDecimals.AXN);
     const shareRate = new BigNumber(this.stakingContractInfo.ShareRate || 0).div(divDecimals);
-    const amount = new BigNumber(this.actionsModalData.amount || 0).div(divDecimals);
+    const amount = new BigNumber(this.restakeData.amount || 0).div(divDecimals);
+    return amount.div(shareRate).times(divDecimals);
+  }
+
+  get userSharesRestakeTopUp() {
+    const divDecimals = Math.pow(10, this.tokensDecimals.AXN);
+    const shareRate = new BigNumber(this.stakingContractInfo.ShareRate || 0).div(divDecimals);
+    const amount = new BigNumber(this.restakeData.topUp || 0).div(divDecimals);
     return amount.div(shareRate).times(divDecimals);
   }
 
@@ -281,12 +323,18 @@ export class StakingPageComponent implements OnDestroy {
 
   public onRestakeDaysChanged() {
     const shares = this.userSharesRestake;
-    this.actionsModalData.shares = shares;
+    this.restakeData.shares = shares;
 
     const LPB = this.bonusLongerPaysBetterRestake;
-    this.actionsModalData.lpb = LPB;
+    this.restakeData.lpb = LPB;
 
-    this.actionsModalData.totalShares = shares.plus(LPB)
+    this.restakeData.totalShares = shares.plus(LPB)
+  }
+
+  public onTopUpAmountChanged() {
+    const basicShares = this.userSharesRestake;
+    const topUpShares = this.userSharesRestakeTopUp;
+    this.restakeData.totalShares = basicShares.plus(topUpShares)
   }
 
   public onChangeAmount() {
@@ -375,13 +423,10 @@ export class StakingPageComponent implements OnDestroy {
     }
   }
 
-  public actionsModalData;
-
   public async openStakeActions(stake: Stake) {
-
     // Check if this is a late unstake
     const endMS = +stake.endSeconds * 1000;
-    const penaltyWindow = endMS + (AVAILABLE_DAYS_AFTER_END * 86400 * 1000)
+    const penaltyWindow = endMS + (AVAILABLE_DAYS_AFTER_END * this.contractService.getMSecondsInDay())
     const isLate = Date.now() > penaltyWindow
 
     if (isLate) {
@@ -389,27 +434,29 @@ export class StakingPageComponent implements OnDestroy {
       const payout = new BigNumber(result[0]);
       const penalty = new BigNumber(result[1]);
 
-      this.actionsModalData = {
-        opened: this.dialog.open(this.actionsModal, {}),
+      this.restakeData = {
         stake,
+        isLate,
+        penalty,
+        topUp: "",
         stakeDays: 0,
         amount: payout,
-        penalty,
-        isLate
+        opened: this.dialog.open(this.actionsModal, {})
       }
     } else {
-      this.actionsModalData = {
-        opened: this.dialog.open(this.actionsModal, {}),
+      this.restakeData = {
         stake,
+        isLate,
+        topUp: "",
         stakeDays: 0,
         amount: stake.principal.plus(stake.interest),
-        isLate
+        opened: this.dialog.open(this.actionsModal, {})
       }
     }
   }
 
   public successWithPenaltyActions(stake: Stake) {
-    this.actionsModalData.opened.close();
+    this.restakeData.opened.close();
 
     // Skip late penalty dialog if not past 14 days
     const endMS = +stake.endSeconds * 1000;
@@ -417,13 +464,14 @@ export class StakingPageComponent implements OnDestroy {
     this.stakeWithdraw(stake, Date.now() < penaltyWindow);
   }
 
-  public restake(stake: Stake, stakingDays: number) {    
-    this.actionsModalData.opened.close();
+  public restake(stake: Stake) {    
     stake.withdrawProgress = true;
-    this.contractService.restake(stake, stakingDays).then(() => {
+    this.contractService.restake(stake, this.restakeData.stakeDays, this.restakeData.topUp).then(() => {
       this.stakeList();
       this.contractService.updateAXNBalance(true);
-    }).finally(() => {
+      this.restakeData.opened.close();
+    })
+    .finally(() => {
       stake.withdrawProgress = false;
     })
   }
@@ -501,6 +549,41 @@ export class StakingPageComponent implements OnDestroy {
       .catch(() => {
         stake.withdrawProgress = false;
       });
+  }
+
+  public extendStake(stake: Stake) {
+    const shareRate = new BigNumber(this.stakingContractInfo.ShareRate).div(this._1e18);
+    const amount = new BigNumber(stake.principal.plus(stake.interest));
+
+    this.extensionInfo.stake = stake;
+    this.extensionInfo.ref = this.dialog.open(this.extendStakeModal, {});
+    this.extensionInfo.newStake = {
+      amount, 
+      lpbShares: this.getLPBShares(amount, 5555),
+      totalShares: amount.times((5554 / 1820) + 1).div(shareRate),
+      baseShares: amount.div(this._1e18).div(shareRate).times(this._1e18),
+      endDate: Date.now() + (5555 * this.settingsData.settings.time.seconds * 1000),
+    }
+  }
+
+  public async confirmExtension() {
+    this.extensionInfo.progress = true;
+
+    try {
+      const transaction = await this.contractService.extendStake(this.extensionInfo.stake);
+      this.extensionInfo.ref.close();
+      this.stakeList();
+      this.dialog.open(TransactionSuccessModalComponent, {
+        width: "400px",
+        data: transaction.transactionHash,
+      });
+    } catch (err) {
+      if (err.message)
+        this.dialog.open(MetamaskErrorComponent, {
+          width: "400px",
+          data: { msg: err.message },
+        });
+    } finally { this.extensionInfo.progress = false }
   }
 
   public sortStakes(ev, type) {

@@ -3914,6 +3914,61 @@
             {
               "indexed": false,
               "internalType": "uint256",
+              "name": "newAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "shares",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newShares",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "start",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "end",
+              "type": "uint256"
+            }
+          ],
+          "name": "StakeUpgrade",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
               "name": "start",
               "type": "uint256"
             },
@@ -4051,6 +4106,19 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "calculateStepsFromStart",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "uint256",
@@ -4069,42 +4137,6 @@
             }
           ],
           "name": "externalStake",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_staker",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_stakeId",
-              "type": "uint256"
-            }
-          ],
-          "name": "fixShareRateOnStake",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_staker",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_sessionId",
-              "type": "uint256"
-            }
-          ],
-          "name": "fixV1Stake",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -4143,6 +4175,19 @@
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxShareEventActive",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
@@ -4279,49 +4324,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_mainTokenAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_auctionAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_subBalancesAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_foreignSwapAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_stakingV1Address",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_stepTimestamp",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_lastSessionIdV1",
-              "type": "uint256"
-            }
-          ],
-          "name": "init",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "init_",
           "outputs": [
@@ -4381,6 +4383,32 @@
         {
           "inputs": [],
           "name": "makePayout",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            }
+          ],
+          "name": "maxShare",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            }
+          ],
+          "name": "maxShareV1",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -4464,6 +4492,11 @@
               "internalType": "uint256",
               "name": "stakingDays",
               "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "topup",
+              "type": "uint256"
             }
           ],
           "name": "restake",
@@ -4481,6 +4514,11 @@
             {
               "internalType": "uint256",
               "name": "stakingDays",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "topup",
               "type": "uint256"
             }
           ],
@@ -4612,25 +4650,12 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
-              "name": "_basePeriod",
-              "type": "uint256"
+              "internalType": "bool",
+              "name": "_active",
+              "type": "bool"
             }
           ],
-          "name": "setBasePeriod",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_lastSessionId",
-              "type": "uint256"
-            }
-          ],
-          "name": "setLastSessionId",
+          "name": "setMaxShareEventActive",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -4644,32 +4669,6 @@
             }
           ],
           "name": "setShareRate",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_sharesTotalSupply",
-              "type": "uint256"
-            }
-          ],
-          "name": "setSharesTotalSupply",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_totalStakedAmount",
-              "type": "uint256"
-            }
-          ],
-          "name": "setTotalStakedAmount",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -13192,7 +13191,7 @@
       "ADDRESS": "0xc778417E063141139Fce010982780140Aa0cD5Ab"
     },
     "AXN": {
-      "ADDRESS": "0x69219374Fc835a2ccAe4281Bd056F5fBD4B1E130",
+      "ADDRESS": "0x1f516c9D6c4d85dAacc1333bdd6bFf28a263e51A",
       "ABI": [
         {
           "anonymous": false,
@@ -14273,7 +14272,7 @@
       ]
     },
     "NativeSwap": {
-      "ADDRESS": "0x8FDCA127CA838662A6B987A93987ff280dc2bfD0",
+      "ADDRESS": "0xEB425CE7d83787692AA0b8d514411C2a924Ec98e",
       "ABI": [
         {
           "anonymous": false,
@@ -14802,7 +14801,7 @@
       ]
     },
     "Auction": {
-      "ADDRESS": "0xb65dd34056Cc82BD42FEd429d86C966212A0fca0",
+      "ADDRESS": "0xed647C1959B5c57a3f5c202940DBF3e5674A98A6",
       "ABI": [
         {
           "anonymous": false,
@@ -15799,7 +15798,7 @@
       ]
     },
     "AuctionV1": {
-      "ADDRESS": "0xa116fd3a41250a092D1dB428Ab1d9d7862B746F4",
+      "ADDRESS": "0xb0e9F8CD4D09b596d0356Bcf07dB05fC76bD2e6E",
       "ABI": [
         {
           "inputs": [],
@@ -16572,7 +16571,7 @@
       ]
     },
     "Staking": {
-      "ADDRESS": "0xF6A8453B28d6CE0300BFF0603664639a4e30732D",
+      "ADDRESS": "0xD94D6b9c47Df7010Ee3c3B2f378daBa9751Cc1fB",
       "ABI": [
         {
           "anonymous": false,
@@ -16741,6 +16740,61 @@
             {
               "indexed": false,
               "internalType": "uint256",
+              "name": "newAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "shares",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newShares",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "start",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "end",
+              "type": "uint256"
+            }
+          ],
+          "name": "StakeUpgrade",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
               "name": "start",
               "type": "uint256"
             },
@@ -16830,6 +16884,136 @@
               "internalType": "address",
               "name": "subBalances",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "basePeriod",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "firstPayout",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastPayout",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "shares",
+              "type": "uint256"
+            }
+          ],
+          "name": "calculateStakingInterest",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "calculateStepsFromStart",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "stakingDays",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "staker",
+              "type": "address"
+            }
+          ],
+          "name": "externalStake",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "start",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "end",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "stakingInterest",
+              "type": "uint256"
+            }
+          ],
+          "name": "getAmountOutAndPenalty",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxShareEventActive",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
@@ -16979,6 +17163,24 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_manager",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_migrator",
+              "type": "address"
+            }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "lastSessionId",
           "outputs": [
@@ -17002,6 +17204,39 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "makePayout",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            }
+          ],
+          "name": "maxShare",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            }
+          ],
+          "name": "maxShareV1",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -17042,6 +17277,19 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "readPayout",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "bytes32",
@@ -17055,6 +17303,52 @@
             }
           ],
           "name": "renounceRole",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "stakingDays",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "topup",
+              "type": "uint256"
+            }
+          ],
+          "name": "restake",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "sessionId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "stakingDays",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "topup",
+              "type": "uint256"
+            }
+          ],
+          "name": "restakeV1",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -17161,6 +17455,69 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "sessionsOf_",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bool",
+              "name": "_active",
+              "type": "bool"
+            }
+          ],
+          "name": "setMaxShareEventActive",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_shareRate",
+              "type": "uint256"
+            }
+          ],
+          "name": "setShareRate",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "setupRole",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "shareRate",
           "outputs": [
@@ -17184,6 +17541,24 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "stakingDays",
+              "type": "uint256"
+            }
+          ],
+          "name": "stake",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -17226,140 +17601,8 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_manager",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_migrator",
-              "type": "address"
-            }
-          ],
-          "name": "initialize",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_mainTokenAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_auctionAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_subBalancesAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_foreignSwapAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_stakingV1Address",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_stepTimestamp",
-              "type": "uint256"
-            }
-          ],
-          "name": "init",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "account",
-              "type": "address"
-            }
-          ],
-          "name": "sessionsOf_",
-          "outputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "",
-              "type": "uint256[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "stakingDays",
-              "type": "uint256"
-            }
-          ],
-          "name": "stake",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "stakingDays",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "staker",
-              "type": "address"
-            }
-          ],
-          "name": "externalStake",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "firstPayout",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "lastPayout",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "shares",
-              "type": "uint256"
-            }
-          ],
-          "name": "calculateStakingInterest",
+          "inputs": [],
+          "name": "totalStakedAmount",
           "outputs": [
             {
               "internalType": "uint256",
@@ -17395,154 +17638,11 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "start",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "end",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "stakingInterest",
-              "type": "uint256"
-            }
-          ],
-          "name": "getAmountOutAndPenalty",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "makePayout",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "readPayout",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getNow0x",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_startTime",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_shareRate",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_sharesTotalSupply",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_nextPayoutCall",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_globalPayin",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_globalPayout",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "_payouts",
-              "type": "uint256[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "_sharesTotalSupplyVec",
-              "type": "uint256[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_lastSessionId",
-              "type": "uint256"
-            }
-          ],
-          "name": "setOtherVars",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address[]",
-              "name": "_wallets",
-              "type": "address[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "_sessionIds",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "setSessionsOf",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
         }
       ]
     },
     "StakingV1": {
-      "ADDRESS": "0x0292b9f9737234A8196Ec666A6469da19edb710B",
+      "ADDRESS": "0x94538A8534fd3faC1f337c301f2d05B3Be4623B2",
       "ABI": [
         {
           "inputs": [],
@@ -18336,7 +18436,7 @@
       ]
     },
     "BPD": {
-      "ADDRESS": "0x645576a0BB401ADF67D1fA4Da974DD2372E8F59b",
+      "ADDRESS": "0x3c69953252284832ABe9543Ac348277cdc286376",
       "ABI": [
         {
           "anonymous": false,
@@ -18834,7 +18934,7 @@
       ]
     },
     "ForeignSwap": {
-      "ADDRESS": "0x5b60E2F0E416687aCCa0922F6C2Be35418a56d0F",
+      "ADDRESS": "0x39C954309691E6e8b2e4B1B004D2eD6C7Ed369EC",
       "ABI": [
         {
           "anonymous": false,
@@ -19554,7 +19654,7 @@
       ]
     },
     "SubBalance": {
-      "ADDRESS": "0x648e5882d95505f6e93ce62E1a83424B93931230",
+      "ADDRESS": "0x81daB473bF6CD10bdc2EE4F851cEDC05d7427531",
       "ABI": [
         {
           "anonymous": false,
@@ -20488,7 +20588,7 @@
       ]
     },
     "SubBalanceV1": {
-      "ADDRESS": "0x0d7b3081FEf6ba3Ef1c3d1a8130eBA1539478E12",
+      "ADDRESS": "0x7F3e5dACaD4C29275D573EE078d3E58b416f4D47",
       "ABI": [
         {
           "inputs": [

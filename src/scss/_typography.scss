@@ -99,6 +99,18 @@ a {
         cursor: pointer;
         text-decoration: underline;
       }
+
+      &-important {
+        text-transform: none;
+        font-weight: 500;
+      }
+
+      &-subtitle {
+        text-transform: none;
+        display: block;
+        font-weight: 500;
+        font-size: 1.2rem;
+      }
     }
 
     &-input {

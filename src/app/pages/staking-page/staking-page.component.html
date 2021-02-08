@@ -404,6 +404,7 @@
               matTooltipClass="question__tooltip"
             ></div>
           </th>
+          <th width="10" *ngIf="maxSharesActive">&nbsp;</th>
           <th width="10">&nbsp;</th>
         </tr>
       </thead>
@@ -488,6 +489,14 @@
             >
           </td>
           <td>{{ stake.apy }}%</td>
+
+          <!-- Extend Stake -->
+          <td class="action-button" *ngIf="maxSharesActive">
+            <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
+              <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
+            </button>
+          </td>
+          
           <td class="action-button">
             <button
               class="axn-btn axn-btn-gray"
@@ -554,6 +563,7 @@
               matTooltipClass="question__tooltip"
             ></div>
           </th>
+          <th width="10" *ngIf="maxSharesActive">&nbsp;</th>
           <th width="10">&nbsp;</th>
         </tr>
       </thead>
@@ -638,6 +648,14 @@
             >
           </td>
           <td>{{stake.apy === 0 ? "TBC" : stake.apy+"%"}}</td>
+
+          <!-- Extend Stake -->
+          <td class="action-button" *ngIf="maxSharesActive">
+            <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
+              <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
+            </button>
+          </td>
+
           <td class="action-button">
             <button
               class="axn-btn axn-btn-gray"
@@ -943,11 +961,11 @@
         </p>
 
         <div class="axn-form-block-one">
-          <div class="axn-form axn-form-base-2">
+          <div class="axn-form axn-form-base-3">
             
             <!-- LEFT COL -->
             <div class="axn-form-block-one axn-form-border-dashed-right">
-              <span class="axn-form-block-one-title" style="text-transform: none; font-size: 1rem;">Restake Period</span>
+              <span class="axn-form-block-one-title">Restake Period</span>
               <input 
                 class="axn-input" 
                 type="number" 
@@ -958,24 +976,60 @@
                 autocomplete="off" 
                 onblur="this.placeholder = '0'" 
                 onfocus="this.placeholder = ''" 
-                style="width: auto;font-size: 1.5rem;"
                 (ngModelChange)="onRestakeDaysChanged()"
-                [(ngModel)]="actionsModalData.stakingDays" 
+                [(ngModel)]="restakeData.stakeDays" 
                 [appMinMaxNumber]="{max: stakeMaxDays}" 
               />
-              <span class="axn-cheap cl-blue-bg" style="text-transform: none;">{{today + (actionsModalData.stakingDays * 24 * 60 * 60 * 1000) | date: "MMM d, y"}}</span>
+              <span class="axn-cheap cl-blue-bg" style="text-transform: none;">{{today + (restakeData.stakeDays * 24 * 60 * 60 * 1000) | date: "MMM d, y"}}</span>
               <div class="axn-form-block-sendmax axn-form-bottom-mid">
-                <span class="axn-btn axn-btn-max" (click)="actionsModalData.stakingDays = stakeMaxDays;">Max Days</span>
+                <span class="axn-btn axn-btn-max" (click)="restakeData.stakeDays = stakeMaxDays;">Max Days</span>
+                <br />
+                <span class="axn-form-block-text">
+                 Max: <b>{{ stakeMaxDays.toLocaleString() }} days</b>
+                </span>
               </div>
+            </div>
+
+              <!-- CENTER COL -->
+            <div class="axn-form-block-one axn-form-border-dashed-right">
+              <span class="axn-form-block-one-title">TopUp (Optional)</span>
+              <input
+                type="text"
+                *ngIf="account"
+                class="axn-input"
+                required="required"
+                name="restake-topup"
+                placeholder="0"
+                onfocus="this.placeholder = ''"
+                onblur="this.placeholder = '0'"
+                (ngModelChange)="onTopUpAmountChanged()"
+                [(ngModel)]="restakeData.topUp"
+                [appBigNumber]="{ decimals: tokensDecimals['AXN'], min: 0, max: account.balances.AXN.wei }"
+              />
+              <span class="axn-cheap icon icon_axn cl-blue-bg">AXN</span>
+              <div class="axn-form-block-sendmax axn-form-bottom-mid">
+                <span class="axn-btn axn-btn-max" (click)="restakeData.topUp = account.balances.AXN.wei;">Max</span>
+                <br/>
+                <span class="axn-form-block-text">
+                  Balance: <b>{{ account?.balances?.AXN.wei | bigNumberFormat: tokensDecimals.AXN:true:false:2 }}</b>
+                </span>
+              </div>  
             </div>
 
             <!-- RIGHT COL -->
             <div class="axn-form-block-one" style="text-transform: none;display: block;" >
-              <p *ngIf="actionsModalData.amount">Amount<br/><b>{{actionsModalData.amount | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b></p>
-              <p *ngIf="actionsModalData.isLate">Late Penalty<br/><b>{{actionsModalData.penalty | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b></p>
-              <p *ngIf="actionsModalData.shares">Shares<br /><b>{{actionsModalData.shares | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b></p>
-              <p *ngIf="actionsModalData.lpb">Longer Pays Better<br /><b>{{actionsModalData.lpb | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b></p>
-              <p *ngIf="actionsModalData.totalShares">Total Shares<br /><b>{{actionsModalData.totalShares | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b></p>
+              <p *ngIf="restakeData.amount">
+                Amount<br/>
+                <b>{{restakeData.amount | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b>
+                <span *ngIf="restakeData.topUp">
+                  <br/>
+                  +<br /><b>{{ restakeData.topUp || 0 | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b>
+                </span>
+              </p>
+              <p *ngIf="restakeData.isLate">Late Penalty<br/><b>{{restakeData.penalty | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</b></p>
+              <p *ngIf="restakeData.shares">Shares<br /><b>{{restakeData.shares | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b></p>
+              <p *ngIf="restakeData.lpb">Longer Pays Better<br /><b>{{restakeData.lpb | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b></p>
+              <p *ngIf="restakeData.totalShares">Total Shares<br /><b>{{restakeData.totalShares | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b></p>
             </div>
           </div> 
         </div>
@@ -986,12 +1040,74 @@
       <button class="axn-btn axn-btn-cancel" type="button" mat-dialog-close>
         <span>Cancel</span>
       </button>
-      <button class="axn-btn axn-btn-gray" [disabled]="!actionsModalData.stakingDays" type="button" (click)="restake(actionsModalData.stake, actionsModalData.stakingDays)">
-        <span>Restake</span>
+
+      <button class="axn-btn axn-btn-gray" (click)="restake(restakeData.stake)" [ngClass]="{ progress: restakeData.stake.withdrawProgress }" [disabled]="restakeData.stake.withdrawProgress || !restakeData.stakeDays">
+        <span class="lds-ellipsis" *ngIf="restakeData.stake.withdrawProgress">
+          <span class="lds-ellipsis-container">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </span>
+        <span class="t-fw-light">&nbsp;&nbsp;Restake&nbsp;&nbsp;</span>
       </button>
-      <button class="axn-btn axn-btn-gray" type="button" (click)="successWithPenaltyActions(actionsModalData.stake)">
+
+      <button class="axn-btn axn-btn-gray" type="button" (click)="successWithPenaltyActions(restakeData.stake)" [disabled]="restakeData.stake.withdrawProgress">
         <span>Withdraw</span>
       </button>
     </div>
+  </div>
+</ng-template>
+
+<!-- Extend Stake Modal -->
+<ng-template #extendStakeModal class="dialog-block" mat-dialog-content>
+  <div class="dialog-block__content">
+    <div class="dialog-title">Max Shares Upgrade</div>
+
+    <div class="axn-form-block-one">
+      <p class="axn-text-body axn-text-body-description">
+        Upgrade this stake and receive max shares at the current share rate (<b>{{stakingContractInfo.ShareRate | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</b>).<br />
+        Any accumulated interest will be added to your principal and re-staked for <b>5,555</b> days.
+      </p>
+    </div>
+
+    <div class="axn-form-block-one">      
+      <div class="upgrade-container">
+        <span class="axn-text-body-subtitle">Principal</span>
+        <span class="axn-text-body-important">{{extensionInfo.stake.principal | bigNumberFormat: tokensDecimals.AXN:true:false:2}} AXN</span>
+        <span class="icon icon_right_arrow"></span>
+        <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{ extensionInfo.stake.interest | bigNumberFormat: tokensDecimals.AXN:true:false:2 }} AXN added from interest">
+          <span class="axn-text-body-important">{{extensionInfo.newStake.amount | bigNumberFormat:tokensDecimals.AXN:true:false:2}} AXN</span>
+        </span>
+      </div>
+      <div class="upgrade-container">
+        <span class="axn-text-body-subtitle">Shares</span>
+        <span class="axn-text-body-important">{{extensionInfo.stake.shares | bigNumberFormat: tokensDecimals.AXN:true:false:2}}</span>
+        <span class="icon icon_right_arrow"></span>
+        <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{ extensionInfo.newStake.baseShares | bigNumberFormat:tokensDecimals.AXN:true:false:2  }} basic shares + {{ extensionInfo.newStake.lpbShares | bigNumberFormat:tokensDecimals.AXN:true:false:2 }} longer pays better">
+          <span class="axn-text-body-important">{{extensionInfo.newStake.totalShares | bigNumberFormat:tokensDecimals.AXN:true:false:2}}</span>
+        </span>
+      </div>
+      <div class="upgrade-container">
+        <span class="axn-text-body-subtitle">End Date</span>
+        <span class="axn-text-body-important">{{extensionInfo.stake.end | date: "mediumDate"}}</span>
+        <span class="icon icon_right_arrow"></span>
+        <span class="axn-text-body-important">{{extensionInfo.newStake.endDate | date: "mediumDate"}}</span>
+      </div>
+    </div>
+
+    <div class="dialog-bottom">
+      <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
+        <span>Cancel</span>
+      </button>
+
+      <button class="axn-btn axn-btn-gray"  (click)="confirmExtension()" [ngClass]="{ progress: extensionInfo.progress }" [disabled]="extensionInfo.progress">
+        <span class="lds-ellipsis" *ngIf="extensionInfo.progress">
+          <span class="lds-ellipsis-container">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </span>
+        <span class="t-fw-light">Upgrade</span>
+      </button>
+    </div>
+    
   </div>
 </ng-template>

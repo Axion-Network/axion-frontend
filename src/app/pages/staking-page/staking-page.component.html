@@ -976,7 +976,7 @@
                 autocomplete="off" 
                 onblur="this.placeholder = '0'" 
                 onfocus="this.placeholder = ''" 
-                (ngModelChange)="onRestakeDaysChanged()"
+                (ngModelChange)="onRestakeChanged()"
                 [(ngModel)]="restakeData.stakeDays" 
                 [appMinMaxNumber]="{max: stakeMaxDays}" 
               />
@@ -1002,7 +1002,7 @@
                 placeholder="0"
                 onfocus="this.placeholder = ''"
                 onblur="this.placeholder = '0'"
-                (ngModelChange)="onTopUpAmountChanged()"
+                (ngModelChange)="onRestakeChanged()"
                 [(ngModel)]="restakeData.topUp"
                 [appBigNumber]="{ decimals: tokensDecimals['AXN'], min: 0, max: account.balances.AXN.wei }"
               />

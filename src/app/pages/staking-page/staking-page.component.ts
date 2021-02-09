@@ -291,7 +291,8 @@ export class StakingPageComponent implements OnDestroy {
   }
 
   get bonusLongerPaysBetterRestake() {
-    return this.getLPBShares(this.restakeData.amount, this.restakeData.stakeDays)
+    const topUp = new BigNumber(this.restakeData.topUp || 0)
+    return this.getLPBShares(this.restakeData.amount.plus(topUp), this.restakeData.stakeDays)
   }
 
   get userShares() {
@@ -305,15 +306,9 @@ export class StakingPageComponent implements OnDestroy {
 
   get userSharesRestake() {
     const divDecimals = Math.pow(10, this.tokensDecimals.AXN);
+    const topUp = new BigNumber(this.restakeData.topUp || 0);
     const shareRate = new BigNumber(this.stakingContractInfo.ShareRate || 0).div(divDecimals);
-    const amount = new BigNumber(this.restakeData.amount || 0).div(divDecimals);
-    return amount.div(shareRate).times(divDecimals);
-  }
-
-  get userSharesRestakeTopUp() {
-    const divDecimals = Math.pow(10, this.tokensDecimals.AXN);
-    const shareRate = new BigNumber(this.stakingContractInfo.ShareRate || 0).div(divDecimals);
-    const amount = new BigNumber(this.restakeData.topUp || 0).div(divDecimals);
+    const amount = new BigNumber(this.restakeData.amount || 0).plus(topUp).div(divDecimals);
     return amount.div(shareRate).times(divDecimals);
   }
 
@@ -321,7 +316,7 @@ export class StakingPageComponent implements OnDestroy {
     return (this.formsData.stakeDays || 0) > this.stakeMaxDays;
   }
 
-  public onRestakeDaysChanged() {
+  public onRestakeChanged() {
     const shares = this.userSharesRestake;
     this.restakeData.shares = shares;
 
@@ -329,12 +324,6 @@ export class StakingPageComponent implements OnDestroy {
     this.restakeData.lpb = LPB;
 
     this.restakeData.totalShares = shares.plus(LPB)
-  }
-
-  public onTopUpAmountChanged() {
-    const basicShares = this.userSharesRestake;
-    const topUpShares = this.userSharesRestakeTopUp;
-    this.restakeData.totalShares = basicShares.plus(topUpShares)
   }
 
   public onChangeAmount() {

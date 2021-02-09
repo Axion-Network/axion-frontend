@@ -2050,8 +2050,8 @@ export class ContractService {
       const tokenSymbol = await tokenContract.methods.symbol().call();
       const tokenDecimals = await tokenContract.methods.decimals().call();
       const interestEarnedToken = await this.getVentureAuctionInterestEarned(tokenAddress);
-      const unformattedInterestInUSDXC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
-      const interestEarnedUSDC = unformattedInterestInUSDXC.toNumber().toLocaleString("en-US");
+      const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
+      const interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
 
       vcaDivs.push({
         tokenName,

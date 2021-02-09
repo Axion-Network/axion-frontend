@@ -6,7 +6,7 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
-import { ContractService, stakingMaxDays, Stake } from "../../services/contract";
+import { ContractService, stakingMaxDays, Stake, VentureAuction } from "../../services/contract";
 import BigNumber from "bignumber.js";
 import { AppConfig } from "../../appconfig";
 import { MatDialog } from "@angular/material/dialog";
@@ -127,6 +127,7 @@ export class StakingPageComponent implements OnDestroy {
   };
 
   public bpd: any = [];
+  public vcaDivs: VentureAuction[];
 
   private settingsData: any;
   private dayEndSubscriber;
@@ -164,6 +165,7 @@ export class StakingPageComponent implements OnDestroy {
                 this.bpdInfoChecker = true;
               });
 
+              this.vcaDivs = await this.contractService.getVentureAuctionDivs();
               this.maxSharesActive = await this.contractService.checkMaxSharesActive();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
             }
@@ -580,6 +582,46 @@ export class StakingPageComponent implements OnDestroy {
       this.stakes[type].sort((a: Stake, b: Stake) => a[ev.active] - b[ev.active])
     else if (ev.direction === "desc")
       this.stakes[type].sort((a: Stake, b: Stake) => b[ev.active] - a[ev.active])
+  }
+
+  public async withdrawVCA(tokenAddress) {
+    try {
+      const tx = await this.contractService.withdrawVCADivs(tokenAddress);
+      if (tx.transactionHash) {
+        this.dialog.open(TransactionSuccessModalComponent, {
+          width: "400px",
+          data: tx.transactionHash,
+        });
+      }
+    }
+    catch (err) {
+      if (err.message) {
+        this.dialog.open(MetamaskErrorComponent, {
+          width: "400px",
+          data: { msg: err.message },
+        });
+      }
+    }
+  }
+
+  public async registerVCA() {
+    try {
+      const tx = await this.contractService.registerForVCA();
+      if (tx.transactionHash) {
+        this.dialog.open(TransactionSuccessModalComponent, {
+          width: "400px",
+          data: tx.transactionHash,
+        });
+      }
+    }
+    catch (err) {
+      if (err.message) {
+        this.dialog.open(MetamaskErrorComponent, {
+          width: "400px",
+          data: { msg: err.message },
+        });
+      }
+    }
   }
 
   ngOnDestroy() {

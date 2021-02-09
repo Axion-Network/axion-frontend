@@ -56,6 +56,15 @@ export interface AuctionBid {
   isV1: boolean;
 }
 
+export interface VentureAuction {
+  decimals: number;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenAddress: string;
+  interestEarnedUSDC: string;
+  interestEarnedToken: BigNumber;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -2021,4 +2030,32 @@ export class ContractService {
   public extendStake(stake: Stake) {
     return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShare"](stake.sessionId).send({ from: this.account.address })
   }
+
+  public async getVentureAuctionDivs(): Promise<VentureAuction[]> {
+    const vcaDivs = []
+    const vca = {
+      decimals: 8,
+      tokenSymbol: "WBTC",
+      tokenName: "Wrapped Bitcoin",
+      interestEarnedUSDC: "0",
+      interestEarnedToken: new BigNumber(0),
+      tokenAddress: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+    }
+
+    vca.interestEarnedToken = new BigNumber(1.0012837).times("100000000")
+    const price = await this.getTokenToUsdcAmountsOutAsync(vca.tokenAddress, vca.interestEarnedToken.toString())
+    vca.interestEarnedUSDC = price.toNumber().toLocaleString("en-US", { maximumFractionDigits: 2 });
+    vcaDivs.push(vca)
+
+    return vcaDivs;
+  }
+
+  public async withdrawVCADivs(tokenAddress) {
+    return this.StakingContract.methods.withdrawDivToken(tokenAddress).send({ from: this.account.address })
+  }
+
+  public async registerForVCA() {
+    return this.StakingContract.methods.setTotalSharesOfAccount().send({ from: this.account.address })
+  }
+
 }

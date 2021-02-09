@@ -380,6 +380,55 @@
   </div>
 </section>
 
+<!-- VCA DIvs -->
+<section class="axn-section" *ngIf="activeStakeTotals && vcaDivs">
+  <div class="axn-form-block table-container p-20">
+    <div class="axn-title-block p-20">
+      <span class="axn-title">Venture Capital Auction Divs</span>
+    </div>
+    
+    <!-- If Registered... -->
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" *ngIf="true">
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Contract Address</th>
+          <th>Interest Earned</th>
+          <th width="10"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let vca of vcaDivs">
+          <td>{{vca.tokenSymbol}}<br/>{{vca.tokenName}}</td>
+          <td>{{vca.tokenAddress}}</td>
+          <td>
+            <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{vca.interestEarnedToken | bigNumberFormat: vca.decimals:true:false:vca.decimals}}">
+              {{vca.interestEarnedToken | bigNumberFormat: vca.decimals:true:false:4}}
+            </span>
+            <br/>${{vca.interestEarnedUSDC}}
+          </td>
+
+          <td class="action-button">
+            <button class="axn-btn axn-btn-gray" (click)="withdrawVCA(vca.tokenAddress)" [disabled]="extensionInfo.progress">
+              <span class="t-fw-light">&nbsp;&nbsp;WITHDRAW&nbsp;&nbsp;</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- If Not Registered... -->
+    <div class="vca-register" *ngIf="false">
+      <span class="axn-form-block-text">You address has not completed registration.<br/>In order to receive VCA divs from current stakes, you must register your stakes.</span>
+      <br/>
+      <button class="axn-btn axn-btn-gray" (click)="registerVCA()" [disabled]="extensionInfo.progress">
+        <span class="t-fw-light">&nbsp;&nbsp;Register for Venture Capital Auction Divs&nbsp;&nbsp;</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Matured Staked -->
 <section class="axn-section" *ngIf="stakes?.matured?.length && tokensDecimals">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">

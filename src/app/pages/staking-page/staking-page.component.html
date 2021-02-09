@@ -402,8 +402,8 @@
           <td>{{vca.tokenSymbol}}<br/>{{vca.tokenName}}</td>
           <td>{{vca.tokenAddress}}</td>
           <td>
-            <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{vca.interestEarnedToken | bigNumberFormat: vca.decimals:true:false:vca.decimals}}">
-              {{vca.interestEarnedToken | bigNumberFormat: vca.decimals:true:false:4}}
+            <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{vca.interestEarnedToken | bigNumberFormat: vca.tokenDecimals:false:false:vca.tokenDecimals}}">
+              {{vca.interestEarnedToken | bigNumberFormat: vca.tokenDecimals:true:false:4}}
             </span>
             <br/>${{vca.interestEarnedUSDC}}
           </td>

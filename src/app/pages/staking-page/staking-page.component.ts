@@ -6,7 +6,7 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
-import { ContractService, stakingMaxDays, Stake, VentureAuction } from "../../services/contract";
+import { ContractService, stakingMaxDays, Stake, VentureAuctionDivs } from "../../services/contract";
 import BigNumber from "bignumber.js";
 import { AppConfig } from "../../appconfig";
 import { MatDialog } from "@angular/material/dialog";
@@ -127,7 +127,7 @@ export class StakingPageComponent implements OnDestroy {
   };
 
   public bpd: any = [];
-  public vcaDivs: VentureAuction[];
+  public vcaDivs: VentureAuctionDivs[];
 
   private settingsData: any;
   private dayEndSubscriber;

@@ -56,11 +56,12 @@ export interface AuctionBid {
   isV1: boolean;
 }
 
-export interface VentureAuction {
-  decimals: number;
+export interface VentureAuctionDivs {
   tokenName: string;
   tokenSymbol: string;
   tokenAddress: string;
+  tokenDecimals: number;
+  totalSharesOf: BigNumber;
   interestEarnedUSDC: string;
   interestEarnedToken: BigNumber;
 }
@@ -2031,31 +2032,45 @@ export class ContractService {
     return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShare"](stake.sessionId).send({ from: this.account.address })
   }
 
-  public async getVentureAuctionDivs(): Promise<VentureAuction[]> {
-    const vcaDivs = []
-    const vca = {
-      decimals: 8,
-      tokenSymbol: "WBTC",
-      tokenName: "Wrapped Bitcoin",
-      interestEarnedUSDC: "0",
-      interestEarnedToken: new BigNumber(0),
-      tokenAddress: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
-    }
+  public async getVentureAuctionTokens(): Promise<string[]> {
+    return ["0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"]; //this.StakingContract.methods.divTokens.call()
+  }
 
-    vca.interestEarnedToken = new BigNumber(1.0012837).times("100000000")
-    const price = await this.getTokenToUsdcAmountsOutAsync(vca.tokenAddress, vca.interestEarnedToken.toString())
-    vca.interestEarnedUSDC = price.toNumber().toLocaleString("en-US", { maximumFractionDigits: 2 });
-    vcaDivs.push(vca)
+  public async getVentureAuctionInterestEarned(address: string): Promise<BigNumber> {
+    return new BigNumber("1.09238").times("100000000"); //this.StakingContract.methods.getTokenInterestEarned(address).call({ from: this.account.address })
+  }
+
+  public async getVentureAuctionDivs(): Promise<VentureAuctionDivs[]> {
+    const vcTokens = await this.getVentureAuctionTokens();
+    const vcaDivs = []
+
+    for (const tokenAddress of vcTokens) {
+      const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, tokenAddress);
+      const tokenName = await tokenContract.methods.name().call();
+      const tokenSymbol = await tokenContract.methods.symbol().call();
+      const tokenDecimals = await tokenContract.methods.decimals().call();
+      const interestEarnedToken = await this.getVentureAuctionInterestEarned(tokenAddress);
+      const unformattedInterestInUSDXC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
+      const interestEarnedUSDC = unformattedInterestInUSDXC.toNumber().toLocaleString("en-US");
+
+      vcaDivs.push({
+        tokenName,
+        tokenSymbol,
+        tokenAddress,
+        tokenDecimals,
+        interestEarnedUSDC,
+        interestEarnedToken,
+      })
+    }
 
     return vcaDivs;
   }
 
-  public async withdrawVCADivs(tokenAddress) {
+  public async withdrawVCADivs(tokenAddress: string) {
     return this.StakingContract.methods.withdrawDivToken(tokenAddress).send({ from: this.account.address })
   }
 
   public async registerForVCA() {
     return this.StakingContract.methods.setTotalSharesOfAccount().send({ from: this.account.address })
   }
-
 }

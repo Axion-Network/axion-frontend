@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: true,
+  production: false,
   configDomain: "assets/js",
   freeClaimApi: "https://api.axion.network",
   slippageTolerancePercent: 1,

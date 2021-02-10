@@ -2125,7 +2125,6 @@ export class ContractService {
           percentage: tokenData.percentages[i]
         })
       }
-     
     }
     catch (e) { tokensOfTheDay = [{ tokenName: "Wrapped BTC", tokenSymbol: "WBTC", percentage: 100 }] }
     finally { return tokensOfTheDay }

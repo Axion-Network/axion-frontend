@@ -409,7 +409,12 @@
           </td>
 
           <td class="action-button">
-            <button class="axn-btn axn-btn-gray" (click)="withdrawVCA(vca.tokenAddress)" [disabled]="extensionInfo.progress">
+            <button class="axn-btn axn-btn-gray" (click)="withdrawVCA(vca)" [disabled]="vca.interestEarnedToken.isZero() || vca.loading"  [ngClass]="{ progress: vca.loading }">
+              <span class="lds-ellipsis" *ngIf="vca.loading">
+                <span class="lds-ellipsis-container">
+                  <span></span><span></span><span></span><span></span>
+                </span>
+              </span>
               <span class="t-fw-light">&nbsp;&nbsp;WITHDRAW&nbsp;&nbsp;</span>
             </button>
           </td>
@@ -418,10 +423,15 @@
     </table>
 
     <!-- If Not Registered... -->
-    <div class="vca-register" *ngIf="false">
+    <div class="vca-register" *ngIf="true">
       <span class="axn-form-block-text">You address has not completed registration.<br/>In order to receive VCA divs from current stakes, you must register your stakes.</span>
       <br/>
-      <button class="axn-btn axn-btn-gray" (click)="registerVCA()" [disabled]="extensionInfo.progress">
+      <button class="axn-btn axn-btn-gray" (click)="registerVCA()" [disabled]="vcaRegisterLoading"  [ngClass]="{ progress: vcaRegisterLoading }">
+        <span class="lds-ellipsis" *ngIf="vcaRegisterLoading">
+          <span class="lds-ellipsis-container">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </span>
         <span class="t-fw-light">&nbsp;&nbsp;Register for Venture Capital Auction Divs&nbsp;&nbsp;</span>
       </button>
     </div>

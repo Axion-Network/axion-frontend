@@ -133,6 +133,7 @@ export class StakingPageComponent implements OnDestroy {
   private dayEndSubscriber;
 
   private usdcPerAxnPrice;
+  public vcaRegisterLoading = false;
 
   constructor(
     private contractService: ContractService,
@@ -584,9 +585,11 @@ export class StakingPageComponent implements OnDestroy {
       this.stakes[type].sort((a: Stake, b: Stake) => b[ev.active] - a[ev.active])
   }
 
-  public async withdrawVCA(tokenAddress) {
+  public async withdrawVCA(vca: VentureAuctionDivs) {
+    vca["loading"] = true;
+
     try {
-      const tx = await this.contractService.withdrawVCADivs(tokenAddress);
+      const tx = await this.contractService.withdrawVCADivs(vca.tokenAddress);
       if (tx.transactionHash) {
         this.dialog.open(TransactionSuccessModalComponent, {
           width: "400px",
@@ -602,9 +605,14 @@ export class StakingPageComponent implements OnDestroy {
         });
       }
     }
+    finally {
+      vca["loading"] = false;
+    }
   }
 
   public async registerVCA() {
+    this.vcaRegisterLoading = true;
+
     try {
       const tx = await this.contractService.registerForVCA();
       if (tx.transactionHash) {
@@ -621,6 +629,9 @@ export class StakingPageComponent implements OnDestroy {
           data: { msg: err.message },
         });
       }
+    }
+    finally {
+      this.vcaRegisterLoading = false;
     }
   }
 

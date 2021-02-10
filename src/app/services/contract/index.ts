@@ -2033,7 +2033,7 @@ export class ContractService {
   }
 
   public async getVentureAuctionTokens(): Promise<string[]> {
-    let vcaTokens = []
+    let vcaTokens: Array<string>;
 
     try { vcaTokens = await this.StakingContract.methods.divTokens().call() } 
     catch (e) { vcaTokens = ["0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"] }
@@ -2041,7 +2041,7 @@ export class ContractService {
   }
 
   public async getVentureAuctionInterestEarned(address: string): Promise<BigNumber> {
-    let interestEarned = new BigNumber(0);
+    let interestEarned: BigNumber;
 
     try { 
       const interest = await this.StakingContract.methods.getTokenInterestEarned(address).call({ from: this.account.address })
@@ -2061,9 +2061,13 @@ export class ContractService {
       const tokenSymbol = await tokenContract.methods.symbol().call();
       const tokenDecimals = await tokenContract.methods.decimals().call();
       const interestEarnedToken = await this.getVentureAuctionInterestEarned(tokenAddress);
-      const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
-      const interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
 
+      let interestEarnedUSDC = "0.00"
+      if (!interestEarnedToken.isZero()) {
+        const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
+        interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
+      }
+       
       vcaDivs.push({
         tokenName,
         tokenSymbol,

@@ -2115,15 +2115,17 @@ export class ContractService {
     let tokensOfTheDay: any[];
 
     try { 
-      const theTokensOfTheDay = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
-      for (const token of theTokensOfTheDay) {
-        const { tokenName, tokenSymbol } = await this.getVentureAuctionTokenInfo(token.coin);
+      const tokenData = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
+
+      for (let i = 0; i < tokenData.tokens.length; ++i) {
+        const { tokenName, tokenSymbol } = await this.getVentureAuctionTokenInfo(tokenData.tokens[i].coin);
         tokensOfTheDay.push({
           tokenName,
           tokenSymbol,
-          percentage: 100
+          percentage: tokenData.percentages[i]
         })
       }
+     
     }
     catch (e) { tokensOfTheDay = [{ tokenName: "Wrapped BTC", tokenSymbol: "WBTC", percentage: 100 }] }
     finally { return tokensOfTheDay }

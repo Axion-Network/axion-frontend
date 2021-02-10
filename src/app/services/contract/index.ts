@@ -2103,19 +2103,19 @@ export class ContractService {
     return this.StakingContract.methods.setTotalSharesOfAccount().send({ from: this.account.address })
   }
 
-  public async getAuctionTypes(): Promise<number[]> {
-    let auctionTypes: Array<number>;
+  public async getAuctionModes(): Promise<number[]> {
+    let autionModes: Array<number>;
 
-    try { auctionTypes = await this.AuctionContract.methods.auctionTypes().call() }
-    catch (e) { auctionTypes = [1,1,1,1,1,1,1] }
-    finally { return auctionTypes }
+    try { autionModes = await this.AuctionContract.methods.getAuctionModes().call() }
+    catch (e) { autionModes = [1,1,1,1,1,1,1] }
+    finally { return autionModes }
   }
 
   public async getTokensOfTheDay() {
     let tokensOfTheDay: any[];
 
     try { 
-      const theTokensOfTheDay = await this.AuctionContract.methods.tokensOfTheDay(this.stepsFromStart % 7).call();
+      const theTokensOfTheDay = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
       for (const token of theTokensOfTheDay) {
         const { tokenName, tokenSymbol } = await this.getVentureAuctionTokenInfo(token.coin);
         tokensOfTheDay.push({

@@ -2953,12 +2953,12 @@
         {
           "constant": true,
           "inputs": [],
-          "name": "auctionTypes",
+          "name": "getAuctionModes",
           "outputs": [
             {
-              "internalType": "uint8",
+              "internalType": "uint8[]",
               "name": "",
-              "type": "uint8"
+              "type": "uint8[]"
             }
           ],
           "payable": false,
@@ -2968,17 +2968,17 @@
         {
           "constant": true,
           "inputs": [],
-          "name": "tokensOfTheDay",
+          "name": "getTokensOfDay",
           "outputs": [
             {
-              "internalType": "address",
+              "internalType": "address[]",
               "name": "coin",
-              "type": "address"
+              "type": "address[]"
             },
             {
-              "internalType": "uint8",
+              "internalType": "uint8[]",
               "name": "percentage",
-              "type": "uint8"
+              "type": "uint256[]"
             }
           ],
           "payable": false,
@@ -15895,12 +15895,12 @@
         {
           "constant": true,
           "inputs": [],
-          "name": "auctionTypes",
+          "name": "getAuctionModes",
           "outputs": [
             {
-              "internalType": "uint8",
+              "internalType": "uint8[]",
               "name": "",
-              "type": "uint8"
+              "type": "uint8[]"
             }
           ],
           "payable": false,
@@ -15910,17 +15910,17 @@
         {
           "constant": true,
           "inputs": [],
-          "name": "tokensOfTheDay",
+          "name": "getTokensOfDay",
           "outputs": [
             {
-              "internalType": "address",
-              "name": "coin",
-              "type": "address"
+              "internalType": "address[]",
+              "name": "tokens",
+              "type": "address[]"
             },
             {
-              "internalType": "uint8",
+              "internalType": "uint256[]",
               "name": "percentage",
-              "type": "uint8"
+              "type": "uint256[]"
             }
           ],
           "payable": false,

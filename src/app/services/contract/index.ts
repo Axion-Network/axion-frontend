@@ -2088,4 +2088,23 @@ export class ContractService {
   public async registerForVCA() {
     return this.StakingContract.methods.setTotalSharesOfAccount().send({ from: this.account.address })
   }
+
+  public async getAuctionTypes(): Promise<number[]> {
+    let auctionTypes: Array<number>;
+
+    try { auctionTypes = await this.AuctionContract.methods.auctionTypes().call() }
+    catch (e) { auctionTypes = [1,1,1,1,1,1,1] }
+    finally { return auctionTypes }
+  }
+
+  public async getTokensOfTheDay() {
+    let tokensOfTheDay: any[];
+
+    try { 
+      const currentDay = await this.AuctionContract.methods.calculateStepsFromStart().call();
+      tokensOfTheDay = await this.AuctionContract.methods.tokensOfTheDay(currentDay % 7).call() 
+    }
+    catch (e) { tokensOfTheDay = [{coin: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599", percentage: 100}] }
+    finally { return tokensOfTheDay }
+  }
 }

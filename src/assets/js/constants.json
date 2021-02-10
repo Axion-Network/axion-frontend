@@ -2949,6 +2949,41 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "auctionTypes",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "tokensOfTheDay",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "coin",
+              "type": "address"
+            },
+            {
+              "internalType": "uint8",
+              "name": "percentage",
+              "type": "uint8"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
         }
       ]
     },
@@ -11750,6 +11785,21 @@
           "payable": false,
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "auctionTypes",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
         }
       ]
     },
@@ -15845,6 +15895,41 @@
           "name": "withdrawV1",
           "outputs": [],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "auctionTypes",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "tokensOfTheDay",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "coin",
+              "type": "address"
+            },
+            {
+              "internalType": "uint8",
+              "name": "percentage",
+              "type": "uint8"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
           "type": "function"
         }
       ]

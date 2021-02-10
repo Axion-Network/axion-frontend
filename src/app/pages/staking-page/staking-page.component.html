@@ -423,7 +423,7 @@
     </table>
 
     <!-- If Not Registered... -->
-    <div class="vca-register" *ngIf="true">
+    <div class="vca-register" *ngIf="false">
       <span class="axn-form-block-text">You address has not completed registration.<br/>In order to receive VCA divs from current stakes, you must register your stakes.</span>
       <br/>
       <button class="axn-btn axn-btn-gray" (click)="registerVCA()" [disabled]="vcaRegisterLoading"  [ngClass]="{ progress: vcaRegisterLoading }">

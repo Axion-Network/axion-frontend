@@ -1470,7 +1470,7 @@ export class ContractService {
     const gasLimit = await this.web3Service.getGasLimit();
     const gasPrice = await this.web3Service.gasPrice();
     const estimatedGas = await this.AuctionContract.methods
-      .bid(0, date, refLink)
+      .bid([0], date, refLink)
       .estimateGas({
         from: this.account.address,
         gas: gasLimit,

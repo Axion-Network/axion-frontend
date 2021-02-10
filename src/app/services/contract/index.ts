@@ -2118,7 +2118,7 @@ export class ContractService {
       const tokenData = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
 
       for (let i = 0; i < tokenData.tokens.length; ++i) {
-        const { tokenName, tokenSymbol } = await this.getVentureAuctionTokenInfo(tokenData.tokens[i].coin);
+        const { tokenName, tokenSymbol } = await this.getVentureAuctionTokenInfo(tokenData.tokens[i]);
         tokensOfTheDay.push({
           tokenName,
           tokenSymbol,

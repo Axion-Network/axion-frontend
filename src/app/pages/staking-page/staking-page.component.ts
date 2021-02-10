@@ -166,6 +166,7 @@ export class StakingPageComponent implements OnDestroy {
                 this.bpdInfoChecker = true;
               });
 
+              account.totalShares = await this.contractService.getTotalShares();
               this.vcaDivs = await this.contractService.getVentureAuctionDivs();
               this.maxSharesActive = await this.contractService.checkMaxSharesActive();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();

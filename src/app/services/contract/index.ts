@@ -2036,6 +2036,10 @@ export class ContractService {
     return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShare"](stake.sessionId).send({ from: this.account.address })
   }
 
+  public getTotalShares() {
+    return this.StakingContract.methods.getTotalSharesOf().send({ from: this.account.address })
+  }
+
   private async getVentureAuctionTokenInfo(tokenAddress: string) {
     const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, tokenAddress);
     const tokenName = await tokenContract.methods.name().call();

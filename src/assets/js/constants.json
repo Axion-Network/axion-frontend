@@ -4899,6 +4899,19 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getTotalSharesOf",
+          "outputs": [
+            {
+              "internalType": "uint",
+              "name": "",
+              "type": "uint"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     },
@@ -17820,6 +17833,19 @@
           "inputs": [],
           "name": "setTotalSharesOfAccount",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getTotalSharesOf",
+          "outputs": [
+            {
+              "internalType": "uint",
+              "name": "",
+              "type": "uint"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         }

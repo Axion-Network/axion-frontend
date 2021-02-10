@@ -143,6 +143,8 @@ export class ContractService {
   private discountPercent: number;
   private premiumPercent: number;
 
+  public stepsFromStart: number;
+  
   constructor(private httpService: HttpClient, private config: AppConfig) {
     setInterval(() => {
       if (!(this.secondsInDay && this.startDate)) {
@@ -164,6 +166,7 @@ export class ContractService {
       }
     }, 60000);
   }
+
 
   public getMSecondsInDay() {
     return this.secondsInDay * 1000;
@@ -267,6 +270,7 @@ export class ContractService {
         if (account) {
           this.initializeContracts();
           const options = await this.AuctionContract.methods.options().call();
+          this.stepsFromStart = await this.AuctionContract.methods.calculateStepsFromStart().call();
 
           this.autoStakeDays = +options.autoStakeDays;
           this.discountPercent = +options.discountPercent;
@@ -2047,7 +2051,7 @@ export class ContractService {
       const interest = await this.StakingContract.methods.getTokenInterestEarned(address).call({ from: this.account.address })
       interestEarned = new BigNumber(interest) 
     }
-    catch (e) { interestEarned = new BigNumber("1.09238").times("100000000") }
+    catch (e) { interestEarned = new BigNumber("0") }
     finally { return interestEarned }
   }
 
@@ -2100,11 +2104,8 @@ export class ContractService {
   public async getTokensOfTheDay() {
     let tokensOfTheDay: any[];
 
-    try { 
-      const currentDay = await this.AuctionContract.methods.calculateStepsFromStart().call();
-      tokensOfTheDay = await this.AuctionContract.methods.tokensOfTheDay(currentDay % 7).call() 
-    }
-    catch (e) { tokensOfTheDay = [{coin: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599", percentage: 100}] }
+    try { tokensOfTheDay = await this.AuctionContract.methods.tokensOfTheDay(this.stepsFromStart % 7).call() }
+    catch (e) { tokensOfTheDay = [{ coin: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599", percentage: 100 }] }
     finally { return tokensOfTheDay }
   }
 }

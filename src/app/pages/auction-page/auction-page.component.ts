@@ -104,6 +104,10 @@ export class AuctionPageComponent implements OnDestroy {
   private usdcPerEthPrice: BigNumber;
   private _1e18: string;
 
+  public isVCA: boolean = false;
+  public auctionTypes: number[];
+  public tokensOfTheDay: any[];
+
   constructor(
     public contractService: ContractService,
     private cookieService: CookieService,
@@ -133,6 +137,7 @@ export class AuctionPageComponent implements OnDestroy {
               this.getAuctionPool();
               this.auctionPoolChecker = true;
 
+              this.setupAuctionTypes();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
               this.usdcPerEthPrice = await this.contractService.getUsdcPerEthPrice();
             }
@@ -147,6 +152,15 @@ export class AuctionPageComponent implements OnDestroy {
   ngOnDestroy() {
     this.auctionPoolChecker = false;
     this.accountSubscribe.unsubscribe();
+  }
+
+  public async setupAuctionTypes() {
+    this.auctionTypes = await this.contractService.getAuctionTypes();
+    this.tokensOfTheDay = await this.contractService.getTokensOfTheDay();
+
+    if (this.auctionTypes[this.contractService.stepsFromStart % 7] === 1) {
+      this.isVCA = true;
+    }
   }
 
   public scanDate(date) {

@@ -25,11 +25,33 @@
     ></div>
   </div>
 
-    <div class="axn-form axn-form-base-2">
+  <!-- Auction Info -->
+  <div class="axn-form axn-form-base-2">
 
-    <!-- BID -->
-    <div class="axn-form-block axn-form-auction">
-      <div class="axn-form-block-one axn-form-arrow p-b-none">
+    <div>
+      <!-- Auction Type -->
+      <div class="axn-form-block m-b-10 p-20 axn-text-center" *ngIf="auctionTypes">
+        <span class="axn-text-subtitle">
+          Today's Auction: {{isVCA ? "Venture Capital" : "Regular"}}
+          <div 
+            class="question" 
+            mat-raised-button 
+            #tooltip2="matTooltip" 
+            (click)="tooltip2.toggle()" 
+            matTooltipClass="question__tooltip question__extrawidth"
+            matTooltip="
+            this tooltip needs updating. It will be used to explain the current auction type. (Venture Capital or... 'regular'?).
+
+            Venture Capital: JoeJoe will fill this in...
+
+            Regular: JoeJoe will also fill this in...
+            ">
+          </div>
+        </span>
+      </div>
+
+      <!-- BID INPUT -->
+      <div class="axn-form-block  axn-form-arrow axn-form-auction axn-form-block-one p-20">
         <span class="axn-form-block-one-title">Input</span>
         <input
           type="text"
@@ -718,7 +740,7 @@
     <div class="dialog-title">Attention!</div>
 
     <div class="dialog-description">
-      <span class="axn-text-boxy">
+      <span class="axn-text-body">
         Due to it's size, your bid will increase the auction price - if you proceed, every bidder will be receiving less AXN per ETH.<br/>
         You are better off buying on <a class="axn-link" target="_blank" href="https://app.uniswap.org/#/swap?outputCurrency=0x71f85b2e46976bd21302b64329868fd15eb0d127">Uniswap</a> with that amount of ETH.
       </span>

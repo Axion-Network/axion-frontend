@@ -2036,6 +2036,19 @@ export class ContractService {
     return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShare"](stake.sessionId).send({ from: this.account.address })
   }
 
+  private async getVentureAuctionTokenInfo(tokenAddress: string) {
+    const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, tokenAddress);
+    const tokenName = await tokenContract.methods.name().call();
+    const tokenSymbol = await tokenContract.methods.symbol().call();
+    const tokenDecimals = await tokenContract.methods.decimals().call();
+
+    return {
+      tokenName,
+      tokenSymbol,
+      tokenDecimals
+    }
+  }
+
   public async getVentureAuctionTokens(): Promise<string[]> {
     let vcaTokens: Array<string>;
 
@@ -2060,11 +2073,8 @@ export class ContractService {
     const vcaDivs = []
 
     for (const tokenAddress of vcTokens) {
-      const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, tokenAddress);
-      const tokenName = await tokenContract.methods.name().call();
-      const tokenSymbol = await tokenContract.methods.symbol().call();
-      const tokenDecimals = await tokenContract.methods.decimals().call();
       const interestEarnedToken = await this.getVentureAuctionInterestEarned(tokenAddress);
+      const { tokenName, tokenSymbol, tokenDecimals } = await this.getVentureAuctionTokenInfo(tokenAddress);
 
       let interestEarnedUSDC = "0.00"
       if (!interestEarnedToken.isZero()) {
@@ -2104,8 +2114,18 @@ export class ContractService {
   public async getTokensOfTheDay() {
     let tokensOfTheDay: any[];
 
-    try { tokensOfTheDay = await this.AuctionContract.methods.tokensOfTheDay(this.stepsFromStart % 7).call() }
-    catch (e) { tokensOfTheDay = [{ coin: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599", percentage: 100 }] }
+    try { 
+      const theTokensOfTheDay = await this.AuctionContract.methods.tokensOfTheDay(this.stepsFromStart % 7).call();
+      for (const token of theTokensOfTheDay) {
+        const { tokenName, tokenSymbol } = await this.getVentureAuctionTokenInfo(token.coin);
+        tokensOfTheDay.push({
+          tokenName,
+          tokenSymbol,
+          percentage: 100
+        })
+      }
+    }
+    catch (e) { tokensOfTheDay = [{ tokenName: "Wrapped BTC", tokenSymbol: "WBTC", percentage: 100 }] }
     finally { return tokensOfTheDay }
   }
 }

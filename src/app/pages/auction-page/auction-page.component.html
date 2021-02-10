@@ -48,6 +48,9 @@
             ">
           </div>
         </span>
+        <div class="tokens-of-the-day">
+          <span class="axn-text-body token-of-the-day" *ngFor="let token of tokensOfTheDay">{{token.tokenSymbol}}: {{token.percentage}}%</span>
+        </div>
       </div>
 
       <!-- BID INPUT -->

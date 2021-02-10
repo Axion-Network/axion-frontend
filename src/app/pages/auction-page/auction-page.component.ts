@@ -15,6 +15,7 @@ import { MetamaskErrorComponent } from "../../components/metamaskError/metamask-
 
 import { AuctionBid, ContractService, Auction } from "../../services/contract";
 import { MatDialog } from "@angular/material/dialog";
+import { TransactionSuccessModalComponent } from "src/app/components/transactionSuccessModal/transaction-success-modal.component";
 
 @Component({
   selector: "app-auction-page",
@@ -131,13 +132,13 @@ export class AuctionPageComponent implements OnDestroy {
               this.onChangeAmount();
               this.onChangeAccount.emit();
               this.getWalletBids();
+              this.setupAuctionTypes();
 
               const info = await this.contractService.getAuctionPool();
               this.poolInfo = info;
               this.getAuctionPool();
               this.auctionPoolChecker = true;
 
-              this.setupAuctionTypes();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
               this.usdcPerEthPrice = await this.contractService.getUsdcPerEthPrice();
             }
@@ -146,7 +147,7 @@ export class AuctionPageComponent implements OnDestroy {
       });
 
     this.tokensDecimals = this.contractService.getCoinsDecimals();
-    this.settings = config.getConfig();
+    this.settings = this.config.getConfig();
   }
 
   ngOnDestroy() {
@@ -328,21 +329,19 @@ export class AuctionPageComponent implements OnDestroy {
     }
 
     this.sendAuctionProgress = true;
+    const callMethod = this.formsData.bidEthAmount === this.account.balances.ETH.wei ? "sendMaxETHToAuctionV2" : "sendETHToAuctionV2";
 
-    const callMethod =
-      this.formsData.bidEthAmount === this.account.balances.ETH.wei
-        ? "sendMaxETHToAuctionV2"
-        : "sendETHToAuctionV2";
-
-    this.contractService[callMethod](
-      this.formsData.bidEthAmount,
-      refAddress
-    )
+    this.contractService[callMethod](this.formsData.bidEthAmount, refAddress)
       .then(
         ({ transactionHash }) => {
           this.contractService.updateETHBalance(true).then(() => {
             this.formsData.bidEthAmount = undefined;
           });
+          
+          this.dialog.open(TransactionSuccessModalComponent, {
+            width: "400px",
+            data: transactionHash,
+          })
         },
         (err) => {
           if (err.message) {

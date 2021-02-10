@@ -1446,7 +1446,7 @@ export class ContractService {
       ? ref.toLowerCase()
       : "0x0000000000000000000000000000000000000000".toLowerCase();
 
-    const amountOutMin = await this.getAmountOutMinAsync(amount);
+    const amountOutMin = [await this.getAmountOutMinAsync(amount)];
 
     return this.AuctionContract.methods
       .bid(amountOutMin, date, refLink)
@@ -1483,7 +1483,7 @@ export class ContractService {
       throw new Error("Not enough gas");
     }
 
-    const amountOutMin = await this.getAmountOutMinAsync(newAmount.toString());
+    const amountOutMin = [await this.getAmountOutMinAsync(newAmount.toString())];
 
     return this.AuctionContract.methods
       .bid(amountOutMin, date, refLink)

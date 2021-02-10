@@ -2322,9 +2322,9 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
+              "internalType": "uint256[]",
               "name": "amountOutMin",
-              "type": "uint256"
+              "type": "uint256[]"
             },
             {
               "internalType": "uint256",
@@ -4853,9 +4853,9 @@
           "name": "divTokens",
           "outputs": [
             {
-              "internalType": "address",
-              "name": "address",
-              "type": "address"
+              "internalType": "address[]",
+              "name": "divTokens",
+              "type": "address[]"
             }
           ],
           "stateMutability": "view",
@@ -15300,9 +15300,9 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
+              "internalType": "uint256[]",
               "name": "amountOutMin",
-              "type": "uint256"
+              "type": "uint256[]"
             },
             {
               "internalType": "uint256",
@@ -15313,11 +15313,6 @@
               "internalType": "address",
               "name": "ref",
               "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "stakeDays",
-              "type": "uint256"
             }
           ],
           "name": "bid",
@@ -17781,9 +17776,9 @@
           "name": "divTokens",
           "outputs": [
             {
-              "internalType": "address",
-              "name": "address",
-              "type": "address"
+              "internalType": "address[]",
+              "name": "divTokens",
+              "type": "address[]"
             }
           ],
           "stateMutability": "view",

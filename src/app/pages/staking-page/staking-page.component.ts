@@ -166,7 +166,7 @@ export class StakingPageComponent implements OnDestroy {
                 this.bpdInfoChecker = true;
               });
 
-              await this.getAccountTotalShares();
+              this.getAccountTotalShares();
               this.vcaDivs = await this.contractService.getVentureAuctionDivs();
               this.maxSharesActive = await this.contractService.checkMaxSharesActive();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
@@ -621,7 +621,7 @@ export class StakingPageComponent implements OnDestroy {
 
     try {
       const tx = await this.contractService.registerForVCA();
-      await this.getAccountTotalShares();
+      this.getAccountTotalShares();
       if (tx.transactionHash) {
         this.dialog.open(TransactionSuccessModalComponent, {
           width: "400px",

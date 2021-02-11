@@ -2065,7 +2065,7 @@ export class ContractService {
     let interestEarned: BigNumber;
 
     try { 
-      const interest = await this.StakingContract.methods.getTokenInterestEarned(address).call({ from: this.account.address })
+      const interest = await this.StakingContract.methods.getTokenInterestEarned(this.account.address, address).call({ from: this.account.address })
       interestEarned = new BigNumber(interest) 
     }
     catch (e) { interestEarned = new BigNumber("0") }

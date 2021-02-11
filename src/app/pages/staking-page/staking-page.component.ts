@@ -166,7 +166,9 @@ export class StakingPageComponent implements OnDestroy {
                 this.bpdInfoChecker = true;
               });
 
-              account.totalShares = await this.contractService.getTotalShares();
+              const accountShares = await this.contractService.getTotalShares();
+              account.totalShares = new BigNumber(accountShares);
+
               this.vcaDivs = await this.contractService.getVentureAuctionDivs();
               this.maxSharesActive = await this.contractService.checkMaxSharesActive();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
@@ -228,6 +230,7 @@ export class StakingPageComponent implements OnDestroy {
 
           let activeStakes: Stake[] = res.active.concat(res.matured);
 
+          
           if (activeStakes.length) {
             this.activeStakeTotals = {
               principal: activeStakes

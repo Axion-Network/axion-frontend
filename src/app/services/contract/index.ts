@@ -2081,11 +2081,12 @@ export class ContractService {
         const interestEarnedToken = await this.getVentureAuctionInterestEarned(tokenAddress);
         const { tokenName, tokenSymbol, tokenDecimals } = await this.getVentureAuctionTokenInfo(tokenAddress);
 
-        let interestEarnedUSDC = "0.00"
-        if (!interestEarnedToken.isZero()) {
-          const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
-          interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
-        }
+        let interestEarnedUSDC = "0.00";
+        // TODO - doesnt work in Ropsten
+        // if (!interestEarnedToken.isZero()) {
+        //   const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
+        //   interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
+        // }
 
         vcaDivs.push({
           tokenName,

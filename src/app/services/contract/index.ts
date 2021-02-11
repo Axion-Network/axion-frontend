@@ -1405,7 +1405,7 @@ export class ContractService {
     const amountOutMin = await this.getAmountOutMinAsync(newAmount.toString());
 
     return this.AuctionContract.methods
-      .bid(amountOutMin, date, refLink)
+      .bid([0], date, refLink) // TODO
       .send({
         from: this.account.address,
         value: newAmount,
@@ -1428,7 +1428,7 @@ export class ContractService {
     const amountOutMin = await this.getAmountOutMinAsync(amount);
 
     return this.AuctionContract.methods
-      .bid(amountOutMin, date, refLink)
+      .bid([0], date, refLink) // TODO
       .send({
         from: this.account.address,
         value: amount,
@@ -1449,7 +1449,7 @@ export class ContractService {
     const amountOutMin = [await this.getAmountOutMinAsync(amount)];
 
     return this.AuctionContract.methods
-      .bid(amountOutMin, date, refLink)
+      .bid([0], date, refLink) // TODO
       .send({
         from: this.account.address,
         value: amount,
@@ -1486,7 +1486,7 @@ export class ContractService {
     const amountOutMin = [await this.getAmountOutMinAsync(newAmount.toString())];
 
     return this.AuctionContract.methods
-      .bid(amountOutMin, date, refLink)
+      .bid([0], date, refLink) // TODO
       .send({
         from: this.account.address,
         value: newAmount,

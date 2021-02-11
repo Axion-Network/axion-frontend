@@ -2056,7 +2056,7 @@ export class ContractService {
   public async getVentureAuctionTokens(): Promise<string[]> {
     let vcaTokens: Array<string>;
 
-    try { vcaTokens = await this.StakingContract.methods.divTokens().call() } 
+    try { vcaTokens = await this.StakingContract.methods.getDivTokens().call() } 
     catch (e) { vcaTokens = ["0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"] }
     finally { return vcaTokens }
   }
@@ -2076,24 +2076,26 @@ export class ContractService {
     const vcTokens = await this.getVentureAuctionTokens();
     const vcaDivs = []
 
-    for (const tokenAddress of vcTokens) {
-      const interestEarnedToken = await this.getVentureAuctionInterestEarned(tokenAddress);
-      const { tokenName, tokenSymbol, tokenDecimals } = await this.getVentureAuctionTokenInfo(tokenAddress);
+    if(vcTokens) {
+      for (const tokenAddress of vcTokens) {
+        const interestEarnedToken = await this.getVentureAuctionInterestEarned(tokenAddress);
+        const { tokenName, tokenSymbol, tokenDecimals } = await this.getVentureAuctionTokenInfo(tokenAddress);
 
-      let interestEarnedUSDC = "0.00"
-      if (!interestEarnedToken.isZero()) {
-        const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
-        interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
+        let interestEarnedUSDC = "0.00"
+        if (!interestEarnedToken.isZero()) {
+          const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
+          interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
+        }
+
+        vcaDivs.push({
+          tokenName,
+          tokenSymbol,
+          tokenAddress,
+          tokenDecimals,
+          interestEarnedUSDC,
+          interestEarnedToken,
+        })
       }
-       
-      vcaDivs.push({
-        tokenName,
-        tokenSymbol,
-        tokenAddress,
-        tokenDecimals,
-        interestEarnedUSDC,
-        interestEarnedToken,
-      })
     }
 
     return vcaDivs;

@@ -4850,7 +4850,7 @@
         },
         {
           "inputs": [],
-          "name": "divTokens",
+          "name": "getDivTokens",
           "outputs": [
             {
               "internalType": "address[]",
@@ -17786,7 +17786,7 @@
         },
         {
           "inputs": [],
-          "name": "divTokens",
+          "name": "getDivTokens",
           "outputs": [
             {
               "internalType": "address[]",

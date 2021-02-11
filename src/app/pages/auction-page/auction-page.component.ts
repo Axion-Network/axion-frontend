@@ -306,26 +306,28 @@ export class AuctionPageComponent implements OnDestroy {
     }
 
     if (!withoutWarning) {
+      if (this.poolInfo.eth && this.poolInfo.axn) {
+        // Small bid warning
+        const potentialWinnings = new BigNumber(this.poolInfo.axnPerEth).times(this.formsData.bidEthAmount).div(this._1e18).dp(0);
+        if (potentialWinnings.isZero()) {
+          this.smallBidDialog = this.dialog.open(this.smallBidModal, {});
+          return;
+        }
 
-      // Small bid warning
-      const potentialWinnings = new BigNumber(this.poolInfo.axnPerEth).times(this.formsData.bidEthAmount).div(this._1e18).dp(0);
-      if (potentialWinnings.isZero()) {
-        this.smallBidDialog = this.dialog.open(this.smallBidModal, {});
-        return;
-      }
+        // Overbid warning
+        if (this.poolInfo.isOverBid) {
+          this.overBidDialog = this.dialog.open(this.overBidModal, {});
+          return;
+        }
 
-      // Overbid warning
-      if (this.poolInfo.isOverBid) {
-        this.overBidDialog = this.dialog.open(this.overBidModal, {});
-        return;
+        // Large bid warning
+        const afterBidAuctionPrice = new BigNumber(this.poolInfo.axn).div(this.poolInfo.eth.plus(this.formsData.bidEthAmount));
+        if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth.times(0.75))) {
+          this.largeBidDialog = this.dialog.open(this.largeBidModal, {});
+          return;
+        }
       }
-
-      // Large bid warning
-      const afterBidAuctionPrice = new BigNumber(this.poolInfo.axn).div(this.poolInfo.eth.plus(this.formsData.bidEthAmount));
-      if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth.times(0.75))) {
-        this.largeBidDialog = this.dialog.open(this.largeBidModal, {});
-        return;
-      }
+    
     }
 
     this.sendAuctionProgress = true;

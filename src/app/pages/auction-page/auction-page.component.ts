@@ -106,7 +106,7 @@ export class AuctionPageComponent implements OnDestroy {
   private _1e18: string;
 
   public isVCA: boolean = false;
-  public auctionModes: number[];
+  public auctionModes: string[];
   public tokensOfTheDay: any[];
 
   constructor(
@@ -159,7 +159,7 @@ export class AuctionPageComponent implements OnDestroy {
     this.auctionModes = await this.contractService.getAuctionModes();
     this.tokensOfTheDay = await this.contractService.getTokensOfTheDay();
 
-    if (this.auctionModes[this.contractService.stepsFromStart % 7] === 1) {
+    if (this.auctionModes[this.contractService.stepsFromStart % 7] === "1") {
       this.isVCA = true;
     }
   }

@@ -2953,21 +2953,27 @@
         {
           "constant": true,
           "inputs": [],
-          "name": "getAuctionModes",
           "outputs": [
             {
-              "internalType": "uint8[]",
+              "internalType": "uint8[7]",
               "name": "",
-              "type": "uint8[]"
+              "type": "uint8[7]"
             }
           ],
+          "name": "getAuctionModes",
           "payable": false,
           "stateMutability": "view",
           "type": "function"
         },
         {
           "constant": true,
-          "inputs": [],
+          "inputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
           "name": "getTokensOfDay",
           "outputs": [
             {
@@ -16017,22 +16023,27 @@
         {
           "constant": true,
           "inputs": [],
-          "name": "getAuctionModes",
           "outputs": [
             {
-              "internalType": "uint8[]",
+              "internalType": "uint8[7]",
               "name": "",
-              "type": "uint8[]"
+              "type": "uint8[7]"
             }
           ],
           "payable": false,
+          "name": "getAuctionModes",
           "stateMutability": "view",
           "type": "function"
         },
         {
           "constant": true,
-          "inputs": [],
-          "name": "getTokensOfDay",
+          "inputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
           "outputs": [
             {
               "internalType": "address[]",
@@ -16045,6 +16056,7 @@
               "type": "uint256[]"
             }
           ],
+          "name": "getTokensOfDay",
           "payable": false,
           "stateMutability": "view",
           "type": "function"

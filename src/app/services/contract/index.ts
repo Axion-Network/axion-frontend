@@ -2110,30 +2110,23 @@ export class ContractService {
     return this.StakingContract.methods.setTotalSharesOfAccount().send({ from: this.account.address })
   }
 
-  public async getAuctionModes(): Promise<number[]> {
-    let autionModes: Array<number>;
-
-    try { autionModes = await this.AuctionContract.methods.getAuctionModes().call() }
-    catch (e) { autionModes = [1,1,1,1,1,1,1] }
-    finally { return autionModes }
+  public async getAuctionModes(): Promise<string[]> {
+    return this.AuctionContract.methods.getAuctionModes().call()
   }
 
   public async getTokensOfTheDay() {
-    let tokensOfTheDay: any[];
+    const tokensOfTheDay = [];
+    const tokenData = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
 
-    try { 
-      const tokenData = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
-
-      for (let i = 0; i < tokenData.tokens.length; ++i) {
-        const { tokenName, tokenSymbol } = await this.getVentureAuctionTokenInfo(tokenData.tokens[i]);
-        tokensOfTheDay.push({
-          tokenName,
-          tokenSymbol,
-          percentage: tokenData.percentages[i]
-        })
-      }
+    for (let i = 0; i < tokenData.tokens.length; ++i) {
+      const { tokenName, tokenSymbol } = await this.getVentureAuctionTokenInfo(tokenData.tokens[i]);
+      tokensOfTheDay.push({
+        tokenName,
+        tokenSymbol,
+        percentage: +tokenData.percentage[i]
+      })
     }
-    catch (e) { tokensOfTheDay = [{ tokenName: "Wrapped BTC", tokenSymbol: "WBTC", percentage: 100 }] }
-    finally { return tokensOfTheDay }
+
+    return tokensOfTheDay;
   }
 }

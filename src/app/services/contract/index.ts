@@ -2053,12 +2053,12 @@ export class ContractService {
     }
   }
 
-  public async getVentureAuctionTokens(): Promise<string[]> {
+  public getVentureAuctionTokens(): Promise<string[]> {
     return this.StakingContract.methods.getDivTokens().call();
   }
 
-  public async getVentureAuctionInterestEarned(address: string): Promise<BigNumber> {
-    return new BigNumber(await this.StakingContract.methods.getTokenInterestEarned(this.account.address, address).call());
+  public getVentureAuctionInterestEarned(address: string): Promise<string> {
+    return this.StakingContract.methods.getTokenInterestEarned(this.account.address, address).call();
   }
 
   public async getVentureAuctionDivs(): Promise<VentureAuctionDivs[]> {
@@ -2067,7 +2067,7 @@ export class ContractService {
 
     if(vcTokens) {
       for (const tokenAddress of vcTokens) {
-        const interestEarnedToken = await this.getVentureAuctionInterestEarned(tokenAddress);
+        const interestEarnedToken = new BigNumber(await this.getVentureAuctionInterestEarned(tokenAddress));
         const { tokenName, tokenSymbol, tokenDecimals } = await this.getVentureAuctionTokenInfo(tokenAddress);
 
         let interestEarnedUSDC = "0.00";
@@ -2091,15 +2091,15 @@ export class ContractService {
     return vcaDivs;
   }
 
-  public async withdrawVCADivs(tokenAddress: string) {
+  public withdrawVCADivs(tokenAddress: string) {
     return this.StakingContract.methods.withdrawDivToken(tokenAddress).send({ from: this.account.address })
   }
 
-  public async registerForVCA() {
+  public registerForVCA() {
     return this.StakingContract.methods.setTotalSharesOfAccount().send({ from: this.account.address })
   }
 
-  public async getAuctionModes(): Promise<string[]> {
+  public getAuctionModes(): Promise<string[]> {
     return this.AuctionContract.methods.getAuctionModes().call()
   }
 

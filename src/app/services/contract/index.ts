@@ -2054,22 +2054,11 @@ export class ContractService {
   }
 
   public async getVentureAuctionTokens(): Promise<string[]> {
-    let vcaTokens: Array<string>;
-
-    try { vcaTokens = await this.StakingContract.methods.getDivTokens().call() } 
-    catch (e) { vcaTokens = ["0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"] }
-    finally { return vcaTokens }
+    return this.StakingContract.methods.getDivTokens().call();
   }
 
   public async getVentureAuctionInterestEarned(address: string): Promise<BigNumber> {
-    let interestEarned: BigNumber;
-
-    try { 
-      const interest = await this.StakingContract.methods.getTokenInterestEarned(this.account.address, address).call({ from: this.account.address })
-      interestEarned = new BigNumber(interest) 
-    }
-    catch (e) { interestEarned = new BigNumber("0") }
-    finally { return interestEarned }
+    return new BigNumber(await this.StakingContract.methods.getTokenInterestEarned(this.account.address, address).call());
   }
 
   public async getVentureAuctionDivs(): Promise<VentureAuctionDivs[]> {

@@ -2066,7 +2066,7 @@ export class ContractService {
     const vcaDivs = []
 
     if(vcTokens) {
-      for (const tokenAddress of vcTokens) {
+      for (const tokenAddress of vcTokens.filter(x => x !== "0x0000000000000000000000000000000000000000")) {
         const interestEarnedToken = new BigNumber(await this.getVentureAuctionInterestEarned(tokenAddress));
         const { tokenName, tokenSymbol, tokenDecimals } = await this.getVentureAuctionTokenInfo(tokenAddress);
 

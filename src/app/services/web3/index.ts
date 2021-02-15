@@ -204,4 +204,8 @@ export class MetamaskService {
       };
     });
   }
+
+  public toChecksumAddress(address: string) {
+    return Web3.utils.toChecksumAddress(address)
+  }
 }

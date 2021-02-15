@@ -33,6 +33,7 @@ export interface Stake {
   isWithdrawn: boolean;
   isV1: boolean;
   apy: number;
+  length: number;
 }
 
 export interface Auction {
@@ -1229,7 +1230,9 @@ export class ContractService {
         )
         .call();
 
+      const startMs = stakeSession.start * 1000;
       const endMs = stakeSession.end * 1000;
+      const dayMs = this.settingsApp.settings.time.seconds * 1000;
       const amount = new BigNumber(stakeSession.amount);
       const bigPayDay = new BigNumber(bigPayDayPayout[0]);
 
@@ -1255,7 +1258,8 @@ export class ContractService {
         isBpdWithdraw: stakeSession.withdrawn && !bigPayDay.isZero(),
         isBpdWithdrawn: bpdSession.withdrawn,
         isV1: true,
-        apy: 0
+        apy: 0,
+        length: (endMs - startMs) / dayMs
       };
 
       return stake;
@@ -1282,7 +1286,9 @@ export class ContractService {
         )
         .call();
 
+      const startMs = stakeSession.start * 1000;
       const endMs = stakeSession.end * 1000;
+      const dayMs = this.settingsApp.settings.time.seconds * 1000;
       const amount = new BigNumber(stakeSession.amount);
       const bigPayDay = new BigNumber(bigPayDayPayout[0]);
 
@@ -1305,7 +1311,8 @@ export class ContractService {
         isBpdWithdraw: stakeSession.withdrawn && !bigPayDay.isZero(),
         isBpdWithdrawn: bpdSession.withdrawn,
         isV1: false,
-        apy: 0
+        apy: 0,
+        length: (endMs - startMs) / dayMs
       };
 
       return stake;
@@ -2020,5 +2027,9 @@ export class ContractService {
   
   public extendStake(stake: Stake) {
     return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShare"](stake.sessionId).send({ from: this.account.address })
+  }
+
+  public getMaxDaysMaxShares() {
+    return this.StakingContract.methods.getMaxShareMaxDays().call()
   }
 }

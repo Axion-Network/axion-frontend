@@ -4812,6 +4812,19 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxShareMaxDays",
+          "outputs": [
+            {
+              "internalType": "uint16",
+              "name": "_maxShareMaxDays",
+              "type": "uint16"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         }
       ]
     },
@@ -17637,6 +17650,19 @@
           "name": "unstakeV1",
           "outputs": [],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxShareMaxDays",
+          "outputs": [
+            {
+              "internalType": "uint16",
+              "name": "_maxShareMaxDays",
+              "type": "uint16"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         }
       ]

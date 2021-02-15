@@ -2136,4 +2136,11 @@ export class ContractService {
 
     return tokensOfTheDay;
   }
+
+  public async isVCARegistrationRequired(): Promise<boolean> {
+    const stakes = await this.getWalletStakesAsync();
+    const totalSharesVCA = new BigNumber(await this.getTotalShares())
+    const totalSharesStakes = stakes.active.concat(stakes.matured).map(x => x.shares).reduce((total, x) => total.plus(x));
+    return !totalSharesVCA.isEqualTo(totalSharesStakes);
+  }
 }

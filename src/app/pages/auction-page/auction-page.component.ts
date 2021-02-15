@@ -139,6 +139,7 @@ export class AuctionPageComponent implements OnDestroy {
               this.getAuctionPool();
               this.auctionPoolChecker = true;
 
+              this.account.mustRegisterVCA = await this.contractService.isVCARegistrationRequired();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
               this.usdcPerEthPrice = await this.contractService.getUsdcPerEthPrice();
             }

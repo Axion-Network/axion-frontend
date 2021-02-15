@@ -1,4 +1,5 @@
-<section class="axn-section" *ngIf="account">
+<!-- Stake -->
+<section class="axn-section" *ngIf="account && !account.mustRegisterVCA">
   <div class="axn-title-block">
     <span class="axn-title">Create Stake</span>
     <div
@@ -226,6 +227,7 @@
   </form>
 </section>
 
+<!-- VCA Divs -->
 <section class="axn-section" *ngIf="activeStakeTotals && vcaDivs">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
@@ -233,7 +235,7 @@
     </div>
     
     <!-- If Registered... -->
-    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" *ngIf="vcaDivs.length > 0">
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" *ngIf="vcaDivs.length > 0 && !account.mustRegisterVCA">
       <thead>
         <tr>
           <th>Token</th>
@@ -268,8 +270,8 @@
     </table>
 
     <!-- If Not Registered... -->
-    <div class="vca-register" *ngIf="!account.totalShares.isEqualTo(activeStakeTotals.shares)">
-      <span class="axn-form-block-text">You address has not completed registration.<br/>In order to receive VCA divs from current stakes, you must register your stakes.</span>
+    <div class="vca-register" *ngIf="account.mustRegisterVCA">
+      <span class="axn-form-block-text">This address (<span class="axn-btn-metamask-text">{{account.address}}</span>) has not completed VCA registration.<br/>In order to interact with your stakes and receive VCA divs from current stakes, you must register your existing stakes.</span>
       <br/>
       <button class="axn-btn axn-btn-gray" (click)="registerVCA()" [disabled]="vcaRegisterLoading"  [ngClass]="{ progress: vcaRegisterLoading }">
         <span class="lds-ellipsis" *ngIf="vcaRegisterLoading">
@@ -283,7 +285,8 @@
   </div>
 </section>
 
-<section class="axn-section" *ngIf="tableInfo">
+<!-- BPD -->
+<section class="axn-section" *ngIf="tableInfo && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">BigPayDay</span>
@@ -335,11 +338,13 @@
   </div>
 </section>
 
+<!-- Spinner -->
 <section *ngIf="account && !stakingInfoChecker" class="loading-spinner">
   <mat-spinner color="accent" diameter="50"></mat-spinner>
 </section>
 
-<section class="axn-section" *ngIf="activeStakeTotals && tokensDecimals">
+<!-- Active Stake Totals -->
+<section class="axn-section" *ngIf="activeStakeTotals && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Active Stake Totals</span>
@@ -438,7 +443,7 @@
 </section>
 
 <!-- Matured Staked -->
-<section class="axn-section" *ngIf="stakes?.matured?.length && tokensDecimals">
+<section class="axn-section" *ngIf="stakes?.matured?.length && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Matured Stakes</span>
@@ -597,7 +602,8 @@
   </div>
 </section>
 
-<section class="axn-section" *ngIf="stakes?.active?.length && tokensDecimals">
+<!-- Active Stakes -->
+<section class="axn-section" *ngIf="stakes?.active?.length && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Active Stakes</span>
@@ -756,7 +762,8 @@
   </div>
 </section>
 
-<section class="axn-section" *ngIf="stakes?.closed?.length && tokensDecimals">
+<!-- Stake History -->
+<section class="axn-section" *ngIf="stakes?.closed?.length && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Stake History</span>
@@ -893,7 +900,8 @@
   </div>
 </section>
 
-<section class="axn-section" *ngIf="stakes?.closedV1?.length && tokensDecimals">
+<!-- V1 Stake History -->
+<section class="axn-section" *ngIf="stakes?.closedV1?.length && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">v1 Stake History</span>
@@ -997,7 +1005,6 @@
     </div>
   </div>
 </ng-template>
-
 
 <!-- Unstake Modal -->
 <ng-template #actionsModal class="dialog-block" mat-dialog-content>

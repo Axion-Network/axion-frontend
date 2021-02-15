@@ -2120,7 +2120,9 @@ export class ContractService {
 
   public async getTokensOfTheDay() {
     const tokensOfTheDay = [];
-    const {tokens, percentage: percentages } = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
+    const result = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
+    const tokens = result[0]
+    const percentages = result[1];
 
     for (let i = 0; i < tokens.length; ++i) {
       const percentage = +percentages[i];

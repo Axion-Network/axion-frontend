@@ -94,6 +94,13 @@ export class ContractService {
     ETH: 18,
   };
 
+  private readonly ethereumToken: any = {
+    tokenDecimals: 18,
+    tokenSymbol: "ETH",
+    tokenName: "Ethereum",
+    tokenAddress: "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+  }
+
   public readonly _1e18: string = Math.pow(10, 18).toString();
 
   public account;
@@ -2044,7 +2051,7 @@ export class ContractService {
     const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, tokenAddress);
     const tokenName = await tokenContract.methods.name().call();
     const tokenSymbol = await tokenContract.methods.symbol().call();
-    const tokenDecimals = await tokenContract.methods.decimals().call();
+    const tokenDecimals = +(await tokenContract.methods.decimals().call());
 
     return {
       tokenName,
@@ -2062,29 +2069,37 @@ export class ContractService {
   }
 
   public async getVentureAuctionDivs(): Promise<VentureAuctionDivs[]> {
-    const vcTokens = await this.getVentureAuctionTokens();
+    const vcaTokens = await this.getVentureAuctionTokens();
     const vcaDivs = []
 
-    if(vcTokens) {
-      for (const tokenAddress of vcTokens.filter(x => x !== "0x0000000000000000000000000000000000000000")) {
+    if (vcaTokens) {
+      for (const tokenAddress of vcaTokens.filter(x => x !== "0x0000000000000000000000000000000000000000")) {
         const interestEarnedToken = new BigNumber(await this.getVentureAuctionInterestEarned(tokenAddress));
-        const { tokenName, tokenSymbol, tokenDecimals } = await this.getVentureAuctionTokenInfo(tokenAddress);
-
         let interestEarnedUSDC = "0.00";
-        // TODO - doesnt work in Ropsten
-        // if (!interestEarnedToken.isZero()) {
-        //   const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
-        //   interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
-        // }
+        if (!interestEarnedToken.isZero() && environment.production) {
+          const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
+          interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
+        }
 
-        vcaDivs.push({
-          tokenName,
-          tokenSymbol,
-          tokenAddress,
-          tokenDecimals,
-          interestEarnedUSDC,
-          interestEarnedToken,
-        })
+        // Check if Ethereum
+        if (tokenAddress === this.web3Service.toChecksumAddress(this.ethereumToken.tokenAddress)) {
+          vcaDivs.push({
+            ...this.ethereumToken,
+            interestEarnedUSDC,
+            interestEarnedToken,
+          })
+        }
+        else {
+          const { tokenName, tokenSymbol, tokenDecimals } = await this.getVentureAuctionTokenInfo(tokenAddress);
+          vcaDivs.push({
+            tokenName,
+            tokenSymbol,
+            tokenAddress,
+            tokenDecimals,
+            interestEarnedUSDC,
+            interestEarnedToken,
+          })
+        }
       }
     }
 
@@ -2105,17 +2120,27 @@ export class ContractService {
 
   public async getTokensOfTheDay() {
     const tokensOfTheDay = [];
-    const tokenData = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
+    const {tokens, percentage: percentages } = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
 
-    for (let i = 0; i < tokenData.tokens.length; ++i) {
-      const { tokenName, tokenSymbol } = await this.getVentureAuctionTokenInfo(tokenData.tokens[i]);
-      tokensOfTheDay.push({
-        tokenName,
-        tokenSymbol,
-        percentage: +tokenData.percentage[i]
-      })
+    for (let i = 0; i < tokens.length; ++i) {
+      const percentage = +percentages[i];
+
+      // Check if Ethereum
+      if (tokens[i] === this.web3Service.toChecksumAddress(this.ethereumToken.tokenAddress)) {
+        tokensOfTheDay.push({ tokenSymbol: this.ethereumToken.tokenSymbol, percentage })
+      } else {
+        const { tokenSymbol } = await this.getVentureAuctionTokenInfo(tokens[i]);
+        tokensOfTheDay.push({ tokenSymbol, percentage })
+      }
     }
 
     return tokensOfTheDay;
+  }
+
+  public async isVCARegistrationRequired(): Promise<boolean> {
+    const stakes = await this.getWalletStakesAsync();
+    const totalSharesVCA = new BigNumber(await this.getTotalShares())
+    const totalSharesStakes = stakes.active.concat(stakes.matured).map(x => x.shares).reduce((total, x) => total.plus(x));
+    return !totalSharesVCA.isEqualTo(totalSharesStakes);
   }
 }

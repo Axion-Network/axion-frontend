@@ -167,7 +167,7 @@ export class StakingPageComponent implements OnDestroy {
               });
 
               this.updateUserVCADivs();
-              this.getAccountTotalShares();
+              this.checkVCARegistration();
               this.maxSharesActive = await this.contractService.checkMaxSharesActive();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
             }
@@ -186,8 +186,8 @@ export class StakingPageComponent implements OnDestroy {
     this.vcaDivs = await this.contractService.getVentureAuctionDivs();
   }
 
-  public async getAccountTotalShares() {
-    this.account.totalShares = new BigNumber(await this.contractService.getTotalShares());
+  public async checkVCARegistration() {
+    this.account.mustRegisterVCA = await this.contractService.isVCARegistrationRequired();
   }
 
   public getStakingInfo() {
@@ -626,7 +626,7 @@ export class StakingPageComponent implements OnDestroy {
 
     try {
       const tx = await this.contractService.registerForVCA();
-      this.getAccountTotalShares();
+      this.checkVCARegistration();
       if (tx.transactionHash) {
         this.dialog.open(TransactionSuccessModalComponent, {
           width: "400px",

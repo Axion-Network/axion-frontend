@@ -251,7 +251,7 @@
           <td>{{vca.tokenSymbol}}</td>
           <td>
             <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{vca.interestEarnedToken | bigNumberFormat: vca.tokenDecimals:false:false:vca.tokenDecimals}}">
-              {{vca.interestEarnedToken | bigNumberFormat: vca.tokenDecimals:true:false:4}}
+              {{vca.interestEarnedToken | bigNumberFormat: vca.tokenDecimals:true:false:8}}
             </span>
           </td>
           <td>${{vca.interestEarnedUSDC}}</td>

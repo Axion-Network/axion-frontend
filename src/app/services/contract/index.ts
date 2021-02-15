@@ -2138,9 +2138,16 @@ export class ContractService {
   }
 
   public async isVCARegistrationRequired(): Promise<boolean> {
-    const stakes = await this.getWalletStakesAsync();
+    const { active, matured } = await this.getWalletStakesAsync();
     const totalSharesVCA = new BigNumber(await this.getTotalShares())
-    const totalSharesStakes = stakes.active.concat(stakes.matured).map(x => x.shares).reduce((total, x) => total.plus(x));
+
+    let totalSharesStakes = new BigNumber(0);
+    const stakes = active.concat(matured);
+
+    if (stakes.length > 0) {
+      totalSharesStakes = stakes.map(x => x.shares).reduce((total, x) => total.plus(x));
+    }
+    
     return !totalSharesVCA.isEqualTo(totalSharesStakes);
   }
 }

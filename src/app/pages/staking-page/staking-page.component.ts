@@ -132,6 +132,7 @@ export class StakingPageComponent implements OnDestroy {
   private dayEndSubscriber;
 
   private usdcPerAxnPrice;
+  public maxShareMaxDays;
 
   constructor(
     private contractService: ContractService,
@@ -164,6 +165,7 @@ export class StakingPageComponent implements OnDestroy {
                 this.bpdInfoChecker = true;
               });
 
+              this.maxShareMaxDays = await this.contractService.getMaxDaysMaxShares();
               this.maxSharesActive = await this.contractService.checkMaxSharesActive();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
             }

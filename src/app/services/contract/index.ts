@@ -2028,4 +2028,8 @@ export class ContractService {
   public extendStake(stake: Stake) {
     return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShare"](stake.sessionId).send({ from: this.account.address })
   }
+
+  public getMaxDaysMaxShares() {
+    return this.StakingContract.methods.getMaxShareMaxDays().call()
+  }
 }

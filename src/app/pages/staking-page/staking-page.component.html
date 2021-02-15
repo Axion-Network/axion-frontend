@@ -492,7 +492,7 @@
 
           <!-- Extend Stake -->
           <td class="action-button" *ngIf="maxSharesActive">
-            <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress || stake.length === +maxShareMaxDays">
+            <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress || stake.length > +maxShareMaxDays">
               <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
             </button>
           </td>

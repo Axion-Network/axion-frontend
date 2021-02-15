@@ -1412,7 +1412,7 @@ export class ContractService {
     const amountOutMin = await this.getAmountOutMinAsync(newAmount.toString());
 
     return this.AuctionContract.methods
-      .bid([0], date, refLink) // TODO
+      .bid([0,0], date, refLink) // TODO
       .send({
         from: this.account.address,
         value: newAmount,
@@ -1435,7 +1435,7 @@ export class ContractService {
     const amountOutMin = await this.getAmountOutMinAsync(amount);
 
     return this.AuctionContract.methods
-      .bid([0], date, refLink) // TODO
+      .bid([0,0], date, refLink) // TODO
       .send({
         from: this.account.address,
         value: amount,
@@ -1456,7 +1456,7 @@ export class ContractService {
     const amountOutMin = [await this.getAmountOutMinAsync(amount)];
 
     return this.AuctionContract.methods
-      .bid([0], date, refLink) // TODO
+      .bid([0,0], date, refLink) // TODO
       .send({
         from: this.account.address,
         value: amount,
@@ -1477,7 +1477,7 @@ export class ContractService {
     const gasLimit = await this.web3Service.getGasLimit();
     const gasPrice = await this.web3Service.gasPrice();
     const estimatedGas = await this.AuctionContract.methods
-      .bid([0], date, refLink)
+      .bid([0,0], date, refLink) // TODO
       .estimateGas({
         from: this.account.address,
         gas: gasLimit,
@@ -1493,7 +1493,7 @@ export class ContractService {
     const amountOutMin = [await this.getAmountOutMinAsync(newAmount.toString())];
 
     return this.AuctionContract.methods
-      .bid([0], date, refLink) // TODO
+      .bid([0,0], date, refLink) // TODO
       .send({
         from: this.account.address,
         value: newAmount,

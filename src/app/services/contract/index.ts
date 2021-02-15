@@ -2127,10 +2127,10 @@ export class ContractService {
 
       // Check if Ethereum
       if (tokens[i] === this.web3Service.toChecksumAddress(this.ethereumToken.tokenAddress)) {
-        tokensOfTheDay.push({ tokenSymbol: this.ethereumToken.tokenSymbol, percentage })
+        tokensOfTheDay.push({ tokenSymbol: this.ethereumToken.tokenSymbol, tokenName: this.ethereumToken.tokenName , percentage })
       } else {
-        const { tokenSymbol } = await this.getVentureAuctionTokenInfo(tokens[i]);
-        tokensOfTheDay.push({ tokenSymbol, percentage })
+        const { tokenSymbol, tokenName } = await this.getVentureAuctionTokenInfo(tokens[i]);
+        tokensOfTheDay.push({ tokenName, tokenSymbol, percentage })
       }
     }
 
@@ -2147,7 +2147,7 @@ export class ContractService {
     if (stakes.length > 0) {
       totalSharesStakes = stakes.map(x => x.shares).reduce((total, x) => total.plus(x));
     }
-    
+
     return !totalSharesVCA.isEqualTo(totalSharesStakes);
   }
 }

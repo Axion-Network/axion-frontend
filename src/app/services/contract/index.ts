@@ -281,6 +281,7 @@ export class ContractService {
       this.web3Service.getAccounts().subscribe(async (account: any) => {
         if (account) {
           this.initializeContracts();
+          this.auctionModes = await this.getAuctionModes();
           const options = await this.AuctionContract.methods.options().call();
           this.stepsFromStart = await this.AuctionContract.methods.calculateStepsFromStart().call();
 
@@ -815,7 +816,6 @@ export class ContractService {
 
     const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, this.CONTRACTS_PARAMS.AXN.ADDRESS);
     const buybackAmount = await tokenContract.methods.balanceOf(this.CONTRACTS_PARAMS.Staking.ADDRESS).call(); 
-    this.auctionModes = await this.getAuctionModes();
 
     auction.tokensOfTheDay = await this.getTokensOfTheDay();
     auction.isVCA = this.auctionModes[this.stepsFromStart % 7] === "1"
@@ -1620,6 +1620,7 @@ export class ContractService {
           const auction = {
             id: id,
             isWeekly: id % 7 === 0,
+            isVCA: this.auctionModes[id % 7] === "1",
             time: {
               date: moment(startDateTS),
               state:

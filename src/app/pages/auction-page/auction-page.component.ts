@@ -91,7 +91,7 @@ export class AuctionPageComponent implements OnDestroy {
   public withdrawnBids: AuctionBid[] = [];
   public withdrawnV1Bids: AuctionBid[] = [];
 
-  public poolInfo = {} as Auction;
+  public poolInfo: Auction;
 
   public auctions: any = [];
   public auctionsIntervals: [];
@@ -105,9 +105,6 @@ export class AuctionPageComponent implements OnDestroy {
   private usdcPerEthPrice: BigNumber;
   private _1e18: string;
 
-  public isVCA: boolean = false;
-  public auctionModes: string[];
-  public tokensOfTheDay: any[];
 
   constructor(
     public contractService: ContractService,
@@ -132,14 +129,12 @@ export class AuctionPageComponent implements OnDestroy {
               this.onChangeAmount();
               this.onChangeAccount.emit();
               this.getWalletBids();
-              this.setupAuctionTypes();
 
               const info = await this.contractService.getAuctionPool();
               this.poolInfo = info;
               this.getAuctionPool();
               this.auctionPoolChecker = true;
 
-              this.account.mustRegisterVCA = await this.contractService.isVCARegistrationRequired();
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
               this.usdcPerEthPrice = await this.contractService.getUsdcPerEthPrice();
             }
@@ -154,15 +149,6 @@ export class AuctionPageComponent implements OnDestroy {
   ngOnDestroy() {
     this.auctionPoolChecker = false;
     this.accountSubscribe.unsubscribe();
-  }
-
-  public async setupAuctionTypes() {
-    this.auctionModes = await this.contractService.getAuctionModes();
-    this.tokensOfTheDay = await this.contractService.getTokensOfTheDay();
-
-    if (this.auctionModes[this.contractService.stepsFromStart % 7] === "1") {
-      this.isVCA = true;
-    }
   }
 
   public scanDate(date) {

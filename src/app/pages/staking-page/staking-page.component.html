@@ -1,8 +1,3 @@
-<!-- Spinner -->
-<section *ngIf="account && (!stakingInfoChecker || checkingVCARegistration)" class="loading-spinner">
-  <mat-spinner color="accent" diameter="50"></mat-spinner>
-</section>
-
 <!-- VCA Registration -->
 <section class="axn-section" *ngIf="account?.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
@@ -29,7 +24,7 @@
 </section>
 
 <!-- Create Stake -->
-<section class="axn-section" *ngIf="account && (!account.mustRegisterVCA && !checkingVCARegistration)">
+<section class="axn-section" *ngIf="account && !account.mustRegisterVCA">
   <div class="axn-title-block">
     <span class="axn-title">Create Stake</span>
     <div
@@ -257,8 +252,13 @@
   </form>
 </section>
 
+<!-- Spinner -->
+<section *ngIf="account && (!stakingInfoChecker || !vcaDivs)" class="loading-spinner">
+  <mat-spinner color="accent" diameter="50"></mat-spinner>
+</section>
+
 <!-- VCA Divs -->
-<section class="axn-section" *ngIf="activeStakeTotals && vcaDivs.length > 0 && (!account.mustRegisterVCA && !checkingVCARegistration)">
+<section class="axn-section" *ngIf="activeStakeTotals && vcaDivs && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Venture Capital Auction</span>
@@ -303,7 +303,7 @@
 </section>
 
 <!-- BPD -->
-<section class="axn-section" *ngIf="tableInfo && (!account.mustRegisterVCA && !checkingVCARegistration)">
+<section class="axn-section" *ngIf="tableInfo && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">BigPayDay</span>
@@ -356,7 +356,7 @@
 </section>
 
 <!-- Active Stake Totals -->
-<section class="axn-section" *ngIf="activeStakeTotals && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
+<section class="axn-section" *ngIf="activeStakeTotals && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Active Stake Totals</span>
@@ -455,7 +455,7 @@
 </section>
 
 <!-- Matured Staked -->
-<section class="axn-section" *ngIf="stakes?.matured?.length && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
+<section class="axn-section" *ngIf="stakes?.matured?.length && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Matured Stakes</span>
@@ -621,7 +621,7 @@
 </section>
 
 <!-- Active Stakes -->
-<section class="axn-section" *ngIf="stakes?.active?.length && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
+<section class="axn-section" *ngIf="stakes?.active?.length && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Active Stakes</span>
@@ -787,7 +787,7 @@
 </section>
 
 <!-- Stake History -->
-<section class="axn-section" *ngIf="stakes?.closed?.length && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
+<section class="axn-section" *ngIf="stakes?.closed?.length && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Stake History</span>
@@ -925,7 +925,7 @@
 </section>
 
 <!-- V1 Stake History -->
-<section class="axn-section" *ngIf="stakes?.closedV1?.length && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
+<section class="axn-section" *ngIf="stakes?.closedV1?.length && tokensDecimals && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">v1 Stake History</span>

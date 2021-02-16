@@ -25,14 +25,19 @@
     ></div>
   </div>
 
+  <!-- Spinner -->
+  <section *ngIf="account && !poolInfo" class="loading-spinner">
+    <mat-spinner color="accent" diameter="50"></mat-spinner>
+  </section>
+
   <!-- Auction Info -->
-  <div class="axn-form axn-form-base-2">
+  <div class="axn-form axn-form-base-2" *ngIf="poolInfo">
 
     <div>
       <!-- Auction Type -->
-      <div class="axn-form-block m-b-10 p-20 axn-text-center" *ngIf="auctionModes && tokensOfTheDay">
+      <div class="axn-form-block m-b-10 p-20 axn-text-center">
         <span class="axn-text-subtitle">
-          Today's Auction: {{isVCA ? "Venture Capital" : "Regular"}}
+          Today's Auction: {{poolInfo.isVCA ? "Venture Capital" : "Regular"}}
           <div 
             class="question" 
             mat-raised-button 
@@ -40,7 +45,7 @@
             (click)="tooltip2.toggle()" 
             matTooltipClass="question__tooltip question__extrawidth"
             matTooltip="
-            this tooltip needs updating. It will be used to explain the current auction type. (Venture Capital or... 'regular'?).
+            this tooltip needs updating. It will be used to explain the auction types. (Venture Capital or... 'regular'?).
 
             Venture Capital: JoeJoe will fill this in...
 
@@ -48,8 +53,19 @@
             ">
           </div>
         </span>
-        <div class="tokens-of-the-day">
-          <span class="axn-text-body token-of-the-day" *ngFor="let token of tokensOfTheDay">{{token.tokenSymbol}}: {{token.percentage}}%</span>
+
+        <!-- VCA Tokens -->
+        <div class="tokens-of-the-day" *ngIf="poolInfo.isVCA">
+          <span class="axn-text-body token-of-the-day" *ngFor="let token of poolInfo.tokensOfTheDay">{{token.tokenSymbol}}: {{token.percentage}}%</span>
+        </div>
+
+        <!-- Non VCA Buyback Stats -->
+        <div class="tokens-of-the-day" *ngIf="!poolInfo.isVCA">
+          <span class="axn-text-body token-of-the-day">
+            <span class="axn-form-block-one-value-small p-tb-5" matTooltipClass="table__tooltip" mat-raised-button matTooltip="${{ getAxnDollarValue(poolInfo.axnBuybacks) | bigNumberFormat: tokensDecimals['ETH']:true:false:2 || 0 }}">
+              Current Buyback Balance: {{poolInfo.axnBuybacks | bigNumberFormat: tokensDecimals['ETH']:true:false:2 || 0}} AXN
+            </span>
+          </span>
         </div>
       </div>
 
@@ -338,7 +354,7 @@
               style="margin: auto"
               (click)="openWithdrawBid(bid)"
               [ngClass]="{ progress: bid.withdrawProgress }"
-              [disabled]="bid.withdrawProgress || account.mustRegisterVCA"
+              [disabled]="bid.withdrawProgress || contractService.isVCARegistrationRequired()"
             >
               <span class="lds-ellipsis" *ngIf="bid.withdrawProgress">
                 <span class="lds-ellipsis-container">

@@ -42,6 +42,9 @@ export interface Auction {
   uniAxnPerEth: BigNumber;
   axnPerEth: BigNumber;
   isOverBid: boolean;
+  isVCA: boolean;
+  axnBuybacks: BigNumber;
+  tokensOfTheDay: string[];
 }
 
 export interface AuctionBid {
@@ -152,6 +155,7 @@ export class ContractService {
   private premiumPercent: number;
 
   public stepsFromStart: number;
+  public auctionModes: string[];
   
   constructor(private httpService: HttpClient, private config: AppConfig) {
     setInterval(() => {
@@ -358,13 +362,13 @@ export class ContractService {
   }
 
   public getAccount(noEnable?) {
-    const finishIniAccount = () => {
+    const finishIniAccount = async () => {
       if (this.account) {
         this.initializeContracts();
-        this.getAccountSnapshot().then(() => {
-          this.updateClaimableInformation(true);
-          this.updateClaimableInformationHex(true);
-        });
+        await this.getAccountSnapshot()
+        await this.checkVCARegistration();
+        this.updateClaimableInformation(true);
+        this.updateClaimableInformationHex(true);
       } else {
         this.callAllAccountsSubscribers();
       }
@@ -808,6 +812,14 @@ export class ContractService {
     );
 
     auction.isOverBid = uniswapAveragePrice.times(0.75).isGreaterThan(auction.axnPerEth);
+
+    const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, this.CONTRACTS_PARAMS.AXN.ADDRESS);
+    const buybackAmount = await tokenContract.methods.balanceOf(this.CONTRACTS_PARAMS.Staking.ADDRESS).call(); 
+    this.auctionModes = await this.getAuctionModes();
+
+    auction.tokensOfTheDay = await this.getTokensOfTheDay();
+    auction.isVCA = this.auctionModes[this.stepsFromStart % 7] === "1"
+    auction.axnBuybacks = new BigNumber(buybackAmount);
 
     return auction;
   }
@@ -2146,7 +2158,7 @@ export class ContractService {
     return tokensOfTheDay;
   }
 
-  public async isVCARegistrationRequired(): Promise<boolean> {
+  public async checkVCARegistration() {
     const { active, matured } = await this.getWalletStakesAsync();
     const totalSharesVCA = new BigNumber(await this.getTotalShares())
 
@@ -2157,7 +2169,7 @@ export class ContractService {
       totalSharesStakes = stakes.map(x => x.shares).reduce((total, x) => total.plus(x));
     }
 
-    return !totalSharesVCA.isEqualTo(totalSharesStakes);
+    this.account.mustRegisterVCA = !totalSharesVCA.isEqualTo(totalSharesStakes);
   }
 
   public getMaxDaysMaxShares() {

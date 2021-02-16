@@ -4993,6 +4993,29 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "getMaxShareMaxDays",
+          "outputs": [
+            {
+              "internalType": "uint16",
+              "name": "_maxShareMaxDays",
+              "type": "uint16"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "StakingV1": {
+      "ADDRESS": "0xCfD53Eff4871B93eD7405F3f428C25F3bf60bbEa",
+      "ABI": [
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
           "inputs": [
             {
               "internalType": "address",
@@ -18154,39 +18177,16 @@
           "type": "function"
         },
         {
-          "inputs": [
+          "inputs": [],
+          "name": "getMaxShareMaxDays",
+          "outputs": [
             {
-              "internalType": "address",
-              "name": "bidderAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "tokenAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amountBought",
-              "type": "uint256"
+              "internalType": "uint16",
+              "name": "_maxShareMaxDays",
+              "type": "uint16"
             }
           ],
-          "name": "updateTokenPricePerShare",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "tokenAddress",
-              "type": "address"
-            }
-          ],
-          "name": "withdrawDivToken",
-          "outputs": [],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         }
       ]

@@ -492,7 +492,13 @@
 
           <!-- Extend Stake -->
           <td class="action-button" *ngIf="maxSharesActive">
-            <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress || stake.length > +maxShareMaxDays">
+            <span *ngIf="stake.length > +maxShareMaxDays" matTooltipClass="table__tooltip" mat-raised-button matTooltip="Stake must be {{maxShareMaxDays}} days or less to be eligible for an upgrade.">
+              <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress || stake.length > +maxShareMaxDays">
+                <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
+              </button>
+            </span>
+
+            <button *ngIf="stake.length <= +maxShareMaxDays" class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
               <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
             </button>
           </td>
@@ -651,7 +657,13 @@
 
           <!-- Extend Stake -->
           <td class="action-button" *ngIf="maxSharesActive">
-            <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress || stake.length > +maxShareMaxDays">
+            <span *ngIf="stake.length > +maxShareMaxDays" matTooltipClass="table__tooltip" mat-raised-button matTooltip="Stake must be {{maxShareMaxDays}} days or less to be eligible for an upgrade.">
+              <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress || stake.length > +maxShareMaxDays">
+                <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
+              </button>
+            </span>
+
+            <button *ngIf="stake.length <= +maxShareMaxDays" class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
               <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
             </button>
           </td>

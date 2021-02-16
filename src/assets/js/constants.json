@@ -13421,7 +13421,7 @@
       "ADDRESS": "0xc778417E063141139Fce010982780140Aa0cD5Ab"
     },
     "AXN": {
-      "ADDRESS": "0xed75f78228350122a54288EbC49d7434B3122110",
+      "ADDRESS": "0xC912399A5660Eb741Aa4371Cb43E96C5123B42C7",
       "ABI": [
         {
           "anonymous": false,
@@ -14502,7 +14502,7 @@
       ]
     },
     "NativeSwap": {
-      "ADDRESS": "0x745f6C678299Eb3c67215657E8084fB8531cc70F",
+      "ADDRESS": "0x2Ee2709F6277e3277d9af30f7C26Cb55240823A0",
       "ABI": [
         {
           "anonymous": false,
@@ -15031,7 +15031,7 @@
       ]
     },
     "Auction": {
-      "ADDRESS": "0x4c1520ad0F2987747d62A695a7406Bc12C37773f",
+      "ADDRESS": "0xA7FA719f8aC190aFCD8974cf486DbE0527F95b92",
       "ABI": [
         {
           "anonymous": false,
@@ -16174,7 +16174,7 @@
       ]
     },
     "AuctionV1": {
-      "ADDRESS": "0x12948056945BEc24FF223f93f3c00aDE57dadE1e",
+      "ADDRESS": "0xf9C26BaB3C8245A1a799302d7262eEb4027b5986",
       "ABI": [
         {
           "inputs": [],
@@ -16947,7 +16947,7 @@
       ]
     },
     "Staking": {
-      "ADDRESS": "0xF1F1Ff3D79F9C4df9Ded33Edc87036Aa712d368A",
+      "ADDRESS": "0x2d141A4f1B9f9109A14FD40294705009f1A9F8B8",
       "ABI": [
         {
           "anonymous": false,
@@ -18192,7 +18192,7 @@
       ]
     },
     "StakingV1": {
-      "ADDRESS": "0xD516F3a527C239eEa767Fc056FEDD3aAb333761c",
+      "ADDRESS": "0xDc0Ec991d0e758012d7ae077889d2CC0742A1c8B",
       "ABI": [
         {
           "inputs": [],
@@ -18986,7 +18986,7 @@
       ]
     },
     "BPD": {
-      "ADDRESS": "0x57761eD550AEE3062960c963252695588e21fd87",
+      "ADDRESS": "0xaE860B558B60c339dFed7BB7771547A1Edc6AC23",
       "ABI": [
         {
           "anonymous": false,
@@ -19484,7 +19484,7 @@
       ]
     },
     "ForeignSwap": {
-      "ADDRESS": "0xa44e7981856B3068ca478D3B8fdb1DF66E947a25",
+      "ADDRESS": "0x3D1C54a91aAe5254C9F269F5070031FAe7aC721f",
       "ABI": [
         {
           "anonymous": false,
@@ -20204,7 +20204,7 @@
       ]
     },
     "SubBalance": {
-      "ADDRESS": "0x3A84240D40Fc1D5F56DF677A39bEd9A730a5E670",
+      "ADDRESS": "0xf400EE62D4DF0Da6CF0f0152cC83b6cdA7Aca042",
       "ABI": [
         {
           "anonymous": false,
@@ -21138,7 +21138,7 @@
       ]
     },
     "SubBalanceV1": {
-      "ADDRESS": "0x226b2B79e5C4feEDbf9ea0897f790F01349cf58A",
+      "ADDRESS": "0x88FE1C8d63df085E51734c4993277fc475b106EF",
       "ABI": [
         {
           "inputs": [

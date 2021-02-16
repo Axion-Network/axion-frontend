@@ -1,5 +1,35 @@
-<!-- Stake -->
-<section class="axn-section" *ngIf="account && !account.mustRegisterVCA">
+<!-- Spinner -->
+<section *ngIf="account && (!stakingInfoChecker || checkingVCARegistration)" class="loading-spinner">
+  <mat-spinner color="accent" diameter="50"></mat-spinner>
+</section>
+
+<!-- VCA Registration -->
+<section class="axn-section" *ngIf="account.mustRegisterVCA">
+  <div class="axn-form-block table-container p-20">
+    <div class="axn-title-block p-20">
+      <span class="axn-title">Venture Capital Auction</span>
+    </div>
+
+    <div class="vca-register" >
+      <span class="axn-form-block-text">This address (<span class="axn-btn-metamask-text">{{account.address}}</span>)
+        has not completed VCA registration.<br />In order to interact with your stakes and receive VCA divs from current
+        stakes, you must register your existing stakes.</span>
+      <br />
+      <button class="axn-btn axn-btn-gray" (click)="registerVCA()" [disabled]="vcaRegisterLoading"
+        [ngClass]="{ progress: vcaRegisterLoading }">
+        <span class="lds-ellipsis" *ngIf="vcaRegisterLoading">
+          <span class="lds-ellipsis-container">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </span>
+        <span class="t-fw-light">&nbsp;&nbsp;Register for Venture Capital Auction Divs&nbsp;&nbsp;</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Create Stake -->
+<section class="axn-section" *ngIf="account && (!account.mustRegisterVCA && !checkingVCARegistration)">
   <div class="axn-title-block">
     <span class="axn-title">Create Stake</span>
     <div
@@ -228,14 +258,13 @@
 </section>
 
 <!-- VCA Divs -->
-<section class="axn-section" *ngIf="activeStakeTotals && vcaDivs">
+<section class="axn-section" *ngIf="activeStakeTotals && vcaDivs.length > 0 && (!account.mustRegisterVCA && !checkingVCARegistration)">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
-      <span class="axn-title">Venture Capital Auction Divs</span>
+      <span class="axn-title">Venture Capital Auction</span>
     </div>
-    
-    <!-- If Registered... -->
-    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" *ngIf="vcaDivs.length > 0 && !account.mustRegisterVCA">
+
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0">
       <thead>
         <tr>
           <th>Token Name</th>
@@ -270,24 +299,11 @@
       </tbody>
     </table>
 
-    <!-- If Not Registered... -->
-    <div class="vca-register" *ngIf="account.mustRegisterVCA">
-      <span class="axn-form-block-text">This address (<span class="axn-btn-metamask-text">{{account.address}}</span>) has not completed VCA registration.<br/>In order to interact with your stakes and receive VCA divs from current stakes, you must register your existing stakes.</span>
-      <br/>
-      <button class="axn-btn axn-btn-gray" (click)="registerVCA()" [disabled]="vcaRegisterLoading"  [ngClass]="{ progress: vcaRegisterLoading }">
-        <span class="lds-ellipsis" *ngIf="vcaRegisterLoading">
-          <span class="lds-ellipsis-container">
-            <span></span><span></span><span></span><span></span>
-          </span>
-        </span>
-        <span class="t-fw-light">&nbsp;&nbsp;Register for Venture Capital Auction Divs&nbsp;&nbsp;</span>
-      </button>
-    </div>
   </div>
 </section>
 
 <!-- BPD -->
-<section class="axn-section" *ngIf="tableInfo && !account.mustRegisterVCA">
+<section class="axn-section" *ngIf="tableInfo && (!account.mustRegisterVCA && !checkingVCARegistration)">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">BigPayDay</span>
@@ -339,13 +355,8 @@
   </div>
 </section>
 
-<!-- Spinner -->
-<section *ngIf="account && !stakingInfoChecker" class="loading-spinner">
-  <mat-spinner color="accent" diameter="50"></mat-spinner>
-</section>
-
 <!-- Active Stake Totals -->
-<section class="axn-section" *ngIf="activeStakeTotals && tokensDecimals && !account.mustRegisterVCA">
+<section class="axn-section" *ngIf="activeStakeTotals && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Active Stake Totals</span>
@@ -444,7 +455,7 @@
 </section>
 
 <!-- Matured Staked -->
-<section class="axn-section" *ngIf="stakes?.matured?.length && tokensDecimals && !account.mustRegisterVCA">
+<section class="axn-section" *ngIf="stakes?.matured?.length && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Matured Stakes</span>
@@ -556,13 +567,7 @@
 
           <!-- Extend Stake -->
           <td class="action-button" *ngIf="maxSharesActive">
-            <span *ngIf="stake.length > +maxShareMaxDays" matTooltipClass="table__tooltip" mat-raised-button matTooltip="Stake must be {{maxShareMaxDays}} days or less to be eligible for an upgrade.">
-              <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress || stake.length > +maxShareMaxDays">
-                <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
-              </button>
-            </span>
-
-            <button *ngIf="stake.length <= +maxShareMaxDays" class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
+            <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
               <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
             </button>
           </td>
@@ -610,7 +615,7 @@
 </section>
 
 <!-- Active Stakes -->
-<section class="axn-section" *ngIf="stakes?.active?.length && tokensDecimals && !account.mustRegisterVCA">
+<section class="axn-section" *ngIf="stakes?.active?.length && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Active Stakes</span>
@@ -722,13 +727,7 @@
 
           <!-- Extend Stake -->
           <td class="action-button" *ngIf="maxSharesActive">
-            <span *ngIf="stake.length > +maxShareMaxDays" matTooltipClass="table__tooltip" mat-raised-button matTooltip="Stake must be {{maxShareMaxDays}} days or less to be eligible for an upgrade.">
-              <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress || stake.length > +maxShareMaxDays">
-                <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
-              </button>
-            </span>
-
-            <button *ngIf="stake.length <= +maxShareMaxDays" class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
+            <button class="axn-btn axn-btn-gray" (click)="extendStake(stake)" [disabled]="extensionInfo.progress">
               <span class="t-fw-light">&nbsp;&nbsp;UPGRADE&nbsp;&nbsp;</span>
             </button>
           </td>
@@ -776,7 +775,7 @@
 </section>
 
 <!-- Stake History -->
-<section class="axn-section" *ngIf="stakes?.closed?.length && tokensDecimals && !account.mustRegisterVCA">
+<section class="axn-section" *ngIf="stakes?.closed?.length && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Stake History</span>
@@ -914,7 +913,7 @@
 </section>
 
 <!-- V1 Stake History -->
-<section class="axn-section" *ngIf="stakes?.closedV1?.length && tokensDecimals && !account.mustRegisterVCA">
+<section class="axn-section" *ngIf="stakes?.closedV1?.length && tokensDecimals && (!account.mustRegisterVCA && !checkingVCARegistration)">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">v1 Stake History</span>

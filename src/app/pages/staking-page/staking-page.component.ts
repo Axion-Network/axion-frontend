@@ -135,6 +135,7 @@ export class StakingPageComponent implements OnDestroy {
   private usdcPerAxnPrice;
   public vcaRegisterLoading = false;
   public maxShareMaxDays;
+  public checkingVCARegistration = true;
 
   constructor(
     private contractService: ContractService,
@@ -190,6 +191,7 @@ export class StakingPageComponent implements OnDestroy {
 
   public async checkVCARegistration() {
     this.account.mustRegisterVCA = await this.contractService.isVCARegistrationRequired();
+    this.checkingVCARegistration = false;
   }
 
   public getStakingInfo() {

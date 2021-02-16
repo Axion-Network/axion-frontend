@@ -2159,7 +2159,7 @@ export class ContractService {
 
     return !totalSharesVCA.isEqualTo(totalSharesStakes);
   }
-}
+
   public getMaxDaysMaxShares() {
     return this.StakingContract.methods.getMaxShareMaxDays().call()
   }

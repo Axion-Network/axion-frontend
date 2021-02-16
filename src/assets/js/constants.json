@@ -17494,6 +17494,19 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "getMaxShareMaxDays",
+          "outputs": [
+            {
+              "internalType": "uint16",
+              "name": "",
+              "type": "uint16"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "bytes32",
@@ -18000,12 +18013,38 @@
         {
           "inputs": [
             {
+              "internalType": "uint16",
+              "name": "_maxShareMaxDays",
+              "type": "uint16"
+            }
+          ],
+          "name": "setMaxShareMaxDays",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
               "name": "_shareRate",
               "type": "uint256"
             }
           ],
           "name": "setShareRate",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_scalingFactor",
+              "type": "uint256"
+            }
+          ],
+          "name": "setShareRateScalingFactor",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -18177,16 +18216,39 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "getMaxShareMaxDays",
-          "outputs": [
+          "inputs": [
             {
-              "internalType": "uint16",
-              "name": "_maxShareMaxDays",
-              "type": "uint16"
+              "internalType": "address payable",
+              "name": "bidderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountBought",
+              "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "name": "updateTokenPricePerShare",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "tokenAddress",
+              "type": "address"
+            }
+          ],
+          "name": "withdrawDivToken",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]

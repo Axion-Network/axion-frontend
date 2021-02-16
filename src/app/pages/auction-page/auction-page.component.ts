@@ -318,7 +318,7 @@ export class AuctionPageComponent implements OnDestroy {
     }
 
     this.sendAuctionProgress = true;
-    const callMethod = this.formsData.bidEthAmount === this.account.balances.ETH.wei ? "sendMaxETHToAuctionV2" : "sendETHToAuctionV2";
+    const callMethod = this.formsData.bidEthAmount === this.account.balances.ETH.wei ? "sendMaxETHToAuction" : "sendETHToAuction";
 
     this.contractService[callMethod](this.formsData.bidEthAmount, refAddress)
       .then(

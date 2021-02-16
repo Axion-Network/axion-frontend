@@ -70,6 +70,11 @@ export interface VentureAuctionDivs {
   interestEarnedToken: BigNumber;
 }
 
+export interface AuctionToken {
+  address: string;
+  percentage: number;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -156,7 +161,8 @@ export class ContractService {
 
   public stepsFromStart: number;
   public auctionModes: string[];
-  
+  public auctionTokens: AuctionToken[];
+
   constructor(private httpService: HttpClient, private config: AppConfig) {
     setInterval(() => {
       if (!(this.secondsInDay && this.startDate)) {
@@ -281,13 +287,20 @@ export class ContractService {
       this.web3Service.getAccounts().subscribe(async (account: any) => {
         if (account) {
           this.initializeContracts();
-          this.auctionModes = await this.getAuctionModes();
           const options = await this.AuctionContract.methods.options().call();
           this.stepsFromStart = await this.AuctionContract.methods.calculateStepsFromStart().call();
 
           this.autoStakeDays = +options.autoStakeDays;
           this.discountPercent = +options.discountPercent;
           this.premiumPercent = +options.premiumPercent;
+
+          this.auctionModes = await this.AuctionContract.methods.getAuctionModes().call();
+
+          const tokensOfDay = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
+
+          this.auctionTokens = tokensOfDay[0].map((token, i) => {
+            return { address: token, percentage: +tokensOfDay[1][i] } as AuctionToken
+          });
 
           const promises = [this.getTokensInfo(false)];
           return Promise.all(promises);
@@ -818,7 +831,7 @@ export class ContractService {
     const buybackAmount = await tokenContract.methods.balanceOf(this.CONTRACTS_PARAMS.Staking.ADDRESS).call(); 
 
     auction.tokensOfTheDay = await this.getTokensOfTheDay();
-    auction.isVCA = this.auctionModes[this.stepsFromStart % 7] === "1"
+    auction.isVCA = this.auctionModes[this.stepsFromStart % 7] === "1";
     auction.axnBuybacks = new BigNumber(buybackAmount);
 
     return auction;
@@ -1405,44 +1418,6 @@ export class ContractService {
     });
   }
 
-  public async sendMaxETHToAuction(amount, ref?) {
-    const date = Math.round(
-      (new Date().getTime() + 24 * 60 * 60 * 1000) / 1000
-    );
-    const refLink = ref
-      ? ref.toLowerCase()
-      : "0x0000000000000000000000000000000000000000".toLowerCase();
-
-    const gasLimit = await this.web3Service.getGasLimit();
-    const gasPrice = await this.web3Service.gasPrice();
-    const estimatedGas = await this.AuctionContract.methods
-      .bid(0, date, refLink)
-      .estimateGas({
-        from: this.account.address,
-        gas: gasLimit,
-        value: amount,
-      });
-
-    const newAmount = new BigNumber(amount).minus(estimatedGas * gasPrice);
-    if (newAmount.isNegative()) {
-      throw new Error("Not enough gas");
-    }
-
-    const amountOutMin = await this.getAmountOutMinAsync(newAmount.toString());
-
-    return this.AuctionContract.methods
-      .bid([0,0], date, refLink) // TODO
-      .send({
-        from: this.account.address,
-        value: newAmount,
-        gasPrice,
-        gasLimit: estimatedGas,
-      })
-      .then((res) => {
-        return this.checkTransaction(res);
-      });
-  }
-
   public async sendETHToAuction(amount, ref?) {
     const date = Math.round(
       (new Date().getTime() + 24 * 60 * 60 * 1000) / 1000
@@ -1454,7 +1429,7 @@ export class ContractService {
     const amountOutMin = await this.getAmountOutMinAsync(amount);
 
     return this.AuctionContract.methods
-      .bid([0,0], date, refLink) // TODO
+      .bid(amountOutMin, date, refLink)
       .send({
         from: this.account.address,
         value: amount,
@@ -1464,28 +1439,7 @@ export class ContractService {
       });
   }
 
-  public async sendETHToAuctionV2(amount, ref?) {
-    const date = Math.round(
-      (new Date().getTime() + 24 * 60 * 60 * 1000) / 1000
-    );
-    const refLink = ref
-      ? ref.toLowerCase()
-      : "0x0000000000000000000000000000000000000000".toLowerCase();
-
-    const amountOutMin = [await this.getAmountOutMinAsync(amount)];
-
-    return this.AuctionContract.methods
-      .bid([0,0], date, refLink) // TODO
-      .send({
-        from: this.account.address,
-        value: amount,
-      })
-      .then((res) => {
-        return this.checkTransaction(res);
-      });
-  }
-
-  public async sendMaxETHToAuctionV2(amount, ref?) {
+  public async sendMaxETHToAuction(amount, ref?) {
     const date = Math.round(
       (new Date().getTime() + 24 * 60 * 60 * 1000) / 1000
     );
@@ -1496,7 +1450,7 @@ export class ContractService {
     const gasLimit = await this.web3Service.getGasLimit();
     const gasPrice = await this.web3Service.gasPrice();
     const estimatedGas = await this.AuctionContract.methods
-      .bid([0,0], date, refLink) // TODO
+      .bid([0], date, refLink)
       .estimateGas({
         from: this.account.address,
         gas: gasLimit,
@@ -1509,10 +1463,10 @@ export class ContractService {
       throw new Error("Not enough gas");
     }
 
-    const amountOutMin = [await this.getAmountOutMinAsync(newAmount.toString())];
+    const amountOutMin = await this.getAmountOutMinAsync(newAmount.toString());
 
     return this.AuctionContract.methods
-      .bid([0,0], date, refLink) // TODO
+      .bid(amountOutMin, date, refLink)
       .send({
         from: this.account.address,
         value: newAmount,
@@ -1524,18 +1478,40 @@ export class ContractService {
       });
   }
 
-  private async getAmountOutMinAsync(amount: string): Promise<string> {
-    const reducedAmount: string = this.reduceAmountByPercent(
-      amount,
-      environment.auctionRecipientPercent
-    );
+  private async getAmountOutMinAsync(amount: string): Promise<string[]> {
+    const auctionMode = +this.auctionModes[this.stepsFromStart % 7];
 
-    const amountOut: string = (await this.getWethToAxionAmountsOutAsync(reducedAmount))[1];
+    if (auctionMode == 0) {
+      const reducedAmount: string = this.reduceAmountByPercent(
+        amount,
+        environment.auctionRecipientPercent
+      );
 
-    return this.reduceAmountByPercent(
-      amountOut,
-      environment.slippageTolerancePercent
-    );
+      const amountOut: string = (await this.getWethToAxionAmountsOutAsync(reducedAmount))[1];
+
+      return [this.reduceAmountByPercent(
+        amountOut,
+        environment.slippageTolerancePercent
+      )];
+    } else if (auctionMode == 1) {
+      const reducedAmount: string = this.reduceAmountByPercent(
+        amount,
+        5 // move to config
+      );
+
+      return Promise.all(this.auctionTokens.map(async (token) => {
+        if (token.address == this.web3Service.toChecksumAddress(this.ethereumToken.tokenAddress)) {
+          return "0";
+        } else {
+          const tokenAmount = this.reduceAmountByPercent(
+            reducedAmount,
+            token.percentage
+          );
+
+          return (await this.getWethToTokenAmountsOutAsync(tokenAmount, token.address))[1];
+        }
+      }));
+    }
   }
 
   private reduceAmountByPercent(amount: string, percent: number): string {
@@ -1557,10 +1533,14 @@ export class ContractService {
   }
 
   private getWethToAxionAmountsOutAsync(amount: string): Promise<string[]> {
+    return this.getWethToTokenAmountsOutAsync(amount, this.CONTRACTS_PARAMS.AXN.ADDRESS);
+  }
+
+  private getWethToTokenAmountsOutAsync(amount: string, tokenAddress: string): Promise<string[]> {
     return this.UniswapV2Router02.methods
       .getAmountsOut(amount, [
         this.CONTRACTS_PARAMS.WETH.ADDRESS,
-        this.CONTRACTS_PARAMS.AXN.ADDRESS,
+        tokenAddress,
       ])
       .call();
   }
@@ -1578,7 +1558,7 @@ export class ContractService {
       .call())[1]).div("1000000"); // USDC uses 6 decimal places
   }
 
-  public getAuctionsData(todaysAuctionId: number, start: number) {
+  public getAuctionsData(todaysAuctionId: number, start: number): Promise<any[]> {
     todaysAuctionId = +todaysAuctionId;
 
     const oneDayInMS = this.secondsInDay * 1000;
@@ -1607,46 +1587,44 @@ export class ContractService {
     }
 
     const nowDateTS = new Date().getTime();
-    const auctionsPromises = auctionIds.map((id) => {
-      return this.AuctionContract.methods
-        .reservesOf(id)
-        .call()
-        .then((auctionData) => {
-          const startDateTS = start + oneDayInMS * id;
-          const endDateTS = startDateTS + oneDayInMS;
-          const axnInPool = new BigNumber(auctionData.token);
-          const ethInPool = new BigNumber(auctionData.eth);
+    const auctionsPromises = auctionIds.map(async (id) => {
+      const auctionData = await this.AuctionContract.methods
+        .reservesOf(id);
 
-          const auction = {
-            id: id,
-            isWeekly: id % 7 === 0,
-            isVCA: this.auctionModes[id % 7] === "1",
-            time: {
-              date: moment(startDateTS),
-              state:
-                nowDateTS > startDateTS && nowDateTS < endDateTS
-                  ? "progress"
-                  : nowDateTS > endDateTS
-                    ? "finished"
-                    : "feature",
-            },
-            data: {
-              axnInPool: axnInPool,
-              ethInPool: ethInPool,
-            },
-            axnPerEth: null,
-          };
+      const startDateTS = start + oneDayInMS * id;
+      const endDateTS = startDateTS + oneDayInMS;
+      const axnInPool = new BigNumber(auctionData.token);
+      const ethInPool = new BigNumber(auctionData.eth);
 
-          if (auction.time.state === "finished") {
-            auction.axnPerEth = this.getAuctionAxnPerEth(
-              axnInPool,
-              ethInPool,
-              auctionData.uniswapMiddlePrice
-            );
-          }
+      const auction = {
+        id: id,
+        isWeekly: id % 7 === 0,
+        isVCA: this.auctionModes[id % 7] === "1",
+        time: {
+          date: moment(startDateTS),
+          state:
+            nowDateTS > startDateTS && nowDateTS < endDateTS
+              ? "progress"
+              : nowDateTS > endDateTS
+                ? "finished"
+                : "feature",
+        },
+        data: {
+          axnInPool: axnInPool,
+          ethInPool: ethInPool,
+        },
+        axnPerEth: null,
+      };
 
-          return auction;
-        });
+      if (auction.time.state === "finished") {
+        auction.axnPerEth = this.getAuctionAxnPerEth(
+          axnInPool,
+          ethInPool,
+          auctionData.uniswapMiddlePrice
+        );
+      }
+
+      return auction;
     });
 
     return Promise.all(auctionsPromises).then((results) => {
@@ -2058,7 +2036,7 @@ export class ContractService {
   public checkMaxSharesActive() {
     return this.StakingContract.methods.getMaxShareEventActive().call();
   }
-  
+
   public extendStake(stake: Stake) {
     return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShare"](stake.sessionId).send({ from: this.account.address })
   }
@@ -2134,11 +2112,7 @@ export class ContractService {
     return this.StakingContract.methods.setTotalSharesOfAccount().send({ from: this.account.address })
   }
 
-  public getAuctionModes(): Promise<string[]> {
-    return this.AuctionContract.methods.getAuctionModes().call()
-  }
-
-  public async getTokensOfTheDay() {
+  public async getTokensOfTheDay(): Promise<any[]> {
     const tokensOfTheDay = [];
     const result = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
     const tokens = result[0]
@@ -2149,7 +2123,7 @@ export class ContractService {
 
       // Check if Ethereum
       if (tokens[i] === this.web3Service.toChecksumAddress(this.ethereumToken.tokenAddress)) {
-        tokensOfTheDay.push({ tokenSymbol: this.ethereumToken.tokenSymbol, tokenName: this.ethereumToken.tokenName , percentage })
+        tokensOfTheDay.push({ tokenSymbol: this.ethereumToken.tokenSymbol, tokenName: this.ethereumToken.tokenName, percentage })
       } else {
         const { tokenSymbol, tokenName } = await this.getVentureAuctionTokenInfo(tokens[i]);
         tokensOfTheDay.push({ tokenName, tokenSymbol, percentage })

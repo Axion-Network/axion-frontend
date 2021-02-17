@@ -129,10 +129,11 @@ export class AuctionPageComponent implements OnDestroy {
               this.onChangeAmount();
               this.onChangeAccount.emit();
               this.getWalletBids();
-              
-              this.getAuctionPool();
-              this.auctionPoolChecker = true;
-              this.contractService.getAuctionPool().then(poolInfo => this.poolInfo = poolInfo);
+              this.contractService.getAuctionPool().then(poolInfo => {
+                this.poolInfo = poolInfo
+                this.getAuctionPool();
+                this.auctionPoolChecker = true;
+              });
               
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
               this.usdcPerEthPrice = await this.contractService.getUsdcPerEthPrice();

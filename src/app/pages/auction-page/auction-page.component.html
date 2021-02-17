@@ -476,7 +476,7 @@
   </div>
 </section>
 
-<section class="axn-section" *ngIf="account">
+<section class="axn-section" *ngIf="account && auctions.length">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Auctions</span>
@@ -491,11 +491,7 @@
       ></div>
     </div>
 
-    <div *ngIf="!auctions.length" class="loading-spinner">
-      <mat-spinner color="accent" diameter="50"></mat-spinner>
-    </div>
-
-    <table *ngIf="auctions.length" class="standard-table" cellpadding="0" cellspacing="0" border="0"  matSort matSortDisableClear="true" (matSortChange)="sort($event, 'auctions')">
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0"  matSort matSortDisableClear="true" (matSortChange)="sort($event, 'auctions')">
       <thead>
         <tr>
           <th mat-sort-header="time.date">Date</th>
@@ -555,7 +551,7 @@
   </div>
 </section>
 
-<section class="axn-section" *ngIf="account">
+<section class="axn-section" *ngIf="account && completedAuctions.length">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Completed Auctions</span>
@@ -570,11 +566,7 @@
       ></div>
     </div>
 
-    <div *ngIf="!completedAuctions.length" class="loading-spinner">
-      <mat-spinner color="accent" diameter="50"></mat-spinner>
-    </div>
-
-    <table *ngIf="completedAuctions.length" class="standard-table" cellpadding="0" cellspacing="0" border="0" matSort matSortDisableClear="true" (matSortChange)="sort($event, 'completedAuctions')">
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" matSort matSortDisableClear="true" (matSortChange)="sort($event, 'completedAuctions')">
       <thead>
         <tr>
           <th mat-sort-header="time.date">Date</th>

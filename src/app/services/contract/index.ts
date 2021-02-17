@@ -1588,8 +1588,7 @@ export class ContractService {
 
     const nowDateTS = new Date().getTime();
     const auctionsPromises = auctionIds.map(async (id) => {
-      const auctionData = await this.AuctionContract.methods
-        .reservesOf(id);
+      const auctionData = await this.AuctionContract.methods.reservesOf(id).call();
 
       const startDateTS = start + oneDayInMS * id;
       const endDateTS = startDateTS + oneDayInMS;

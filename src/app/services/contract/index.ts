@@ -828,7 +828,7 @@ export class ContractService {
     auction.isOverBid = uniswapAveragePrice.times(0.75).isGreaterThan(auction.axnPerEth);
 
     const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, this.CONTRACTS_PARAMS.AXN.ADDRESS);
-    const buybackAmount = await tokenContract.methods.balanceOf(this.CONTRACTS_PARAMS.Staking.ADDRESS).call(); 
+    const buybackAmount = await tokenContract.methods.balanceOf(this.CONTRACTS_PARAMS.Staking.ADDRESS).call();
 
     auction.tokensOfTheDay = await this.getTokensOfTheDay();
     auction.isVCA = this.auctionModes[this.stepsFromStart % 7] === "1";
@@ -1496,7 +1496,7 @@ export class ContractService {
     } else if (auctionMode == 1) {
       const reducedAmount: string = this.reduceAmountByPercent(
         amount,
-        5 // move to config
+        environment.ventureAuctionRecipientPercent
       );
 
       return Promise.all(this.auctionTokens.map(async (token) => {

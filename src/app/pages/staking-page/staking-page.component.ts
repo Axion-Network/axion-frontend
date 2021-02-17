@@ -569,11 +569,12 @@ export class StakingPageComponent implements OnDestroy {
         data: transaction.transactionHash,
       });
     } catch (err) {
-      if (err.message)
+      if (err.message) {
         this.dialog.open(MetamaskErrorComponent, {
           width: "400px",
-          data: { msg: err.message },
+          data: { msg: this.rewriteErrorMessage(err.message) },
         });
+      }
     } finally { this.extensionInfo.progress = false }
   }
 
@@ -582,6 +583,13 @@ export class StakingPageComponent implements OnDestroy {
       this.stakes[type].sort((a: Stake, b: Stake) => a[ev.active] - b[ev.active])
     else if (ev.direction === "desc")
       this.stakes[type].sort((a: Stake, b: Stake) => b[ev.active] - a[ev.active])
+  }
+
+  private rewriteErrorMessage(msg: string): string {
+    if (msg.toLowerCase().includes("transaction was not mined within 50 blocks"))
+      msg = "Your transaction is taking longer than usual. Please check your wallet address on Etherscan and click on the pending transaction for an estimated transaction time. Do not cancel the transaction yet.";
+
+    return msg;
   }
 
   ngOnDestroy() {

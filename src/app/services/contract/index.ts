@@ -2041,7 +2041,7 @@ export class ContractService {
   }
 
   public getTotalShares() {
-    return this.StakingContract.methods.getTotalSharesOf().call({ from: this.account.address })
+    return this.StakingContract.methods.getTotalSharesOf(this.account.address).call()
   }
 
   private async getVentureAuctionTokenInfo(tokenAddress: string) {

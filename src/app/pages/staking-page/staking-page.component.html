@@ -258,7 +258,7 @@
 </section>
 
 <!-- VCA Divs -->
-<section class="axn-section" *ngIf="activeStakeTotals && vcaDivs && !account.mustRegisterVCA">
+<section class="axn-section" *ngIf="activeStakeTotals && vcaDivs?.length > 0 && !account.mustRegisterVCA">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Venture Capital Auction</span>

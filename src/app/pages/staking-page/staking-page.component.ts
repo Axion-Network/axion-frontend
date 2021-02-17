@@ -624,14 +624,13 @@ export class StakingPageComponent implements OnDestroy {
 
     try {
       const tx = await this.contractService.registerForVCA();
-      this.contractService.checkVCARegistration();
-
       if (tx.transactionHash) {
         this.dialog.open(TransactionSuccessModalComponent, {
           width: "400px",
           data: tx.transactionHash,
         });
       }
+      this.contractService.checkVCARegistration();
     }
     catch (err) {
       if (err.message) {

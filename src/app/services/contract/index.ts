@@ -155,13 +155,14 @@ export class ContractService {
 
   private dayEndSubscribers: Subscriber<any>[] = [];
 
-  public autoStakeDays: number;
+  public autoStakeDays: number; 
   private discountPercent: number;
   private premiumPercent: number;
 
   public stepsFromStart: number;
   public auctionModes: string[];
   public auctionTokens: AuctionToken[];
+  public ventureAutostakeDays: number;
 
   constructor(private httpService: HttpClient, private config: AppConfig) {
     setInterval(() => {
@@ -289,6 +290,7 @@ export class ContractService {
           this.initializeContracts();
           const options = await this.AuctionContract.methods.options().call();
           this.stepsFromStart = await this.AuctionContract.methods.calculateStepsFromStart().call();
+          this.ventureAutostakeDays = await this.AuctionContract.methods.getVentureAutoStakeDays().call();
 
           this.autoStakeDays = +options.autoStakeDays;
           this.discountPercent = +options.discountPercent;

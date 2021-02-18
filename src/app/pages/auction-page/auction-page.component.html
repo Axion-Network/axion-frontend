@@ -774,12 +774,12 @@
 
     <div class="dialog-description dialog-description-slim">
       <div class="axn-form axn-form-block-one">
-          <p style="text-transform: none;">
-            It is mandatory for each auction bid to be autostaked.<br/>
-            Please enter the autostake length for this bid
-          </p>
+        <p class="axn-text-body">
+          It is mandatory for each auction bid to be autostaked.<br/>
+          Please enter the autostake length for this bid.
+        </p>
 
-        <span class="axn-form-block-one-title">Stake Length<br>{{ contractService.autoStakeDays }} - {{stakeMaxDays}} Days</span>
+        <span class="axn-form-block-one-title">Stake Length<br>{{ withdrawData.minAutostakeDays }} - {{stakeMaxDays}} Days</span>
         <input
           step="1"
           type="number"
@@ -788,33 +788,24 @@
           required="required"
           name="stake-days"
           [max]="stakeMaxDays"
+          (ngModelChange)="onAutostakeDaysChanged()"
           [(ngModel)]="withdrawData.autoStakeDays"
-          [appMinMaxNumber]="{
-            max: stakeMaxDays
-          }"
+          [appMinMaxNumber]="{ max: stakeMaxDays }"
         />
-        <span
-          class="axn-cheap cl-blue-bg"
-          style="
-            padding-left: 10px;
-            padding-right: 10px;
-            text-transform: none;
-          "
-          >{{
-            today +
-              ((withdrawData.autoStakeDays ||
-                this.contractService.autoStakeDays) +
-                1) *
-                24 *
-                60 *
-                60 *
-                1000 | date: "MMM d, y"
-          }}</span>
+        <span class="axn-cheap cl-blue-bg axn-text-body">
+          {{today + (withdrawData.autoStakeDays || withdrawData.minAutostakeDays) * 24 * 60 * 60 * 1000 | date: "MMM d, y"}}
+        </span>
 
-          <div class="axn-form-block-sendmax">
-            <span class="axn-btn axn-btn-max" (click)="withdrawData.autoStakeDays = stakeMaxDays">Send max</span>
-          </div>
-          
+        <div class="axn-form-block-sendmax">
+          <span class="axn-btn axn-btn-max" (click)="withdrawData.autoStakeDays = stakeMaxDays">Send max</span>
+        </div>
+
+        <p class="axn-text-body">
+          Amount: {{ withdrawData.amount | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }} AXN<br />
+          Basic Shares: {{ withdrawData.shares | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }} <br />
+          Longer Pays Better: {{ withdrawData.lpb | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }} <br />
+          Total Shares: {{ withdrawData.totalShares | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }}
+        </p>
       </div>
     </div>
 
@@ -822,7 +813,7 @@
       <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
         <span>Close</span>
       </button>
-      <button class="axn-btn axn-btn-gray" [disabled]="withdrawData.autoStakeDays < contractService.autoStakeDays" type="button" (click)="confirmAutostakeDays()">
+      <button class="axn-btn axn-btn-gray" [disabled]="withdrawData.autoStakeDays < withdrawData.minAutostakeDays" type="button" (click)="confirmAutostakeDays()">
         <span>Stake</span>
       </button>
     </div>

@@ -779,7 +779,7 @@
             Please enter the autostake length for this bid
           </p>
 
-        <span class="axn-form-block-one-title">Stake Length<br>{{ contractService.autoStakeDays }} - {{stakeMaxDays}} Days</span>
+        <span class="axn-form-block-one-title">Stake Length<br>{{ withdrawData.minAutostakeDays }} - {{stakeMaxDays}} Days</span>
         <input
           step="1"
           type="number"
@@ -803,7 +803,7 @@
           >{{
             today +
               ((withdrawData.autoStakeDays ||
-                this.contractService.autoStakeDays) +
+                withdrawData.minAutostakeDays) +
                 1) *
                 24 *
                 60 *
@@ -822,7 +822,7 @@
       <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
         <span>Close</span>
       </button>
-      <button class="axn-btn axn-btn-gray" [disabled]="withdrawData.autoStakeDays < contractService.autoStakeDays" type="button" (click)="confirmAutostakeDays()">
+      <button class="axn-btn axn-btn-gray" [disabled]="withdrawData.autoStakeDays < withdrawData.minAutostakeDays" type="button" (click)="confirmAutostakeDays()">
         <span>Stake</span>
       </button>
     </div>

@@ -776,7 +776,7 @@
       <div class="axn-form axn-form-block-one">
         <p class="axn-text-body">
           It is mandatory for each auction bid to be autostaked.<br/>
-          Please enter the autostake length for this bid
+          Please enter the autostake length for this bid.
         </p>
 
         <span class="axn-form-block-one-title">Stake Length<br>{{ withdrawData.minAutostakeDays }} - {{stakeMaxDays}} Days</span>
@@ -796,9 +796,16 @@
           {{today + (withdrawData.autoStakeDays || withdrawData.minAutostakeDays) * 24 * 60 * 60 * 1000 | date: "MMM d, y"}}
         </span>
 
-          <div class="axn-form-block-sendmax">
-            <span class="axn-btn axn-btn-max" (click)="withdrawData.autoStakeDays = stakeMaxDays">Send max</span>
-          </div>
+        <div class="axn-form-block-sendmax">
+          <span class="axn-btn axn-btn-max" (click)="withdrawData.autoStakeDays = stakeMaxDays">Send max</span>
+        </div>
+
+        <p class="axn-text-body">
+          Amount: {{ withdrawData.amount | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }} AXN<br />
+          Basic Shares: {{ withdrawData.shares | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }} <br />
+          Longer Pays Better: {{ withdrawData.lpb | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }} <br />
+          Total Shares: {{ withdrawData.totalShares | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }}
+        </p>
       </div>
     </div>
 

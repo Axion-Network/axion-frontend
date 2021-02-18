@@ -2151,4 +2151,8 @@ export class ContractService {
   public getMaxDaysMaxShares() {
     return this.StakingContract.methods.getMaxShareMaxDays().call()
   }
+
+  public getShareRate() {
+    return this.StakingContract.methods.shareRate().call()
+  }
 }

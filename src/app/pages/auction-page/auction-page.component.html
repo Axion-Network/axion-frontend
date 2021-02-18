@@ -774,10 +774,10 @@
 
     <div class="dialog-description dialog-description-slim">
       <div class="axn-form axn-form-block-one">
-          <p style="text-transform: none;">
-            It is mandatory for each auction bid to be autostaked.<br/>
-            Please enter the autostake length for this bid
-          </p>
+        <p class="axn-text-body">
+          It is mandatory for each auction bid to be autostaked.<br/>
+          Please enter the autostake length for this bid
+        </p>
 
         <span class="axn-form-block-one-title">Stake Length<br>{{ withdrawData.minAutostakeDays }} - {{stakeMaxDays}} Days</span>
         <input
@@ -788,33 +788,17 @@
           required="required"
           name="stake-days"
           [max]="stakeMaxDays"
+          (ngModelChange)="onAutostakeDaysChanged()"
           [(ngModel)]="withdrawData.autoStakeDays"
-          [appMinMaxNumber]="{
-            max: stakeMaxDays
-          }"
+          [appMinMaxNumber]="{ max: stakeMaxDays }"
         />
-        <span
-          class="axn-cheap cl-blue-bg"
-          style="
-            padding-left: 10px;
-            padding-right: 10px;
-            text-transform: none;
-          "
-          >{{
-            today +
-              ((withdrawData.autoStakeDays ||
-                withdrawData.minAutostakeDays) +
-                1) *
-                24 *
-                60 *
-                60 *
-                1000 | date: "MMM d, y"
-          }}</span>
+        <span class="axn-cheap cl-blue-bg axn-text-body">
+          {{today + (withdrawData.autoStakeDays || withdrawData.minAutostakeDays) * 24 * 60 * 60 * 1000 | date: "MMM d, y"}}
+        </span>
 
           <div class="axn-form-block-sendmax">
             <span class="axn-btn axn-btn-max" (click)="withdrawData.autoStakeDays = stakeMaxDays">Send max</span>
           </div>
-          
       </div>
     </div>
 

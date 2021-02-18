@@ -71,6 +71,10 @@ export class AuctionPageComponent implements OnDestroy {
     bid?: AuctionBid;
     autoStakeDays?: number;
     minAutostakeDays?: number;
+    shares?: BigNumber;
+    lpb?: BigNumber;
+    amount?: BigNumber;
+    totalShares?: BigNumber;
   } = {};
 
   public referalLink = "";
@@ -105,7 +109,7 @@ export class AuctionPageComponent implements OnDestroy {
   private usdcPerAxnPrice: BigNumber;
   private usdcPerEthPrice: BigNumber;
   private _1e18: string;
-
+  public shareRate: BigNumber;
 
   constructor(
     public contractService: ContractService,
@@ -127,6 +131,7 @@ export class AuctionPageComponent implements OnDestroy {
 
             if (account) {
               this.getAuctions();
+              this.getShareRate();
               this.onChangeAmount();
               this.onChangeAccount.emit();
               this.getWalletBids();
@@ -150,6 +155,11 @@ export class AuctionPageComponent implements OnDestroy {
   ngOnDestroy() {
     this.auctionPoolChecker = false;
     this.accountSubscribe.unsubscribe();
+  }
+
+  public async getShareRate() {
+    const shareRate = await this.contractService.getShareRate();
+    this.shareRate = new BigNumber(shareRate).div(this._1e18);
   }
 
   public scanDate(date) {
@@ -362,16 +372,32 @@ export class AuctionPageComponent implements OnDestroy {
     }, 2500);
   }
 
+  public onAutostakeDaysChanged() {
+    const days = this.withdrawData.autoStakeDays - 1;
+    this.withdrawData.lpb = days >= 0 ? this.withdrawData.amount.times(days / 1820).div(this.shareRate) : new BigNumber(0)
+    this.withdrawData.totalShares = this.withdrawData.shares.plus(this.withdrawData.lpb);
+  }
+
   public openWithdrawBid(bid: AuctionBid) {
     this.withdrawData.bid = bid;
+    this.withdrawData.amount = bid.winnings.times(this._1e18);
 
+    // Check if bid is from VCA
     let autoStakeDays = this.contractService.autoStakeDays;
     if (this.contractService.auctionModes[+bid.auctionId % 7] === "1") {
       autoStakeDays = this.contractService.ventureAutostakeDays;
     }
 
-    this.withdrawData.minAutostakeDays = autoStakeDays
+    // Set min Autostake Days
     this.withdrawData.autoStakeDays = autoStakeDays;
+    this.withdrawData.minAutostakeDays = autoStakeDays;
+
+    // Calculate Shares
+    this.withdrawData.shares = this.withdrawData.amount.div(this.shareRate);
+    this.withdrawData.lpb = this.withdrawData.amount.times(((autoStakeDays - 1) / 1820)).div(this.shareRate);
+    this.withdrawData.totalShares = this.withdrawData.shares.plus(this.withdrawData.lpb);
+
+    // Keep ref for when we need to close
     this.withdrawData.dialog = this.dialog.open(this.withdrawModal, {});
   }
 

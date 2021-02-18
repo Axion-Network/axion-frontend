@@ -107,7 +107,7 @@ export class ContractService {
     tokenDecimals: 18,
     tokenSymbol: "ETH",
     tokenName: "Ethereum",
-    tokenAddress: "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+    tokenAddress: "0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF",
   }
 
   public readonly _1e18: string = Math.pow(10, 18).toString();
@@ -1502,7 +1502,7 @@ export class ContractService {
       );
 
       return Promise.all(this.auctionTokens.map(async (token) => {
-        if (token.address == this.web3Service.toChecksumAddress(this.ethereumToken.tokenAddress)) {
+        if (token.address == this.ethereumToken.tokenAddress) {
           return "0";
         } else {
           const tokenAmount = this.reduceAmountByPercent(
@@ -2081,7 +2081,7 @@ export class ContractService {
         }
 
         // Check if Ethereum
-        if (tokenAddress === this.web3Service.toChecksumAddress(this.ethereumToken.tokenAddress)) {
+        if (tokenAddress === this.ethereumToken.tokenAddress) {
           vcaDivs.push({
             ...this.ethereumToken,
             interestEarnedUSDC,
@@ -2123,7 +2123,7 @@ export class ContractService {
       const percentage = +percentages[i];
 
       // Check if Ethereum
-      if (tokens[i] === this.web3Service.toChecksumAddress(this.ethereumToken.tokenAddress)) {
+      if (tokens[i] === this.ethereumToken.tokenAddress) {
         tokensOfTheDay.push({ tokenSymbol: this.ethereumToken.tokenSymbol, tokenName: this.ethereumToken.tokenName, percentage })
       } else {
         const { tokenSymbol, tokenName } = await this.getVentureAuctionTokenInfo(tokens[i]);

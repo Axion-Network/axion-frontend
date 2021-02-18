@@ -70,6 +70,7 @@ export class AuctionPageComponent implements OnDestroy {
     dialog?: any;
     bid?: AuctionBid;
     autoStakeDays?: number;
+    minAutostakeDays?: number;
   } = {};
 
   public referalLink = "";
@@ -363,7 +364,14 @@ export class AuctionPageComponent implements OnDestroy {
 
   public openWithdrawBid(bid: AuctionBid) {
     this.withdrawData.bid = bid;
-    this.withdrawData.autoStakeDays = this.contractService.autoStakeDays;
+
+    let autoStakeDays = this.contractService.autoStakeDays;
+    if (this.contractService.auctionModes[+bid.auctionId % 7] === "1") {
+      autoStakeDays = this.contractService.ventureAutostakeDays;
+    }
+
+    this.withdrawData.minAutostakeDays = autoStakeDays
+    this.withdrawData.autoStakeDays = autoStakeDays;
     this.withdrawData.dialog = this.dialog.open(this.withdrawModal, {});
   }
 

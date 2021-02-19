@@ -5029,52 +5029,6 @@
           "type": "constructor"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "bidderAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "tokenAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amountBought",
-              "type": "uint256"
-            }
-          ],
-          "name": "updateTokenPricePerShare",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "tokenAddress",
-              "type": "address"
-            }
-          ],
-          "name": "withdrawDivToken",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    },
-    "StakingV1": {
-      "ADDRESS": "0xCfD53Eff4871B93eD7405F3f428C25F3bf60bbEa",
-      "ABI": [
-        {
-          "inputs": [],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
           "anonymous": false,
           "inputs": [
             {

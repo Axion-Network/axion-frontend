@@ -304,6 +304,7 @@ export class StakingPageComponent implements OnDestroy {
     this.contractService
       .depositAXN(this.formsData.stakeAmount, this.formsData.stakeDays)
       .then((r) => {
+        this.contractService.checkVCARegistration();
         this.contractService.updateAXNBalance(true).then(() => {
           this.stakeTokensProgress = false;
           this.shareRate = 0;
@@ -497,6 +498,7 @@ export class StakingPageComponent implements OnDestroy {
       this.stakeList();
       this.contractService.updateAXNBalance(true);
       this.restakeData.opened.close();
+      this.contractService.checkVCARegistration();
     })
     .finally(() => {
       stake.withdrawProgress = false;
@@ -543,6 +545,7 @@ export class StakingPageComponent implements OnDestroy {
           this.stakeList();
           this.contractService.updateAXNBalance(true);
           stake.withdrawProgress = false;
+          this.contractService.checkVCARegistration();
         })
         .catch(() => {
           stake.withdrawProgress = false;
@@ -554,6 +557,7 @@ export class StakingPageComponent implements OnDestroy {
           this.stakeList();
           this.contractService.updateAXNBalance(true);
           stake.withdrawProgress = false;
+          this.contractService.checkVCARegistration();
         })
         .catch(() => {
           stake.withdrawProgress = false;
@@ -599,6 +603,7 @@ export class StakingPageComponent implements OnDestroy {
       this.extensionInfo.ref.close();
       this.stakeList();
       this.openSuccessDialog(transaction.transactionHash);
+      this.contractService.checkVCARegistration();
     } catch (err) {
       if (err.message) {
         this.openErrorDialog(err.message);

@@ -157,6 +157,28 @@ export class AuctionPageComponent implements OnDestroy {
     this.accountSubscribe.unsubscribe();
   }
 
+  public openDialog(dialog) {
+    return this.ngZone.run(() => this.dialog.open(dialog, {}))
+  }
+
+  public openSuccessDialog(txID) {
+    this.ngZone.run(() => {
+      this.dialog.open(TransactionSuccessModalComponent, {
+        width: "400px",
+        data: txID,
+      })
+    })
+  }
+
+  public openErrorDialog(msg) {
+    this.ngZone.run(() => {
+      this.dialog.open(MetamaskErrorComponent, {
+        width: "400px",
+        data: { msg },
+      })
+    })
+  }
+
   public async getShareRate() {
     const shareRate = await this.contractService.getShareRate();
     this.shareRate = new BigNumber(shareRate).div(this._1e18);
@@ -294,12 +316,7 @@ export class AuctionPageComponent implements OnDestroy {
   public sendETHToAuction(withoutWarning?) {
     const refAddress = this.cookieService.get("ref")
     if (refAddress.toLowerCase() === this.account.address.toLowerCase()) {
-      this.dialog.open(MetamaskErrorComponent, {
-        width: "400px",
-        data: {
-          msg: "It appears you are trying to self refer using your own referral link. Please use a different referral link before proceeding.",
-        },
-      });
+      this.openErrorDialog("It appears you are trying to self refer using your own referral link. Please use a different referral link before proceeding.")
       return;
     }
 
@@ -308,20 +325,20 @@ export class AuctionPageComponent implements OnDestroy {
         // Small bid warning
         const potentialWinnings = new BigNumber(this.poolInfo.axnPerEth).times(this.formsData.bidEthAmount).div(this._1e18).dp(0);
         if (potentialWinnings.isZero()) {
-          this.smallBidDialog = this.dialog.open(this.smallBidModal, {});
+          this.smallBidDialog = this.openDialog(this.smallBidModal);
           return;
         }
 
         // Overbid warning
         if (this.poolInfo.isOverBid) {
-          this.overBidDialog = this.dialog.open(this.overBidModal, {});
+          this.overBidDialog = this.openDialog(this.overBidModal);
           return;
         }
 
         // Large bid warning
         const afterBidAuctionPrice = new BigNumber(this.poolInfo.axn).div(this.poolInfo.eth.plus(this.formsData.bidEthAmount));
         if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth.times(0.75))) {
-          this.largeBidDialog = this.dialog.open(this.largeBidModal, {});
+          this.largeBidDialog = this.openDialog(this.largeBidModal);
           return;
         }
       }
@@ -338,19 +355,11 @@ export class AuctionPageComponent implements OnDestroy {
             this.formsData.bidEthAmount = undefined;
           });
           
-          this.dialog.open(TransactionSuccessModalComponent, {
-            width: "400px",
-            data: transactionHash,
-          })
+          this.openSuccessDialog(transactionHash);
         },
         (err) => {
           if (err.message) {
-            this.dialog.open(MetamaskErrorComponent, {
-              width: "400px",
-              data: {
-                msg: err.message,
-              },
-            });
+            this.openErrorDialog(err.message);
           }
         }
       )
@@ -398,7 +407,7 @@ export class AuctionPageComponent implements OnDestroy {
     this.withdrawData.totalShares = this.withdrawData.shares.plus(this.withdrawData.lpb);
 
     // Keep ref for when we need to close
-    this.withdrawData.dialog = this.dialog.open(this.withdrawModal, {});
+    this.withdrawData.dialog = this.openDialog(this.withdrawModal);
   }
 
   public confirmAutostakeDays() {

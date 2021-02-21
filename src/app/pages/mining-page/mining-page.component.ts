@@ -150,21 +150,25 @@ export class MiningPageComponent implements OnDestroy {
   }
 
   public openSuccessModal(txID: string) {
-    this.dialog.open(TransactionSuccessModalComponent, {
-      width: "400px",
-      data: txID,
-    });
+    this.ngZone.run(() => {
+      this.dialog.open(TransactionSuccessModalComponent, {
+        width: "400px",
+        data: txID,
+      })
+    })
   }
 
   public openErrorModal(message: string) {
-    return this.dialog.open(MetamaskErrorComponent, {
-      width: "400px",
-      data: { msg: message },
-    });
+    return this.ngZone.run(() => {
+      return this.dialog.open(MetamaskErrorComponent, {
+        width: "400px",
+        data: { msg: message },
+      });
+    })
   }
 
   public openWithdrawLPModal() {
-    this.formData.ref = this.dialog.open(this.withdrawLPModal, {});
+    this.formData.ref = this.ngZone.run(() => this.dialog.open(this.withdrawLPModal, {}));
   }
 
   public subscribeAccount() {

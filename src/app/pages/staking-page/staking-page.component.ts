@@ -569,11 +569,12 @@ export class StakingPageComponent implements OnDestroy {
         data: transaction.transactionHash,
       });
     } catch (err) {
-      if (err.message)
+      if (err.message) {
         this.dialog.open(MetamaskErrorComponent, {
           width: "400px",
           data: { msg: err.message },
         });
+      }
     } finally { this.extensionInfo.progress = false }
   }
 

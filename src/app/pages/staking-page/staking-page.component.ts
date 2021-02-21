@@ -186,6 +186,10 @@ export class StakingPageComponent implements OnDestroy {
 
   public async updateUserVCADivs() {
     this.vcaDivs = await this.contractService.getVentureAuctionDivs();
+
+    // Sometimes on load, the loading indicator would appear forever after getting vcaDivs.
+    // but stops when the user scrolls. This line should fix that in most cases.
+    window.dispatchEvent(new Event("scroll"));
   }
 
   public getStakingInfo() {

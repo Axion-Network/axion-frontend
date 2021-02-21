@@ -136,6 +136,7 @@ export class StakingPageComponent implements OnDestroy {
   public vcaRegisterLoading = false;
   public maxShareMaxDays;
   public checkingVCARegistration = true;
+  public confirmWithdrawData;
 
   constructor(
     private contractService: ContractService,
@@ -182,6 +183,28 @@ export class StakingPageComponent implements OnDestroy {
     this.dayEndSubscriber = this.contractService.onDayEnd().subscribe(() => {
       this.stakeList();
     });
+  }
+
+  public openDialog(dialog) {
+    return this.ngZone.run(() => this.dialog.open(dialog, {}))
+  }
+
+  public openSuccessDialog(txID) {
+    this.ngZone.run(() => {
+      this.dialog.open(TransactionSuccessModalComponent, {
+        width: "400px",
+        data: txID,
+      })
+    })
+  }
+
+  public openErrorDialog(msg) {
+    this.ngZone.run(() => {
+      this.dialog.open(MetamaskErrorComponent, {
+        width: "400px",
+        data: { msg },
+      })
+    })
   }
 
   public async updateUserVCADivs() {
@@ -445,7 +468,7 @@ export class StakingPageComponent implements OnDestroy {
         topUp: "",
         stakeDays: 0,
         amount: payout,
-        opened: this.dialog.open(this.actionsModal, {})
+        opened: this.openDialog(this.actionsModal)
       }
     } else {
       this.restakeData = {
@@ -454,7 +477,7 @@ export class StakingPageComponent implements OnDestroy {
         topUp: "",
         stakeDays: 0,
         amount: stake.principal.plus(stake.interest),
-        opened: this.dialog.open(this.actionsModal, {})
+        opened: this.openDialog(this.actionsModal)
       }
     }
   }
@@ -485,8 +508,6 @@ export class StakingPageComponent implements OnDestroy {
     this.stakeWithdraw(this.confirmWithdrawData.stake, true);
   }
 
-  public confirmWithdrawData;
-
   public async stakeWithdraw(stake: Stake, withoutConfirm?) {
     if (!withoutConfirm) {
       const result = await this.contractService.getStakePayoutAndPenalty(stake, stake.interest);
@@ -494,7 +515,7 @@ export class StakingPageComponent implements OnDestroy {
       const penalty = new BigNumber(result[1]);
 
       if (!penalty.isZero()) {
-        const openedWarning = this.dialog.open(this.warningModal, {});
+        const openedWarning = this.openDialog(this.warningModal);
         const oneDayInSeconds = this.contractService.getMSecondsInDay();
         const nowTS = Date.now();
         const endTS = stake.end.getTime();
@@ -560,7 +581,7 @@ export class StakingPageComponent implements OnDestroy {
     const amount = new BigNumber(stake.principal.plus(stake.interest));
 
     this.extensionInfo.stake = stake;
-    this.extensionInfo.ref = this.dialog.open(this.extendStakeModal, {});
+    this.extensionInfo.ref = this.openDialog(this.extendStakeModal);
     this.extensionInfo.newStake = {
       amount, 
       lpbShares: this.getLPBShares(amount, 5555),
@@ -577,16 +598,11 @@ export class StakingPageComponent implements OnDestroy {
       const transaction = await this.contractService.extendStake(this.extensionInfo.stake);
       this.extensionInfo.ref.close();
       this.stakeList();
-      this.dialog.open(TransactionSuccessModalComponent, {
-        width: "400px",
-        data: transaction.transactionHash,
-      });
+      this.openSuccessDialog(transaction.transactionHash);
     } catch (err) {
-      if (err.message)
-        this.dialog.open(MetamaskErrorComponent, {
-          width: "400px",
-          data: { msg: err.message },
-        });
+      if (err.message) {
+        this.openErrorDialog(err.message);
+      }
     } finally { this.extensionInfo.progress = false }
   }
 
@@ -603,19 +619,11 @@ export class StakingPageComponent implements OnDestroy {
     try {
       const tx = await this.contractService.withdrawVCADivs(vca.tokenAddress);
       this.updateUserVCADivs();
-      if (tx.transactionHash) {
-        this.dialog.open(TransactionSuccessModalComponent, {
-          width: "400px",
-          data: tx.transactionHash,
-        });
-      }
+      this.openSuccessDialog(tx.transactionHash);
     }
     catch (err) {
       if (err.message) {
-        this.dialog.open(MetamaskErrorComponent, {
-          width: "400px",
-          data: { msg: err.message },
-        });
+        this.openErrorDialog(err.message)
       }
     }
     finally {
@@ -628,20 +636,12 @@ export class StakingPageComponent implements OnDestroy {
 
     try {
       const tx = await this.contractService.registerForVCA();
-      if (tx.transactionHash) {
-        this.dialog.open(TransactionSuccessModalComponent, {
-          width: "400px",
-          data: tx.transactionHash,
-        });
-      }
+      this.openSuccessDialog(tx.transactionHash);
       this.contractService.checkVCARegistration();
     }
     catch (err) {
       if (err.message) {
-        this.dialog.open(MetamaskErrorComponent, {
-          width: "400px",
-          data: { msg: err.message },
-        });
+        this.openErrorDialog(err.message)
       }
     }
     finally {

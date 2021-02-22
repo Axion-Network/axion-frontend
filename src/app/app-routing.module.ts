@@ -19,10 +19,6 @@ const routes: Routes = [
     component: StakingPageComponent,
   },
   {
-    path: "mining",
-    component: MiningPageComponent,
-  },
-  {
     path: "mining/:mine",
     component: MiningPageComponent,
   },

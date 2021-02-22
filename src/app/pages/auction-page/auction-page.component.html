@@ -7,20 +7,18 @@
       class="question"
       mat-raised-button
       matTooltip="
-      This auction raffles accumulated Axion tokens between users, in proportion to the participants' bid in Ethereum. Any leftover Axion from the auction rolls over into the next weekly auction.
+      The regular auction 'raffles' accumulated Axion tokens between users, in proportion to the participants’ bid in Ethereum (ETH). Any leftover AXN from the auction rolls over into the next weekly auction. When a user places a bid in ETH, 80% of the received ETH is used to instantly buy back AXN on Uniswap and the received AXN is distributed as dividends to the staker class. 19% of the ETH is Axion Foundation profit whereas 1% goes to The Eden Reforestation Project where every $0.10 donated plants one tree.
 
-      When the user places a bid in ETH: 80% of the received ETH is used to instantly BUYBACK Axion on Uniswap and the received AXN is distributed as DIVIDENDS to stakers. 19% of the received ETH is the company's profit,  1% goes to The Eden Reforestation Project, with each $0.10 planting a tree.
+      All Axion received from this auction including referral bonuses must be staked for a minimum of 60 days upon withdrawal. The stake length may be increased to 5555 days. By increasing the stake length, the more shares the user receives in return which results in more dividends received from the auction buybacks.
 
-      All Axion received from the Auction including referral bonuses will be staked for a minimum of {{ contractService.autoStakeDays }} days upon withdrawal. The stake length may be increased up to {{stakeMaxDays}} days.
       
-      When you increase the stake length you get more shares, resulting in better DIVIDENDS received from auction BUYBACK.
+      There are two Venture Capital Auctions per week, on Tuesday and Friday. Each of these particular auctions have a maximum cap of 1B (billion) AXN, for a total of 2B per week - once they are sold out, no more bids can be had. Venture Capital Auctions bring in a new dividend asset class in the form of wrapped Bitcoin (wBTC) which simply utilizes Bitcoin's liquidity on the Ethereum network. The Venture Capital Auction investor also receives an immediate 10% wBTC bonus upon completion of the VCA in which they’ve bid in.
 
-      There is a chance the auction gets overbid, and everyone who has bid will receive a lower amount of AXN compared to buying on Uniswap.
-
-      If entering within the last hour or so, please be sure to use a high gas fee. If your transaction does not complete by auction cut off, your ETH will be entered into the next days auction. We are not responsible for this and cannot provide any refunds.
+      The auto-stake period for VCA's are a minimum of 120 days - longer than the normal auctions in order to offset the additional reward paid in wBTC. 
       
-      WARNING
-      Last bid of the same auction overwrites previous bid referral and stake length."
+      VC auction investors may choose to stake for longer than 120 days, upwards of 5555 days accompanied by a sliding scale with the date attached. Longer auto-stake periods for purchased AXN benefit greatly due to the BigPayDays and LongerPaysBetter bonuses while also securing a better share rate.
+
+      The rewards for VCA's are wBTC, where 85% of all ETH raised is used to purchase wBTC and distribute it across the staker class - these dividends are liquid and withdrawable at any time. 10% is the wBTC bonus to the bidder, and 5% is Axion Foundation profit. In the near future, additional alternative coin (altcoin) dividends will be introduced."
       matTooltipClass="question__tooltip question__extrawidth"
     ></div>
   </div>
@@ -38,20 +36,6 @@
       <div class="axn-form-block m-b-10 p-20 axn-text-center">
         <span class="axn-text-subtitle">
           Today's Auction: {{poolInfo.isVCA ? "Venture Capital" : "Regular"}}
-          <div 
-            class="question" 
-            mat-raised-button 
-            #tooltip2="matTooltip" 
-            (click)="tooltip2.toggle()" 
-            matTooltipClass="question__tooltip question__extrawidth"
-            matTooltip="
-            this tooltip needs updating. It will be used to explain the auction types. (Venture Capital or... 'regular'?).
-
-            Venture Capital: JoeJoe will fill this in...
-
-            Regular: JoeJoe will also fill this in...
-            ">
-          </div>
         </span>
 
         <!-- VCA Tokens -->

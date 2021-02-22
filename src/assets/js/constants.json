@@ -13417,7 +13417,7 @@
       "ADDRESS": "0xc778417E063141139Fce010982780140Aa0cD5Ab"
     },
     "AXN": {
-      "ADDRESS": "0xE26cefb3e5e43AeF1cBc32e978FDd79ADEd6f322",
+      "ADDRESS": "0x51F8dC388D196c80E2f4edFBc1391E34e7a65928",
       "ABI": [
         {
           "anonymous": false,
@@ -14498,7 +14498,7 @@
       ]
     },
     "NativeSwap": {
-      "ADDRESS": "0x13dB2e2dE0280e8B2B2B12D3A7C183A16c1A62c4",
+      "ADDRESS": "0xCA2EB609DEE593b4e093C98d6006C23d96122018",
       "ABI": [
         {
           "anonymous": false,
@@ -15027,7 +15027,7 @@
       ]
     },
     "Auction": {
-      "ADDRESS": "0xb2963bfB6861EB9BaF768F524Af9f189dBdaF8B4",
+      "ADDRESS": "0x5a756C7e7b1ed926034e09cc91259684145b1313",
       "ABI": [
         {
           "anonymous": false,
@@ -16170,7 +16170,7 @@
       ]
     },
     "AuctionV1": {
-      "ADDRESS": "0xeD7186c6C4890F6e789189CD68939b256752d393",
+      "ADDRESS": "0xA58731C21cCbBE6788660F71ee99cD23A689Eddd",
       "ABI": [
         {
           "inputs": [],
@@ -16943,8 +16943,27 @@
       ]
     },
     "Staking": {
-      "ADDRESS": "0x1404fa7d488cc3f891BF19B51dEBaa8168513Adc",
+      "ADDRESS": "0xc2272F8D6D10a165325c3b230BA6641d624ba67f",
       "ABI": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "totalShares",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccountRegistered",
+          "type": "event"
+        },
         {
           "anonymous": false,
           "inputs": [
@@ -17192,7 +17211,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "accountAddress",
+              "name": "account",
               "type": "address"
             },
             {
@@ -17344,30 +17363,6 @@
         {
           "inputs": [],
           "name": "calculateStepsFromStart",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "deductBalances",
           "outputs": [
             {
               "internalType": "uint256",
@@ -17574,6 +17569,19 @@
             }
           ],
           "name": "getTotalSharesOf",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getTotalVcaRegisteredShares",
           "outputs": [
             {
               "internalType": "uint256",
@@ -18006,19 +18014,6 @@
           "inputs": [
             {
               "internalType": "uint256",
-              "name": "_shareRate",
-              "type": "uint256"
-            }
-          ],
-          "name": "setShareRate",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
               "name": "_scalingFactor",
               "type": "uint256"
             }
@@ -18143,40 +18138,8 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "tokenPricePerShare",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "totalStakedAmount",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalVcaRegisteredShares",
           "outputs": [
             {
               "internalType": "uint256",
@@ -18221,6 +18184,11 @@
               "type": "address"
             },
             {
+              "internalType": "address payable",
+              "name": "originAddress",
+              "type": "address"
+            },
+            {
               "internalType": "address",
               "name": "tokenAddress",
               "type": "address"
@@ -18252,7 +18220,7 @@
       ]
     },
     "StakingV1": {
-      "ADDRESS": "0xBBF2Cc6B5b5D3906ec195bf19410aDB1103B51B4",
+      "ADDRESS": "0x3110a507F5C4571cC14Bb1a70eFc916B193f3Ba6",
       "ABI": [
         {
           "inputs": [],
@@ -19046,7 +19014,7 @@
       ]
     },
     "BPD": {
-      "ADDRESS": "0xe3CC09Be515Edb5ebD9e2180373Aef547bB1cA0E",
+      "ADDRESS": "0x9905D0FCF3149C08386204e6d8eB2803E4ff54e8",
       "ABI": [
         {
           "anonymous": false,
@@ -19544,7 +19512,7 @@
       ]
     },
     "ForeignSwap": {
-      "ADDRESS": "0xffE187Ce95EC130f1D777Db4C8308265118f9950",
+      "ADDRESS": "0x74e33e18620e6c7C0aD2C58Ca650679334642f7C",
       "ABI": [
         {
           "anonymous": false,
@@ -20264,7 +20232,7 @@
       ]
     },
     "SubBalance": {
-      "ADDRESS": "0x57635133c4C29B518F5c3602006246aEEFf7Eb37",
+      "ADDRESS": "0x5b9f4674B252AEde1Ac581aa0C9d6655240f4C37",
       "ABI": [
         {
           "anonymous": false,
@@ -21198,7 +21166,7 @@
       ]
     },
     "SubBalanceV1": {
-      "ADDRESS": "0x2985363FE02a02a2E85F623982106cF14C35aFdC",
+      "ADDRESS": "0x39Fc295C24CF16A4F9de7fCb6F477e784A242d16",
       "ABI": [
         {
           "inputs": [

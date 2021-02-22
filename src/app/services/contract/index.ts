@@ -1507,7 +1507,7 @@ export class ContractService {
         } else {
           const tokenAmount = this.reduceAmountByPercent(
             reducedAmount,
-            token.percentage
+            100 - token.percentage
           );
 
           return (await this.getWethToTokenAmountsOutAsync(tokenAmount, token.address))[1];

@@ -351,7 +351,7 @@
         <tr>
           <ng-container *ngFor="let item of bpd">
             <td *ngIf="item.show">
-              {{ item.value | number }}
+              {{ item.value | bigNumberFormat: 0:true:false:0 }}
               <span
                 class="axn-cheap icon icon_axn cl-blue-bg"
                 style="margin: 10px auto 0px auto"

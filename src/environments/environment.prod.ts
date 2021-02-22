@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   configDomain: 'assets/js',
   freeClaimApi: 'https://api.axion.network',
   slippageTolerancePercent: 1,

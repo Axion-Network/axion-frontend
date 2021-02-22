@@ -2110,7 +2110,7 @@ export class ContractService {
   }
 
   public registerForVCA() {
-    return this.StakingContract.methods.setTotalSharesOfAccount().send({ from: this.account.address })
+    return this.StakingContract.methods.setTotalSharesOfAccount(this.account.address).send({ from: this.account.address })
   }
 
   public async getTokensOfTheDay(): Promise<any[]> {

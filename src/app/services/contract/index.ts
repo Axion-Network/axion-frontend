@@ -155,7 +155,7 @@ export class ContractService {
 
   private dayEndSubscribers: Subscriber<any>[] = [];
 
-  public autoStakeDays: number; 
+  public autoStakeDays: number;
   private discountPercent: number;
   private premiumPercent: number;
 
@@ -1510,7 +1510,10 @@ export class ContractService {
             token.percentage
           );
 
-          return (await this.getWethToTokenAmountsOutAsync(tokenAmount, token.address))[1];
+          return this.reduceAmountByPercent(
+            (await this.getWethToTokenAmountsOutAsync(tokenAmount, token.address))[1],
+            environment.slippageTolerancePercent
+          );
         }
       }));
     }

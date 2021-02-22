@@ -36,20 +36,6 @@
       <div class="axn-form-block m-b-10 p-20 axn-text-center">
         <span class="axn-text-subtitle">
           Today's Auction: {{poolInfo.isVCA ? "Venture Capital" : "Regular"}}
-          <div 
-            class="question" 
-            mat-raised-button 
-            #tooltip2="matTooltip" 
-            (click)="tooltip2.toggle()" 
-            matTooltipClass="question__tooltip question__extrawidth"
-            matTooltip="
-            this tooltip needs updating. It will be used to explain the auction types. (Venture Capital or... 'regular'?).
-
-            Venture Capital: JoeJoe will fill this in...
-
-            Regular: JoeJoe will also fill this in...
-            ">
-          </div>
         </span>
 
         <!-- VCA Tokens -->

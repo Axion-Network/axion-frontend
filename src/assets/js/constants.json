@@ -1980,7 +1980,7 @@
               "type": "uint256"
             },
             {
-              "indexed": true,
+              "indexed": false,
               "internalType": "uint256",
               "name": "time",
               "type": "uint256"
@@ -2076,6 +2076,49 @@
             {
               "indexed": false,
               "internalType": "uint256",
+              "name": "ethBid",
+              "type": "uint256"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "auctionId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address[]",
+              "name": "coins",
+              "type": "address[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256[]",
+              "name": "amountBought",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "VentureBid",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
               "name": "value",
               "type": "uint256"
             },
@@ -2086,7 +2129,7 @@
               "type": "uint256"
             },
             {
-              "indexed": true,
+              "indexed": false,
               "internalType": "uint256",
               "name": "time",
               "type": "uint256"
@@ -2419,6 +2462,19 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "getAuctionModes",
+          "outputs": [
+            {
+              "internalType": "uint8[7]",
+              "name": "",
+              "type": "uint8[7]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "bytes32",
@@ -2481,13 +2537,24 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "getUniswapLastPrice",
+          "inputs": [
+            {
+              "internalType": "uint8",
+              "name": "_day",
+              "type": "uint8"
+            }
+          ],
+          "name": "getTokensOfDay",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "address[]",
               "name": "",
-              "type": "uint256"
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
             }
           ],
           "stateMutability": "view",
@@ -2495,12 +2562,12 @@
         },
         {
           "inputs": [],
-          "name": "getUniswapMiddlePriceForDays",
+          "name": "getVentureAutoStakeDays",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "uint8",
               "name": "",
-              "type": "uint256"
+              "type": "uint8"
             }
           ],
           "stateMutability": "view",
@@ -2546,59 +2613,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_stepTimestamp",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "_mainTokenAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_stakingAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address payable",
-              "name": "_uniswapAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address payable",
-              "name": "_recipientAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_nativeSwapAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_foreignSwapAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_subbalancesAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_auctionV1Address",
-              "type": "address"
-            }
-          ],
-          "name": "init",
-          "outputs": [],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -2782,6 +2796,24 @@
         {
           "inputs": [
             {
+              "internalType": "uint8",
+              "name": "_day",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "_mode",
+              "type": "uint8"
+            }
+          ],
+          "name": "setAuctionMode",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
               "name": "_autoStakeDays",
               "type": "uint256"
@@ -2873,6 +2905,42 @@
         {
           "inputs": [
             {
+              "internalType": "uint8",
+              "name": "day",
+              "type": "uint8"
+            },
+            {
+              "internalType": "address[]",
+              "name": "coins",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint8[]",
+              "name": "percentages",
+              "type": "uint8[]"
+            }
+          ],
+          "name": "setTokensOfDay",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint8",
+              "name": "_autoStakeDays",
+              "type": "uint8"
+            }
+          ],
+          "name": "setVentureAutoStakeDays",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "bytes32",
               "name": "role",
               "type": "bytes32"
@@ -2948,60 +3016,6 @@
           "name": "withdrawV1",
           "outputs": [],
           "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [],
-          "outputs": [
-            {
-              "internalType": "uint8[7]",
-              "name": "",
-              "type": "uint8[7]"
-            }
-          ],
-          "name": "getAuctionModes",
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "constant": true,
-          "inputs": [
-            {
-              "internalType": "uint8",
-              "name": "",
-              "type": "uint8"
-            }
-          ],
-          "name": "getTokensOfDay",
-          "outputs": [
-            {
-              "internalType": "address[]",
-              "name": "coin",
-              "type": "address[]"
-            },
-            {
-              "internalType": "uint8[]",
-              "name": "percentage",
-              "type": "uint256[]"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getVentureAutoStakeDays",
-          "outputs": [
-            {
-              "internalType": "uint8",
-              "name": "",
-              "type": "uint8"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         }
       ]
@@ -3806,6 +3820,25 @@
           "inputs": [
             {
               "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint256",
+              "name": "totalShares",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccountRegistered",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
               "internalType": "uint256",
               "name": "value",
               "type": "uint256"
@@ -4048,7 +4081,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "accountAddress",
+              "name": "account",
               "type": "address"
             },
             {
@@ -4213,30 +4246,6 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "deductBalances",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
               "internalType": "uint256",
               "name": "amount",
               "type": "uint256"
@@ -4317,6 +4326,19 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMaxShareMaxDays",
+          "outputs": [
+            {
+              "internalType": "uint16",
+              "name": "",
+              "type": "uint16"
             }
           ],
           "stateMutability": "view",
@@ -4409,8 +4431,27 @@
           "type": "function"
         },
         {
-          "inputs": [],
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
           "name": "getTotalSharesOf",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getTotalVcaRegisteredShares",
           "outputs": [
             {
               "internalType": "uint256",
@@ -4829,12 +4870,25 @@
         {
           "inputs": [
             {
+              "internalType": "uint16",
+              "name": "_maxShareMaxDays",
+              "type": "uint16"
+            }
+          ],
+          "name": "setMaxShareMaxDays",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
-              "name": "_shareRate",
+              "name": "_scalingFactor",
               "type": "uint256"
             }
           ],
-          "name": "setShareRate",
+          "name": "setShareRateScalingFactor",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -4954,25 +5008,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "tokenPricePerShare",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "totalStakedAmount",
           "outputs": [
@@ -5012,16 +5047,44 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "getMaxShareMaxDays",
-          "outputs": [
+          "inputs": [
             {
-              "internalType": "uint16",
-              "name": "_maxShareMaxDays",
-              "type": "uint16"
+              "internalType": "address payable",
+              "name": "bidderAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address payable",
+              "name": "originAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "tokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountBought",
+              "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "name": "updateTokenPricePerShare",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "tokenAddress",
+              "type": "address"
+            }
+          ],
+          "name": "withdrawDivToken",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]

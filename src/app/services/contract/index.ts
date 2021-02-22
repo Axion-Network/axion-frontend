@@ -1107,7 +1107,7 @@ export class ContractService {
 
     bpdInfo.contracts.BPDInfo.map((value) => {
       const data = {
-        value: 0,
+        value: new BigNumber(0),
         year: 0,
         dateEnd: 0,
         daysLeft: 0,
@@ -1115,7 +1115,7 @@ export class ContractService {
         seconds: 0,
       };
 
-      data.value = value;
+      data.value = new BigNumber(value).times(50);
       data.year =
         count > 0
           ? bpdInfo.daysInYear * (count + 1)
@@ -1282,7 +1282,7 @@ export class ContractService {
       const endMs = stakeSession.end * 1000;
       const dayMs = this.settingsApp.settings.time.seconds * 1000;
       const amount = new BigNumber(stakeSession.amount);
-      const bigPayDay = new BigNumber(bigPayDayPayout[0]);
+      const bigPayDay = new BigNumber(bigPayDayPayout[0]).times(50);
 
       const stake: Stake = {
         start: new Date(stakeSession.start * 1000),
@@ -1338,7 +1338,7 @@ export class ContractService {
       const endMs = stakeSession.end * 1000;
       const dayMs = this.settingsApp.settings.time.seconds * 1000;
       const amount = new BigNumber(stakeSession.amount);
-      const bigPayDay = new BigNumber(bigPayDayPayout[0]);
+      const bigPayDay = new BigNumber(bigPayDayPayout[0]).times(50);
 
       const stake: Stake = {
         start: new Date(stakeSession.start * 1000),
@@ -1507,7 +1507,7 @@ export class ContractService {
         } else {
           const tokenAmount = this.reduceAmountByPercent(
             reducedAmount,
-            token.percentage
+            100 - token.percentage
           );
 
           return this.reduceAmountByPercent(

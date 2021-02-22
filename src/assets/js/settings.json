@@ -12,7 +12,7 @@
     "net": 3,
 
     "time": {
-      "seconds": 600,
+      "seconds": 21600,
       "display": "days"
     }
   },

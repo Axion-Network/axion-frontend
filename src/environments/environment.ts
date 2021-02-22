@@ -8,6 +8,7 @@ export const environment = {
   freeClaimApi: "https://api.axion.network",
   slippageTolerancePercent: 1,
   auctionRecipientPercent: 20,
+  ventureAuctionRecipientPercent: 5
 };
 
 /*

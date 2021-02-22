@@ -567,3 +567,20 @@ body {
 .upgrade-container {
   margin: 2%;
 }
+
+.vca-register {
+  text-align: center;
+  padding: 30px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tokens-of-the-day {
+  display: flex;
+  justify-content: center;
+}
+
+.token-of-the-day {
+  margin: 0 2%;
+}

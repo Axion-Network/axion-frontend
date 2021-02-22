@@ -42,6 +42,9 @@ export interface Auction {
   uniAxnPerEth: BigNumber;
   axnPerEth: BigNumber;
   isOverBid: boolean;
+  isVCA: boolean;
+  axnBuybacks: BigNumber;
+  tokensOfTheDay: string[];
 }
 
 export interface AuctionBid {
@@ -55,6 +58,21 @@ export interface AuctionBid {
   status: string;
   axnPerEth: BigNumber;
   isV1: boolean;
+}
+
+export interface VentureAuctionDivs {
+  tokenName: string;
+  tokenSymbol: string;
+  tokenAddress: string;
+  tokenDecimals: number;
+  totalSharesOf: BigNumber;
+  interestEarnedUSDC: string;
+  interestEarnedToken: BigNumber;
+}
+
+export interface AuctionToken {
+  address: string;
+  percentage: number;
 }
 
 @Injectable({
@@ -84,6 +102,13 @@ export class ContractService {
   private tokensDecimals: any = {
     ETH: 18,
   };
+
+  private readonly ethereumToken: any = {
+    tokenDecimals: 18,
+    tokenSymbol: "ETH",
+    tokenName: "Ethereum",
+    tokenAddress: "0xFFfFfFffFFfffFFfFFfFFFFFffFFFffffFfFFFfF",
+  }
 
   public readonly _1e18: string = Math.pow(10, 18).toString();
 
@@ -134,6 +159,11 @@ export class ContractService {
   private discountPercent: number;
   private premiumPercent: number;
 
+  public stepsFromStart: number;
+  public auctionModes: string[];
+  public auctionTokens: AuctionToken[];
+  public ventureAutostakeDays: number;
+
   constructor(private httpService: HttpClient, private config: AppConfig) {
     setInterval(() => {
       if (!(this.secondsInDay && this.startDate)) {
@@ -155,6 +185,7 @@ export class ContractService {
       }
     }, 60000);
   }
+
 
   public getMSecondsInDay() {
     return this.secondsInDay * 1000;
@@ -258,10 +289,20 @@ export class ContractService {
         if (account) {
           this.initializeContracts();
           const options = await this.AuctionContract.methods.options().call();
+          this.stepsFromStart = await this.AuctionContract.methods.calculateStepsFromStart().call();
+          this.ventureAutostakeDays = await this.AuctionContract.methods.getVentureAutoStakeDays().call();
 
           this.autoStakeDays = +options.autoStakeDays;
           this.discountPercent = +options.discountPercent;
           this.premiumPercent = +options.premiumPercent;
+
+          this.auctionModes = await this.AuctionContract.methods.getAuctionModes().call();
+
+          const tokensOfDay = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
+
+          this.auctionTokens = tokensOfDay[0].map((token, i) => {
+            return { address: token, percentage: +tokensOfDay[1][i] } as AuctionToken
+          });
 
           const promises = [this.getTokensInfo(false)];
           return Promise.all(promises);
@@ -337,13 +378,13 @@ export class ContractService {
   }
 
   public getAccount(noEnable?) {
-    const finishIniAccount = () => {
+    const finishIniAccount = async () => {
       if (this.account) {
         this.initializeContracts();
-        this.getAccountSnapshot().then(() => {
-          this.updateClaimableInformation(true);
-          this.updateClaimableInformationHex(true);
-        });
+        await this.getAccountSnapshot()
+        await this.checkVCARegistration();
+        this.updateClaimableInformation(true);
+        this.updateClaimableInformationHex(true);
       } else {
         this.callAllAccountsSubscribers();
       }
@@ -788,6 +829,13 @@ export class ContractService {
 
     auction.isOverBid = uniswapAveragePrice.times(0.75).isGreaterThan(auction.axnPerEth);
 
+    const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, this.CONTRACTS_PARAMS.AXN.ADDRESS);
+    const buybackAmount = await tokenContract.methods.balanceOf(this.CONTRACTS_PARAMS.Staking.ADDRESS).call();
+
+    auction.tokensOfTheDay = await this.getTokensOfTheDay();
+    auction.isVCA = this.auctionModes[this.stepsFromStart % 7] === "1";
+    auction.axnBuybacks = new BigNumber(buybackAmount);
+
     return auction;
   }
 
@@ -1059,7 +1107,7 @@ export class ContractService {
 
     bpdInfo.contracts.BPDInfo.map((value) => {
       const data = {
-        value: 0,
+        value: new BigNumber(0),
         year: 0,
         dateEnd: 0,
         daysLeft: 0,
@@ -1067,7 +1115,7 @@ export class ContractService {
         seconds: 0,
       };
 
-      data.value = value;
+      data.value = new BigNumber(value).times(50);
       data.year =
         count > 0
           ? bpdInfo.daysInYear * (count + 1)
@@ -1234,7 +1282,7 @@ export class ContractService {
       const endMs = stakeSession.end * 1000;
       const dayMs = this.settingsApp.settings.time.seconds * 1000;
       const amount = new BigNumber(stakeSession.amount);
-      const bigPayDay = new BigNumber(bigPayDayPayout[0]);
+      const bigPayDay = new BigNumber(bigPayDayPayout[0]).times(50);
 
       const stake: Stake = {
         start: new Date(stakeSession.start * 1000),
@@ -1290,7 +1338,7 @@ export class ContractService {
       const endMs = stakeSession.end * 1000;
       const dayMs = this.settingsApp.settings.time.seconds * 1000;
       const amount = new BigNumber(stakeSession.amount);
-      const bigPayDay = new BigNumber(bigPayDayPayout[0]);
+      const bigPayDay = new BigNumber(bigPayDayPayout[0]).times(50);
 
       const stake: Stake = {
         start: new Date(stakeSession.start * 1000),
@@ -1372,44 +1420,6 @@ export class ContractService {
     });
   }
 
-  public async sendMaxETHToAuction(amount, ref?) {
-    const date = Math.round(
-      (new Date().getTime() + 24 * 60 * 60 * 1000) / 1000
-    );
-    const refLink = ref
-      ? ref.toLowerCase()
-      : "0x0000000000000000000000000000000000000000".toLowerCase();
-
-    const gasLimit = await this.web3Service.getGasLimit();
-    const gasPrice = await this.web3Service.gasPrice();
-    const estimatedGas = await this.AuctionContract.methods
-      .bid(0, date, refLink)
-      .estimateGas({
-        from: this.account.address,
-        gas: gasLimit,
-        value: amount,
-      });
-
-    const newAmount = new BigNumber(amount).minus(estimatedGas * gasPrice);
-    if (newAmount.isNegative()) {
-      throw new Error("Not enough gas");
-    }
-
-    const amountOutMin = await this.getAmountOutMinAsync(newAmount.toString());
-
-    return this.AuctionContract.methods
-      .bid(amountOutMin, date, refLink)
-      .send({
-        from: this.account.address,
-        value: newAmount,
-        gasPrice,
-        gasLimit: estimatedGas,
-      })
-      .then((res) => {
-        return this.checkTransaction(res);
-      });
-  }
-
   public async sendETHToAuction(amount, ref?) {
     const date = Math.round(
       (new Date().getTime() + 24 * 60 * 60 * 1000) / 1000
@@ -1431,28 +1441,7 @@ export class ContractService {
       });
   }
 
-  public async sendETHToAuctionV2(amount, ref?) {
-    const date = Math.round(
-      (new Date().getTime() + 24 * 60 * 60 * 1000) / 1000
-    );
-    const refLink = ref
-      ? ref.toLowerCase()
-      : "0x0000000000000000000000000000000000000000".toLowerCase();
-
-    const amountOutMin = await this.getAmountOutMinAsync(amount);
-
-    return this.AuctionContract.methods
-      .bid(amountOutMin, date, refLink)
-      .send({
-        from: this.account.address,
-        value: amount,
-      })
-      .then((res) => {
-        return this.checkTransaction(res);
-      });
-  }
-
-  public async sendMaxETHToAuctionV2(amount, ref?) {
+  public async sendMaxETHToAuction(amount, ref?) {
     const date = Math.round(
       (new Date().getTime() + 24 * 60 * 60 * 1000) / 1000
     );
@@ -1463,7 +1452,7 @@ export class ContractService {
     const gasLimit = await this.web3Service.getGasLimit();
     const gasPrice = await this.web3Service.gasPrice();
     const estimatedGas = await this.AuctionContract.methods
-      .bid(0, date, refLink)
+      .bid([0], date, refLink)
       .estimateGas({
         from: this.account.address,
         gas: gasLimit,
@@ -1491,18 +1480,43 @@ export class ContractService {
       });
   }
 
-  private async getAmountOutMinAsync(amount: string): Promise<string> {
-    const reducedAmount: string = this.reduceAmountByPercent(
-      amount,
-      environment.auctionRecipientPercent
-    );
+  private async getAmountOutMinAsync(amount: string): Promise<string[]> {
+    const auctionMode = +this.auctionModes[this.stepsFromStart % 7];
 
-    const amountOut: string = (await this.getWethToAxionAmountsOutAsync(reducedAmount))[1];
+    if (auctionMode == 0) {
+      const reducedAmount: string = this.reduceAmountByPercent(
+        amount,
+        environment.auctionRecipientPercent
+      );
 
-    return this.reduceAmountByPercent(
-      amountOut,
-      environment.slippageTolerancePercent
-    );
+      const amountOut: string = (await this.getWethToAxionAmountsOutAsync(reducedAmount))[1];
+
+      return [this.reduceAmountByPercent(
+        amountOut,
+        environment.slippageTolerancePercent
+      )];
+    } else if (auctionMode == 1) {
+      const reducedAmount: string = this.reduceAmountByPercent(
+        amount,
+        environment.ventureAuctionRecipientPercent
+      );
+
+      return Promise.all(this.auctionTokens.map(async (token) => {
+        if (token.address == this.ethereumToken.tokenAddress) {
+          return "0";
+        } else {
+          const tokenAmount = this.reduceAmountByPercent(
+            reducedAmount,
+            100 - token.percentage
+          );
+
+          return this.reduceAmountByPercent(
+            (await this.getWethToTokenAmountsOutAsync(tokenAmount, token.address))[1],
+            environment.slippageTolerancePercent
+          );
+        }
+      }));
+    }
   }
 
   private reduceAmountByPercent(amount: string, percent: number): string {
@@ -1524,10 +1538,14 @@ export class ContractService {
   }
 
   private getWethToAxionAmountsOutAsync(amount: string): Promise<string[]> {
+    return this.getWethToTokenAmountsOutAsync(amount, this.CONTRACTS_PARAMS.AXN.ADDRESS);
+  }
+
+  private getWethToTokenAmountsOutAsync(amount: string, tokenAddress: string): Promise<string[]> {
     return this.UniswapV2Router02.methods
       .getAmountsOut(amount, [
         this.CONTRACTS_PARAMS.WETH.ADDRESS,
-        this.CONTRACTS_PARAMS.AXN.ADDRESS,
+        tokenAddress,
       ])
       .call();
   }
@@ -1545,7 +1563,7 @@ export class ContractService {
       .call())[1]).div("1000000"); // USDC uses 6 decimal places
   }
 
-  public getAuctionsData(todaysAuctionId: number, start: number) {
+  public getAuctionsData(todaysAuctionId: number, start: number): Promise<any[]> {
     todaysAuctionId = +todaysAuctionId;
 
     const oneDayInMS = this.secondsInDay * 1000;
@@ -1574,45 +1592,43 @@ export class ContractService {
     }
 
     const nowDateTS = new Date().getTime();
-    const auctionsPromises = auctionIds.map((id) => {
-      return this.AuctionContract.methods
-        .reservesOf(id)
-        .call()
-        .then((auctionData) => {
-          const startDateTS = start + oneDayInMS * id;
-          const endDateTS = startDateTS + oneDayInMS;
-          const axnInPool = new BigNumber(auctionData.token);
-          const ethInPool = new BigNumber(auctionData.eth);
+    const auctionsPromises = auctionIds.map(async (id) => {
+      const auctionData = await this.AuctionContract.methods.reservesOf(id).call();
 
-          const auction = {
-            id: id,
-            isWeekly: id % 7 === 0,
-            time: {
-              date: moment(startDateTS),
-              state:
-                nowDateTS > startDateTS && nowDateTS < endDateTS
-                  ? "progress"
-                  : nowDateTS > endDateTS
-                    ? "finished"
-                    : "feature",
-            },
-            data: {
-              axnInPool: axnInPool,
-              ethInPool: ethInPool,
-            },
-            axnPerEth: null,
-          };
+      const startDateTS = start + oneDayInMS * id;
+      const endDateTS = startDateTS + oneDayInMS;
+      const axnInPool = new BigNumber(auctionData.token);
+      const ethInPool = new BigNumber(auctionData.eth);
 
-          if (auction.time.state === "finished") {
-            auction.axnPerEth = this.getAuctionAxnPerEth(
-              axnInPool,
-              ethInPool,
-              auctionData.uniswapMiddlePrice
-            );
-          }
+      const auction = {
+        id: id,
+        isWeekly: id % 7 === 0,
+        isVCA: this.auctionModes[id % 7] === "1",
+        time: {
+          date: moment(startDateTS),
+          state:
+            nowDateTS > startDateTS && nowDateTS < endDateTS
+              ? "progress"
+              : nowDateTS > endDateTS
+                ? "finished"
+                : "feature",
+        },
+        data: {
+          axnInPool: axnInPool,
+          ethInPool: ethInPool,
+        },
+        axnPerEth: null,
+      };
 
-          return auction;
-        });
+      if (auction.time.state === "finished") {
+        auction.axnPerEth = this.getAuctionAxnPerEth(
+          axnInPool,
+          ethInPool,
+          auctionData.uniswapMiddlePrice
+        );
+      }
+
+      return auction;
     });
 
     return Promise.all(auctionsPromises).then((results) => {
@@ -2024,12 +2040,122 @@ export class ContractService {
   public checkMaxSharesActive() {
     return this.StakingContract.methods.getMaxShareEventActive().call();
   }
-  
+
   public extendStake(stake: Stake) {
     return this.StakingContract.methods[stake.isV1 ? "maxShareV1" : "maxShare"](stake.sessionId).send({ from: this.account.address })
   }
 
+  public getTotalShares() {
+    return this.StakingContract.methods.getTotalSharesOf(this.account.address).call()
+  }
+
+  private async getVentureAuctionTokenInfo(tokenAddress: string) {
+    const tokenContract = this.web3Service.getContract(this.CONTRACTS_PARAMS.ERC20.ABI, tokenAddress);
+    const tokenName = await tokenContract.methods.name().call();
+    const tokenSymbol = await tokenContract.methods.symbol().call();
+    const tokenDecimals = +(await tokenContract.methods.decimals().call());
+
+    return {
+      tokenName,
+      tokenSymbol,
+      tokenDecimals
+    }
+  }
+
+  public getVentureAuctionTokens(): Promise<string[]> {
+    return this.StakingContract.methods.getDivTokens().call();
+  }
+
+  public getVentureAuctionInterestEarned(address: string): Promise<string> {
+    return this.StakingContract.methods.getTokenInterestEarned(this.account.address, address).call();
+  }
+
+  public async getVentureAuctionDivs(): Promise<VentureAuctionDivs[]> {
+    const vcaTokens = await this.getVentureAuctionTokens();
+    const vcaDivs = []
+
+    if (vcaTokens) {
+      for (const tokenAddress of vcaTokens.filter(x => x !== "0x0000000000000000000000000000000000000000")) {
+        const interestEarnedToken = new BigNumber(await this.getVentureAuctionInterestEarned(tokenAddress));
+        let interestEarnedUSDC = "0.00";
+        if (!interestEarnedToken.isZero() && environment.production) {
+          const unformattedInterestInUSDC = await this.getTokenToUsdcAmountsOutAsync(tokenAddress, interestEarnedToken.toString())
+          interestEarnedUSDC = unformattedInterestInUSDC.toNumber().toLocaleString("en-US");
+        }
+
+        // Check if Ethereum
+        if (tokenAddress === this.ethereumToken.tokenAddress) {
+          vcaDivs.push({
+            ...this.ethereumToken,
+            interestEarnedUSDC,
+            interestEarnedToken,
+          })
+        }
+        else {
+          const { tokenName, tokenSymbol, tokenDecimals } = await this.getVentureAuctionTokenInfo(tokenAddress);
+          vcaDivs.push({
+            tokenName,
+            tokenSymbol,
+            tokenAddress,
+            tokenDecimals,
+            interestEarnedUSDC,
+            interestEarnedToken,
+          })
+        }
+      }
+    }
+
+    return vcaDivs;
+  }
+
+  public withdrawVCADivs(tokenAddress: string) {
+    return this.StakingContract.methods.withdrawDivToken(tokenAddress).send({ from: this.account.address })
+  }
+
+  public registerForVCA() {
+    return this.StakingContract.methods.setTotalSharesOfAccount(this.account.address).send({ from: this.account.address })
+  }
+
+  public async getTokensOfTheDay(): Promise<any[]> {
+    const tokensOfTheDay = [];
+    const result = await this.AuctionContract.methods.getTokensOfDay(this.stepsFromStart % 7).call();
+    const tokens = result[0]
+    const percentages = result[1];
+
+    for (let i = 0; i < tokens.length; ++i) {
+      const percentage = +percentages[i];
+
+      // Check if Ethereum
+      if (tokens[i] === this.ethereumToken.tokenAddress) {
+        tokensOfTheDay.push({ tokenSymbol: this.ethereumToken.tokenSymbol, tokenName: this.ethereumToken.tokenName, percentage })
+      } else {
+        const { tokenSymbol, tokenName } = await this.getVentureAuctionTokenInfo(tokens[i]);
+        tokensOfTheDay.push({ tokenName, tokenSymbol, percentage })
+      }
+    }
+
+    return tokensOfTheDay;
+  }
+
+  public async checkVCARegistration() {
+    const { active, matured } = await this.getWalletStakesAsync();
+    const totalSharesVCA = new BigNumber(await this.getTotalShares())
+
+    let totalSharesStakes = new BigNumber(0);
+    const stakes = active.concat(matured);
+
+    if (stakes.length > 0) {
+      totalSharesStakes = stakes.map(x => x.shares).reduce((total, x) => total.plus(x));
+    }
+
+    this.account.mustRegisterVCA = !totalSharesVCA.isEqualTo(totalSharesStakes);
+  }
+
   public getMaxDaysMaxShares() {
     return this.StakingContract.methods.getMaxShareMaxDays().call()
+  }
+
+  public getShareRate() {
+    return this.StakingContract.methods.shareRate().call()
   }
 }

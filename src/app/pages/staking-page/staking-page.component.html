@@ -1,3 +1,4 @@
+<!-- Create Stake -->
 <section class="axn-section" *ngIf="account">
   <div class="axn-title-block">
     <span class="axn-title">Create Stake</span>
@@ -226,6 +227,92 @@
   </form>
 </section>
 
+<!-- Spinner -->
+<section *ngIf="account && (!stakingInfoChecker || !vcaDivs)" class="loading-spinner">
+  <mat-spinner color="accent" diameter="50"></mat-spinner>
+</section>
+
+<!-- VCA Registration -->
+<section class="axn-section" *ngIf="account?.mustRegisterVCA">
+  <div class="axn-form-block table-container p-20">
+    <div class="axn-title-block p-20">
+      <span class="axn-title">Venture Capital Auction</span>
+    </div>
+
+    <div class="vca-register">
+      <span class="axn-form-block-text">
+        This address (<span class="axn-btn-metamask-text">{{account.address}}</span>) has not completed VCA registration.<br />
+        In order to receive VCA divs from your current active stakes, you must register your wallet.<br />
+        Alternatively, any stake, unstake or max share upgrade from now on will automatically complete this action.
+      </span>
+      <br />
+      <button class="axn-btn axn-btn-gray" (click)="registerVCA()" [disabled]="vcaRegisterLoading"
+        [ngClass]="{ progress: vcaRegisterLoading }">
+        <span class="lds-ellipsis" *ngIf="vcaRegisterLoading">
+          <span class="lds-ellipsis-container">
+            <span></span><span></span><span></span><span></span>
+          </span>
+        </span>
+        <span class="t-fw-light">&nbsp;&nbsp;Register Wallet for Venture Capital Auction&nbsp;&nbsp;</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- VCA Divs -->
+<section class="axn-section" *ngIf="activeStakeTotals && !account.mustRegisterVCA && vcaDivs">
+  <div class="axn-form-block table-container p-20">
+    <div class="axn-title-block p-20">
+      <span class="axn-title">Venture Capital Auction</span>
+    </div>
+
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" *ngIf="vcaDivs.length > 0">
+      <thead>
+        <tr>
+          <th>Token Name</th>
+          <th>Token Symbol</th>
+          <th>Interest Earned</th>
+          <th>Interest Earned (USD)</th>
+          <th width="10"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let vca of vcaDivs">
+          <td>{{vca.tokenName}}</td>
+          <td>{{vca.tokenSymbol}}</td>
+          <td>
+            <span matTooltipClass="table__tooltip" mat-raised-button matTooltip="{{vca.interestEarnedToken | bigNumberFormat: vca.tokenDecimals:false:false:vca.tokenDecimals}}">
+              {{vca.interestEarnedToken | bigNumberFormat: vca.tokenDecimals:true:false:8}}
+            </span>
+          </td>
+          <td>${{vca.interestEarnedUSDC}}</td>
+
+          <td class="action-button">
+            <button class="axn-btn axn-btn-gray" (click)="withdrawVCA(vca)" [disabled]="vca.interestEarnedToken.isZero() || vca.loading"  [ngClass]="{ progress: vca.loading }">
+              <span class="lds-ellipsis" *ngIf="vca.loading">
+                <span class="lds-ellipsis-container">
+                  <span></span><span></span><span></span><span></span>
+                </span>
+              </span>
+              <span class="t-fw-light">&nbsp;&nbsp;WITHDRAW&nbsp;&nbsp;</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Completed VCA Registration -->
+    <div class="vca-register" *ngIf="vcaDivs.length === 0">
+      <span class="axn-form-block-text">
+        This address (<span class="axn-btn-metamask-text">{{account.address}}</span>) has successfully completed VCA registration!<br/>
+        Once the Venture Capital Auctions start, this section will show your accumulated dividends.
+      </span>
+    </div>
+
+  </div>
+</section>
+
+<!-- BPD -->
 <section class="axn-section" *ngIf="tableInfo">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
@@ -278,10 +365,7 @@
   </div>
 </section>
 
-<section *ngIf="account && !stakingInfoChecker" class="loading-spinner">
-  <mat-spinner color="accent" diameter="50"></mat-spinner>
-</section>
-
+<!-- Active Stake Totals -->
 <section class="axn-section" *ngIf="activeStakeTotals && tokensDecimals">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
@@ -380,6 +464,7 @@
   </div>
 </section>
 
+<!-- Matured Staked -->
 <section class="axn-section" *ngIf="stakes?.matured?.length && tokensDecimals">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
@@ -545,6 +630,7 @@
   </div>
 </section>
 
+<!-- Active Stakes -->
 <section class="axn-section" *ngIf="stakes?.active?.length && tokensDecimals">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
@@ -710,6 +796,7 @@
   </div>
 </section>
 
+<!-- Stake History -->
 <section class="axn-section" *ngIf="stakes?.closed?.length && tokensDecimals">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
@@ -847,6 +934,7 @@
   </div>
 </section>
 
+<!-- V1 Stake History -->
 <section class="axn-section" *ngIf="stakes?.closedV1?.length && tokensDecimals">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
@@ -951,7 +1039,6 @@
     </div>
   </div>
 </ng-template>
-
 
 <!-- Unstake Modal -->
 <ng-template #actionsModal class="dialog-block" mat-dialog-content>

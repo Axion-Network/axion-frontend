@@ -7,29 +7,68 @@
       class="question"
       mat-raised-button
       matTooltip="
-      This auction raffles accumulated Axion tokens between users, in proportion to the participants' bid in Ethereum. Any leftover Axion from the auction rolls over into the next weekly auction.
+      The regular auction 'raffles' accumulated Axion tokens between users, in proportion to the participants’ bid in Ethereum (ETH). Any leftover AXN from the auction rolls over into the next weekly auction. When a user places a bid in ETH, 80% of the received ETH is used to instantly buy back AXN on Uniswap and the received AXN is distributed as dividends to the staker class. 19% of the ETH is Axion Foundation profit whereas 1% goes to The Eden Reforestation Project where every $0.10 donated plants one tree.
 
-      When the user places a bid in ETH: 80% of the received ETH is used to instantly BUYBACK Axion on Uniswap and the received AXN is distributed as DIVIDENDS to stakers. 19% of the received ETH is the company's profit,  1% goes to The Eden Reforestation Project, with each $0.10 planting a tree.
+      All Axion received from this auction including referral bonuses must be staked for a minimum of 60 days upon withdrawal. The stake length may be increased to 5555 days. By increasing the stake length, the more shares the user receives in return which results in more dividends received from the auction buybacks.
 
-      All Axion received from the Auction including referral bonuses will be staked for a minimum of {{ contractService.autoStakeDays }} days upon withdrawal. The stake length may be increased up to {{stakeMaxDays}} days.
       
-      When you increase the stake length you get more shares, resulting in better DIVIDENDS received from auction BUYBACK.
+      There are two Venture Capital Auctions per week, on Tuesday and Friday. Each of these particular auctions have a maximum cap of 1B (billion) AXN, for a total of 2B per week - once they are sold out, no more bids can be had. Venture Capital Auctions bring in a new dividend asset class in the form of wrapped Bitcoin (wBTC) which simply utilizes Bitcoin's liquidity on the Ethereum network. The Venture Capital Auction investor also receives an immediate 10% wBTC bonus upon completion of the VCA in which they’ve bid in.
 
-      There is a chance the auction gets overbid, and everyone who has bid will receive a lower amount of AXN compared to buying on Uniswap.
+      The auto-stake period for VCA's are a minimum of 120 days - longer than the normal auctions in order to offset the additional reward paid in wBTC. 
 
-      If entering within the last hour or so, please be sure to use a high gas fee. If your transaction does not complete by auction cut off, your ETH will be entered into the next days auction. We are not responsible for this and cannot provide any refunds.
-      
-      WARNING
-      Last bid of the same auction overwrites previous bid referral and stake length."
+      VC auction investors may choose to stake for longer than 120 days, upwards of 5555 days accompanied by a sliding scale with the date attached. Longer auto-stake periods for purchased AXN benefit greatly due to the BigPayDays and LongerPaysBetter bonuses while also securing a better share rate.
+    
+      The rewards for VCA's are wBTC, where 85% of all ETH raised is used to purchase wBTC and distribute it across the staker class - these dividends are liquid and withdrawable at any time. 10% is the wBTC bonus to the bidder, and 5% is Axion Foundation profit. In the near future, additional alternative coin (altcoin) dividends will be introduced."
       matTooltipClass="question__tooltip question__extrawidth"
     ></div>
   </div>
 
-    <div class="axn-form axn-form-base-2">
+  <!-- Spinner -->
+  <section *ngIf="account && !poolInfo" class="loading-spinner">
+    <mat-spinner color="accent" diameter="50"></mat-spinner>
+  </section>
 
-    <!-- BID -->
-    <div class="axn-form-block axn-form-auction">
-      <div class="axn-form-block-one axn-form-arrow p-b-none">
+  <!-- Auction Info -->
+  <div class="axn-form axn-form-base-2" *ngIf="poolInfo">
+
+    <div>
+      <!-- Auction Type -->
+      <div class="axn-form-block m-b-10 p-20 axn-text-center">
+        <span class="axn-text-subtitle">
+          Today's Auction: {{poolInfo.isVCA ? "Venture Capital" : "Regular"}}
+          <div 
+            class="question" 
+            mat-raised-button 
+            #tooltip2="matTooltip" 
+            (click)="tooltip2.toggle()" 
+            matTooltipClass="question__tooltip question__extrawidth"
+            matTooltip="
+            this tooltip needs updating. It will be used to explain the auction types. (Venture Capital or... 'regular'?).
+
+            Venture Capital: JoeJoe will fill this in...
+
+            Regular: JoeJoe will also fill this in...
+            ">
+          </div>
+        </span>
+
+        <!-- VCA Tokens -->
+        <div class="tokens-of-the-day" *ngIf="poolInfo.isVCA">
+          <span class="axn-text-body token-of-the-day" *ngFor="let token of poolInfo.tokensOfTheDay">{{token.tokenSymbol}}: {{token.percentage}}%</span>
+        </div>
+
+        <!-- Non VCA Buyback Stats -->
+        <div class="tokens-of-the-day" *ngIf="!poolInfo.isVCA">
+          <span class="axn-text-body token-of-the-day">
+            <span class="axn-form-block-one-value-small p-tb-5" matTooltipClass="table__tooltip" mat-raised-button matTooltip="${{ getAxnDollarValue(poolInfo.axnBuybacks) | bigNumberFormat: tokensDecimals['ETH']:true:false:2 || 0 }}">
+              Current Buyback Balance: {{poolInfo.axnBuybacks | bigNumberFormat: tokensDecimals['ETH']:true:false:2 || 0}} AXN
+            </span>
+          </span>
+        </div>
+      </div>
+
+      <!-- BID INPUT -->
+      <div class="axn-form-block  axn-form-arrow axn-form-auction axn-form-block-one p-20">
         <span class="axn-form-block-one-title">Input</span>
         <input
           type="text"
@@ -313,7 +352,7 @@
               style="margin: auto"
               (click)="openWithdrawBid(bid)"
               [ngClass]="{ progress: bid.withdrawProgress }"
-              [disabled]="bid.withdrawProgress"
+              [disabled]="bid.withdrawProgress || account.mustRegisterVCA"
             >
               <span class="lds-ellipsis" *ngIf="bid.withdrawProgress">
                 <span class="lds-ellipsis-container">
@@ -435,7 +474,7 @@
   </div>
 </section>
 
-<section class="axn-section" *ngIf="account">
+<section class="axn-section" *ngIf="account && auctions.length">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Auctions</span>
@@ -450,11 +489,7 @@
       ></div>
     </div>
 
-    <div *ngIf="!auctions.length" class="loading-spinner">
-      <mat-spinner color="accent" diameter="50"></mat-spinner>
-    </div>
-
-    <table *ngIf="auctions.length" class="standard-table" cellpadding="0" cellspacing="0" border="0"  matSort matSortDisableClear="true" (matSortChange)="sort($event, 'auctions')">
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0"  matSort matSortDisableClear="true" (matSortChange)="sort($event, 'auctions')">
       <thead>
         <tr>
           <th mat-sort-header="time.date">Date</th>
@@ -514,7 +549,7 @@
   </div>
 </section>
 
-<section class="axn-section" *ngIf="account">
+<section class="axn-section" *ngIf="account && completedAuctions.length">
   <div class="axn-form-block table-container p-20">
     <div class="axn-title-block p-20">
       <span class="axn-title">Completed Auctions</span>
@@ -529,11 +564,7 @@
       ></div>
     </div>
 
-    <div *ngIf="!completedAuctions.length" class="loading-spinner">
-      <mat-spinner color="accent" diameter="50"></mat-spinner>
-    </div>
-
-    <table *ngIf="completedAuctions.length" class="standard-table" cellpadding="0" cellspacing="0" border="0" matSort matSortDisableClear="true" (matSortChange)="sort($event, 'completedAuctions')">
+    <table class="standard-table" cellpadding="0" cellspacing="0" border="0" matSort matSortDisableClear="true" (matSortChange)="sort($event, 'completedAuctions')">
       <thead>
         <tr>
           <th mat-sort-header="time.date">Date</th>
@@ -718,7 +749,7 @@
     <div class="dialog-title">Attention!</div>
 
     <div class="dialog-description">
-      <span class="axn-text-boxy">
+      <span class="axn-text-body">
         Due to it's size, your bid will increase the auction price - if you proceed, every bidder will be receiving less AXN per ETH.<br/>
         You are better off buying on <a class="axn-link" target="_blank" href="https://app.uniswap.org/#/swap?outputCurrency=0x71f85b2e46976bd21302b64329868fd15eb0d127">Uniswap</a> with that amount of ETH.
       </span>
@@ -741,12 +772,12 @@
 
     <div class="dialog-description dialog-description-slim">
       <div class="axn-form axn-form-block-one">
-          <p style="text-transform: none;">
-            It is mandatory for each auction bid to be autostaked.<br/>
-            Please enter the autostake length for this bid
-          </p>
+        <p class="axn-text-body">
+          It is mandatory for each auction bid to be autostaked.<br/>
+          Please enter the autostake length for this bid.
+        </p>
 
-        <span class="axn-form-block-one-title">Stake Length<br>{{ contractService.autoStakeDays }} - {{stakeMaxDays}} Days</span>
+        <span class="axn-form-block-one-title">Stake Length<br>{{ withdrawData.minAutostakeDays }} - {{stakeMaxDays}} Days</span>
         <input
           step="1"
           type="number"
@@ -755,33 +786,24 @@
           required="required"
           name="stake-days"
           [max]="stakeMaxDays"
+          (ngModelChange)="onAutostakeDaysChanged()"
           [(ngModel)]="withdrawData.autoStakeDays"
-          [appMinMaxNumber]="{
-            max: stakeMaxDays
-          }"
+          [appMinMaxNumber]="{ max: stakeMaxDays }"
         />
-        <span
-          class="axn-cheap cl-blue-bg"
-          style="
-            padding-left: 10px;
-            padding-right: 10px;
-            text-transform: none;
-          "
-          >{{
-            today +
-              ((withdrawData.autoStakeDays ||
-                this.contractService.autoStakeDays) +
-                1) *
-                24 *
-                60 *
-                60 *
-                1000 | date: "MMM d, y"
-          }}</span>
+        <span class="axn-cheap cl-blue-bg axn-text-body">
+          {{today + (withdrawData.autoStakeDays || withdrawData.minAutostakeDays) * 24 * 60 * 60 * 1000 | date: "MMM d, y"}}
+        </span>
 
-          <div class="axn-form-block-sendmax">
-            <span class="axn-btn axn-btn-max" (click)="withdrawData.autoStakeDays = stakeMaxDays">Send max</span>
-          </div>
-          
+        <div class="axn-form-block-sendmax">
+          <span class="axn-btn axn-btn-max" (click)="withdrawData.autoStakeDays = stakeMaxDays">Send max</span>
+        </div>
+
+        <p class="axn-text-body">
+          Amount: {{ withdrawData.amount | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }} AXN<br />
+          Basic Shares: {{ withdrawData.shares | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }} <br />
+          Longer Pays Better: {{ withdrawData.lpb | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }} <br />
+          Total Shares: {{ withdrawData.totalShares | bigNumberFormat: tokensDecimals["AXN"]:true:false:2 }}
+        </p>
       </div>
     </div>
 
@@ -789,7 +811,7 @@
       <button class="axn-btn axn-btn-gray" type="button" mat-dialog-close>
         <span>Close</span>
       </button>
-      <button class="axn-btn axn-btn-gray" [disabled]="withdrawData.autoStakeDays < contractService.autoStakeDays" type="button" (click)="confirmAutostakeDays()">
+      <button class="axn-btn axn-btn-gray" [disabled]="withdrawData.autoStakeDays < withdrawData.minAutostakeDays" type="button" (click)="confirmAutostakeDays()">
         <span>Stake</span>
       </button>
     </div>

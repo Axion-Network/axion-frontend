@@ -15,6 +15,7 @@ import { MetamaskErrorComponent } from "../../components/metamaskError/metamask-
 
 import { AuctionBid, ContractService, Auction } from "../../services/contract";
 import { MatDialog } from "@angular/material/dialog";
+import { TransactionSuccessModalComponent } from "src/app/components/transactionSuccessModal/transaction-success-modal.component";
 
 @Component({
   selector: "app-auction-page",
@@ -69,6 +70,11 @@ export class AuctionPageComponent implements OnDestroy {
     dialog?: any;
     bid?: AuctionBid;
     autoStakeDays?: number;
+    minAutostakeDays?: number;
+    shares?: BigNumber;
+    lpb?: BigNumber;
+    amount?: BigNumber;
+    totalShares?: BigNumber;
   } = {};
 
   public referalLink = "";
@@ -90,7 +96,7 @@ export class AuctionPageComponent implements OnDestroy {
   public withdrawnBids: AuctionBid[] = [];
   public withdrawnV1Bids: AuctionBid[] = [];
 
-  public poolInfo = {} as Auction;
+  public poolInfo: Auction;
 
   public auctions: any = [];
   public auctionsIntervals: [];
@@ -103,6 +109,7 @@ export class AuctionPageComponent implements OnDestroy {
   private usdcPerAxnPrice: BigNumber;
   private usdcPerEthPrice: BigNumber;
   private _1e18: string;
+  public shareRate: BigNumber;
 
   constructor(
     public contractService: ContractService,
@@ -124,15 +131,16 @@ export class AuctionPageComponent implements OnDestroy {
 
             if (account) {
               this.getAuctions();
+              this.getShareRate();
               this.onChangeAmount();
               this.onChangeAccount.emit();
               this.getWalletBids();
-
-              const info = await this.contractService.getAuctionPool();
-              this.poolInfo = info;
-              this.getAuctionPool();
-              this.auctionPoolChecker = true;
-
+              this.contractService.getAuctionPool().then(poolInfo => {
+                this.poolInfo = poolInfo
+                this.getAuctionPool();
+                this.auctionPoolChecker = true;
+              });
+              
               this.usdcPerAxnPrice = await this.contractService.getUsdcPerAxnPrice();
               this.usdcPerEthPrice = await this.contractService.getUsdcPerEthPrice();
             }
@@ -141,12 +149,39 @@ export class AuctionPageComponent implements OnDestroy {
       });
 
     this.tokensDecimals = this.contractService.getCoinsDecimals();
-    this.settings = config.getConfig();
+    this.settings = this.config.getConfig();
   }
 
   ngOnDestroy() {
     this.auctionPoolChecker = false;
     this.accountSubscribe.unsubscribe();
+  }
+
+  public openDialog(dialog) {
+    return this.ngZone.run(() => this.dialog.open(dialog, {}))
+  }
+
+  public openSuccessDialog(txID) {
+    this.ngZone.run(() => {
+      this.dialog.open(TransactionSuccessModalComponent, {
+        width: "400px",
+        data: txID,
+      })
+    })
+  }
+
+  public openErrorDialog(msg) {
+    this.ngZone.run(() => {
+      this.dialog.open(MetamaskErrorComponent, {
+        width: "400px",
+        data: { msg },
+      })
+    })
+  }
+
+  public async getShareRate() {
+    const shareRate = await this.contractService.getShareRate();
+    this.shareRate = new BigNumber(shareRate).div(this._1e18);
   }
 
   public scanDate(date) {
@@ -281,63 +316,50 @@ export class AuctionPageComponent implements OnDestroy {
   public sendETHToAuction(withoutWarning?) {
     const refAddress = this.cookieService.get("ref")
     if (refAddress.toLowerCase() === this.account.address.toLowerCase()) {
-      this.dialog.open(MetamaskErrorComponent, {
-        width: "400px",
-        data: {
-          msg: "It appears you are trying to self refer using your own referral link. Please use a different referral link before proceeding.",
-        },
-      });
+      this.openErrorDialog("It appears you are trying to self refer using your own referral link. Please use a different referral link before proceeding.")
       return;
     }
 
     if (!withoutWarning) {
+      if (this.poolInfo.eth && this.poolInfo.axn) {
+        // Small bid warning
+        const potentialWinnings = new BigNumber(this.poolInfo.axnPerEth).times(this.formsData.bidEthAmount).div(this._1e18).dp(0);
+        if (potentialWinnings.isZero()) {
+          this.smallBidDialog = this.openDialog(this.smallBidModal);
+          return;
+        }
 
-      // Small bid warning
-      const potentialWinnings = new BigNumber(this.poolInfo.axnPerEth).times(this.formsData.bidEthAmount).div(this._1e18).dp(0);
-      if (potentialWinnings.isZero()) {
-        this.smallBidDialog = this.dialog.open(this.smallBidModal, {});
-        return;
-      }
+        // Overbid warning
+        if (this.poolInfo.isOverBid) {
+          this.overBidDialog = this.openDialog(this.overBidModal);
+          return;
+        }
 
-      // Overbid warning
-      if (this.poolInfo.isOverBid) {
-        this.overBidDialog = this.dialog.open(this.overBidModal, {});
-        return;
+        // Large bid warning
+        const afterBidAuctionPrice = new BigNumber(this.poolInfo.axn).div(this.poolInfo.eth.plus(this.formsData.bidEthAmount));
+        if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth.times(0.75))) {
+          this.largeBidDialog = this.openDialog(this.largeBidModal);
+          return;
+        }
       }
-
-      // Large bid warning
-      const afterBidAuctionPrice = new BigNumber(this.poolInfo.axn).div(this.poolInfo.eth.plus(this.formsData.bidEthAmount));
-      if (afterBidAuctionPrice.isLessThan(this.poolInfo.axnPerEth.times(0.75))) {
-        this.largeBidDialog = this.dialog.open(this.largeBidModal, {});
-        return;
-      }
+    
     }
 
     this.sendAuctionProgress = true;
+    const callMethod = this.formsData.bidEthAmount === this.account.balances.ETH.wei ? "sendMaxETHToAuction" : "sendETHToAuction";
 
-    const callMethod =
-      this.formsData.bidEthAmount === this.account.balances.ETH.wei
-        ? "sendMaxETHToAuctionV2"
-        : "sendETHToAuctionV2";
-
-    this.contractService[callMethod](
-      this.formsData.bidEthAmount,
-      refAddress
-    )
+    this.contractService[callMethod](this.formsData.bidEthAmount, refAddress)
       .then(
         ({ transactionHash }) => {
           this.contractService.updateETHBalance(true).then(() => {
             this.formsData.bidEthAmount = undefined;
           });
+          
+          this.openSuccessDialog(transactionHash);
         },
         (err) => {
           if (err.message) {
-            this.dialog.open(MetamaskErrorComponent, {
-              width: "400px",
-              data: {
-                msg: err.message,
-              },
-            });
+            this.openErrorDialog(err.message);
           }
         }
       )
@@ -359,10 +381,33 @@ export class AuctionPageComponent implements OnDestroy {
     }, 2500);
   }
 
+  public onAutostakeDaysChanged() {
+    const days = this.withdrawData.autoStakeDays - 1;
+    this.withdrawData.lpb = days >= 0 ? this.withdrawData.amount.times(days / 1820).div(this.shareRate) : new BigNumber(0)
+    this.withdrawData.totalShares = this.withdrawData.shares.plus(this.withdrawData.lpb);
+  }
+
   public openWithdrawBid(bid: AuctionBid) {
     this.withdrawData.bid = bid;
-    this.withdrawData.autoStakeDays = this.contractService.autoStakeDays;
-    this.withdrawData.dialog = this.dialog.open(this.withdrawModal, {});
+    this.withdrawData.amount = bid.winnings.times(this._1e18);
+
+    // Check if bid is from VCA
+    let autoStakeDays = this.contractService.autoStakeDays;
+    if (this.contractService.auctionModes[+bid.auctionId % 7] === "1") {
+      autoStakeDays = this.contractService.ventureAutostakeDays;
+    }
+
+    // Set min Autostake Days
+    this.withdrawData.autoStakeDays = autoStakeDays;
+    this.withdrawData.minAutostakeDays = autoStakeDays;
+
+    // Calculate Shares
+    this.withdrawData.shares = this.withdrawData.amount.div(this.shareRate);
+    this.withdrawData.lpb = this.withdrawData.amount.times(((autoStakeDays - 1) / 1820)).div(this.shareRate);
+    this.withdrawData.totalShares = this.withdrawData.shares.plus(this.withdrawData.lpb);
+
+    // Keep ref for when we need to close
+    this.withdrawData.dialog = this.openDialog(this.withdrawModal);
   }
 
   public confirmAutostakeDays() {

@@ -338,7 +338,7 @@
               style="margin: auto"
               (click)="openWithdrawBid(bid)"
               [ngClass]="{ progress: bid.withdrawProgress }"
-              [disabled]="bid.withdrawProgress || account.mustRegisterVCA"
+              [disabled]="bid.withdrawProgress"
             >
               <span class="lds-ellipsis" *ngIf="bid.withdrawProgress">
                 <span class="lds-ellipsis-container">

@@ -354,8 +354,6 @@ export class AuctionPageComponent implements OnDestroy {
           this.contractService.updateETHBalance(true).then(() => {
             this.formsData.bidEthAmount = undefined;
           });
-          
-          this.openSuccessDialog(transactionHash);
         },
         (err) => {
           if (err.message) {

@@ -294,7 +294,7 @@ export class StakingPageComponent implements OnDestroy {
           this.stakingInfoChecker = true;
           this.contractService.getVCARegisteredShares().then(shares => {
             this.totalRegisteredVCAShares = new BigNumber(shares);
-            this.currentPoolPercentage = this.activeStakeTotals.shares.div(this.totalRegisteredVCAShares);
+            this.currentPoolPercentage = this.activeStakeTotals.shares.div(this.totalRegisteredVCAShares).times(100);
           })
         }
       )

@@ -2155,4 +2155,8 @@ export class ContractService {
   public getShareRate() {
     return this.StakingContract.methods.shareRate().call()
   }
+
+  public getVCARegisteredShares() {
+    return this.StakingContract.methods.getTotalVcaRegisteredShares().call();
+  }
 }

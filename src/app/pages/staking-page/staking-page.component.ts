@@ -137,6 +137,8 @@ export class StakingPageComponent implements OnDestroy {
   public maxShareMaxDays;
   public checkingVCARegistration = true;
   public confirmWithdrawData;
+  public totalRegisteredVCAShares;
+  public currentPoolPercentage;
 
   constructor(
     private contractService: ContractService,
@@ -290,6 +292,10 @@ export class StakingPageComponent implements OnDestroy {
           window.dispatchEvent(new Event("resize"));
           this.getStakingInfo();
           this.stakingInfoChecker = true;
+          this.contractService.getVCARegisteredShares().then(shares => {
+            this.totalRegisteredVCAShares = new BigNumber(shares);
+            this.currentPoolPercentage = this.activeStakeTotals.shares.div(this.totalRegisteredVCAShares);
+          })
         }
       )
       .catch(console.log);

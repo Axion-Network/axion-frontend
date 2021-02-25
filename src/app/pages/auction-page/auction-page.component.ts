@@ -409,6 +409,11 @@ export class AuctionPageComponent implements OnDestroy {
   }
 
   public confirmAutostakeDays() {
+    if (!Number.isInteger(this.withdrawData.autoStakeDays)) {
+      this.openErrorDialog("Invalid Stake Length: The length of your stake must be a whole number.");
+      return;
+    }
+
     this.withdrawData.dialog.close();
 
     this.bidWithdraw(

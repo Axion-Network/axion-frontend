@@ -300,6 +300,11 @@ export class StakingPageComponent implements OnDestroy {
   }
 
   public openStake() {
+    if (!Number.isInteger(this.formsData.stakeDays)) {
+      this.openErrorDialog("Invalid Stake Length: The length of your stake must be a whole number.");
+      return;
+    }
+
     this.stakeTokensProgress = true;
     this.contractService
       .depositAXN(this.formsData.stakeAmount, this.formsData.stakeDays)
@@ -493,6 +498,11 @@ export class StakingPageComponent implements OnDestroy {
   }
 
   public restake(stake: Stake) {    
+    if (!Number.isInteger(this.restakeData.stakeDays)) {
+      this.openErrorDialog("Invalid Stake Length: The length of your re-stake must be a whole number.");
+      return;
+    }
+
     stake.withdrawProgress = true;
     this.contractService.restake(stake, this.restakeData.stakeDays, this.restakeData.topUp).then(() => {
       this.stakeList();

@@ -1,15 +1,13 @@
 <div class="dialog-block" mat-dialog-content>
   <div class="dialog-block__content">
     <div class="dialog-description" [innerHTML]="err"></div>
-
-    <div class="axn-container-center m-t-15">
-      <button
-      class="axn-btn axn-btn-gray"
-        (click)="closeModal()"
-        type="button"
-      >
-        <span>&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;</span>
-      </button>
-    </div>
+      <div class="axn-container-center">
+        <button class="axn-btn axn-btn-gray" ngxClipboard [cbContent]="technicalError" *ngIf="technicalError">
+          Copy Error Details
+        </button>
+        <button class="axn-btn axn-btn-gray m-t-15" (click)="closeModal()" type="button">
+          <span>&nbsp;&nbsp;&nbsp;Close&nbsp;&nbsp;&nbsp;</span>
+        </button>
+      </div>
   </div>
 </div>

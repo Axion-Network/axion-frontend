@@ -7,6 +7,7 @@ import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 })
 export class MetamaskErrorComponent {
     public err: string;
+    public technicalError: string;
 
     constructor(
         public dialogRef: MatDialogRef<MetamaskErrorComponent>,
@@ -18,6 +19,11 @@ export class MetamaskErrorComponent {
             this.err = `Your transaction is taking longer than usual due to a below average gas price that was set. 
                         Please check your wallet address on Etherscan and click on the pending transaction for an estimated transaction time. 
                         Do not cancel the transaction yet. Alternatively, you can try to 'speed up' the transaction in the 'Activity' section of Metamask.`;
+        }
+
+        if (this.err.toString().includes("Transaction has been reverted by the EVM")) {
+            this.technicalError = data.msg;
+            this.err = "Transaction has been reverted by Ethereum. Please try the action again, or get in contact with support for further information.";
         }
     }
 
